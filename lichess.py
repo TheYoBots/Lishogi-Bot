@@ -20,6 +20,7 @@ ENDPOINTS = {
     "move": "/api/bot/game/{}/move/{}",
     "chat": "/api/bot/game/{}/chat",
     "abort": "/api/bot/game/{}/abort",
+    "seek": "/api/seek",
     "accept": "/api/challenge/{}/accept",
     "decline": "/api/challenge/{}/decline",
     "upgrade": "/api/bot/account/upgrade",
@@ -91,6 +92,10 @@ class Lichess():
 
     def decline_challenge(self, challenge_id):
         return self.api_post(ENDPOINTS["decline"].format(challenge_id))
+
+    def create_seek(self, variant):
+        payload = {'variant': variant}
+        return self.api_post(ENDPOINTS["seek"], data=payload)
 
     def get_profile(self):
         profile = self.api_get(ENDPOINTS["profile"])

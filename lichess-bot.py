@@ -1,3 +1,4 @@
+import variants
 import argparse
 import chess
 from chess.variant import find_variant
@@ -53,6 +54,7 @@ def upgrade_account(li):
 @backoff.on_exception(backoff.expo, BaseException, max_time=600, giveup=is_final)
 def watch_control_stream(control_queue, li):
     response = li.get_event_stream()
+    control_queue.put_nowait({"type": "connected"})
     try:
         for line in response.iter_lines():
             if line:
@@ -80,11 +82,18 @@ def start(li, user_profile, engine_factory, config):
     with logging_pool.LoggingPool(max_games+1) as pool:
         while not terminated:
             event = control_queue.get()
+            logger.info("||| control_queue event: %s" % event["type"])
             if event["type"] == "terminated":
                 break
+            elif event["type"] == "connected":
+                for variant in challenge_config["variants"]:
+                    logger.info("Creating seek for %s" % variant)
+                    li.create_seek(variant)
             elif event["type"] == "local_game_done":
                 busy_processes -= 1
                 logger.info("+++ Process Free. Total Queued: {}. Total Used: {}".format(queued_processes, busy_processes))
+                logger.info("Creating new seek for %s" % variant)
+                li.create_seek(event["variant"])
             elif event["type"] == "challenge":
                 chlng = model.Challenge(event["challenge"])
                 if chlng.is_supported(challenge_config):
@@ -125,7 +134,7 @@ def start(li, user_profile, engine_factory, config):
     control_stream.terminate()
     control_stream.join()
 
-@backoff.on_exception(backoff.expo, BaseException, max_time=600, giveup=is_final)
+#@backoff.on_exception(backoff.expo, BaseException, max_time=600, giveup=is_final)
 def play_game(li, game_id, control_queue, engine_factory, user_profile, config, challenge_queue):
     response = li.get_game_stream(game_id)
     lines = response.iter_lines()
@@ -153,6 +162,8 @@ def play_game(li, game_id, control_queue, engine_factory, user_profile, config, 
             u_type = upd["type"] if upd else "ping"
             if u_type == "chatLine":
                 conversation.react(ChatLine(upd), game)
+            elif u_type == "gameEnd":
+                break
             elif u_type == "gameState":
                 game.state = upd
                 moves = upd["moves"].split()
@@ -191,14 +202,15 @@ def play_game(li, game_id, control_queue, engine_factory, user_profile, config, 
         engine.quit()
         # This can raise queue.NoFull, but that should only happen if we're not processing
         # events fast enough and in this case I believe the exception should be raised
-        control_queue.put_nowait({"type": "local_game_done"})
+        control_queue.put_nowait({"type": "local_game_done", "variant": game.variant_name})
 
 
 def play_first_move(game, engine, board, li):
     moves = game.state["moves"].split()
     if is_engine_move(game, moves):
         # need to hardcode first movetime since Lichess has 30 sec limit.
-        best_move = engine.first_search(board, 10000)
+        # best_move = engine.first_search(board, 10000)
+        best_move = engine.first_search(board, 100)
         li.make_move(game.id, best_move)
         return True
     return False
@@ -251,7 +263,7 @@ def setup_board(game):
         board = chess.Board(game.initial_fen)
     else:
         VariantBoard = find_variant(game.variant_name)
-        board = VariantBoard()
+        board = VariantBoard(game.initial_fen)
     moves = game.state["moves"].split()
     for move in moves:
         board = update_board(board, move)
@@ -268,6 +280,10 @@ def is_engine_move(game, moves):
 
 
 def update_board(board, move):
+    if not isinstance(board, chess.Board):
+        board.push(move)
+        return board
+
     uci_move = chess.Move.from_uci(move)
     board.push(uci_move)
     return board

@@ -5,6 +5,9 @@ import chess.uci
 import backoff
 import subprocess
 
+from engine import GeneralEngine
+
+
 @backoff.on_exception(backoff.expo, BaseException, max_time=120)
 def create_engine(config, board):
     cfg = config["engine"]
@@ -17,6 +20,9 @@ def create_engine(config, board):
             commands.append("--{}={}".format(k, v))
 
     silence_stderr = cfg.get("silence_stderr", False)
+
+    if not isinstance(board, chess.Board):
+        return GeneralEngine(board, commands, cfg.get("uci_options", {}) or {}, silence_stderr)
 
     if engine_type == "xboard":
         return XBoardEngine(board, commands, cfg.get("xboard_options", {}) or {}, silence_stderr)
