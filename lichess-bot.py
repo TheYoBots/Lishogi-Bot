@@ -85,6 +85,8 @@ def start(li, user_profile, engine_factory, config):
             logger.info("||| control_queue event: %s" % event["type"])
             if event["type"] == "terminated":
                 break
+            elif event["type"] == "ping":
+                li.pong()
             elif event["type"] == "connected":
                 for variant in challenge_config["variants"]:
                     logger.info("Creating seek for %s" % variant)
@@ -134,7 +136,7 @@ def start(li, user_profile, engine_factory, config):
     control_stream.terminate()
     control_stream.join()
 
-#@backoff.on_exception(backoff.expo, BaseException, max_time=600, giveup=is_final)
+@backoff.on_exception(backoff.expo, BaseException, max_time=600, giveup=is_final)
 def play_game(li, game_id, control_queue, engine_factory, user_profile, config, challenge_queue):
     response = li.get_game_stream(game_id)
     lines = response.iter_lines()
