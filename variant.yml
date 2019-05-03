@@ -1,5 +1,6 @@
 token: "token_Variant-Stockfish"    # lichess OAuth2 Token
-url: "http://127.0.0.1:8080"  # lichess base URL
+#url: "http://127.0.0.1:8080"  # lichess base URL
+url: "https://pychess-variants.herokuapp.com"
 
 engine:                      # engine settings
   dir: "./engines/"          # dir containing engines, relative to this project
@@ -50,8 +51,8 @@ challenge:                   # incoming challenges
   min_increment: 0           # minimum amount of increment to accept a challenge
   variants:                  # chess variants to accept (http://lichess.org/variant)
 #    - standard
-#    - crazyhouse
-    - placement
+    - crazyhouse
+#    - placement
   time_controls:             # time controls to accept
 #   - ultraBullet
     - bullet

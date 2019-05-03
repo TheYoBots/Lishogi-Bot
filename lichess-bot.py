@@ -97,6 +97,7 @@ def start(li, user_profile, engine_factory, config):
                 logger.info("Creating new seek for %s" % variant)
                 li.create_seek(event["variant"])
             elif event["type"] == "challenge":
+                print(event)
                 chlng = model.Challenge(event["challenge"])
                 if chlng.is_supported(challenge_config):
                     challenge_queue.append(chlng)

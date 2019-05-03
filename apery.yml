@@ -1,5 +1,6 @@
 token: "token_Apery"    # lichess OAuth2 Token
-url: "http://127.0.0.1:8080"  # lichess base URL
+#url: "http://127.0.0.1:8080"  # lichess base URL
+url: "https://pychess-variants.herokuapp.com"
 
 engine:                      # engine settings
   dir: "./engines/"          # dir containing engines, relative to this project
