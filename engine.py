@@ -5,6 +5,11 @@ logger = logging.getLogger(__name__)
 
 WHITE = True
 
+# From https://github.com/niklasf/fishnet
+LVL_SKILL = [0, 3, 6, 10, 14, 16, 18, 20]
+LVL_MOVETIMES = [50, 100, 150, 200, 300, 400, 500, 1000]
+LVL_DEPTHS = [1, 1, 2, 3, 5, 8, 13, 22]
+
 
 class PopenEngine(subprocess.Popen):
     def __init__(self, commands, options, protocol="UCI"):
@@ -20,19 +25,19 @@ class PopenEngine(subprocess.Popen):
         self.stdin.flush()
         logger.debug("<< %s" % command)
 
-    def setoption(self, option, value):
-# TODO:
-# 2019-03-13 15:07:40,199: <PopenProcess at 0x7f9d91632400 (pid=17165)> << setoption name go_commands value {'depth': 1}
-# 2019-03-13 15:07:40,199: <PopenProcess at 0x7f9d91632400 (pid=17165)> << isready
-# 2019-03-13 15:07:40,394: <PopenProcess at 0x7f9d91632400 (pid=17165)> >> No such option: go_commands
+    def setoption(self, options):
+        for option, value in options.items():
+            if option == "go_commands":
+                continue
 
-        if option not in self.supported_options:
-            return
+            if option not in self.supported_options:
+                continue
 
-        if self.protocol == "UCCI":
-            self.send("setoption %s %s" % (option, str(value)))
-        else:
-            self.send("setoption name %s value %s" % (option, str(value)))
+            if self.protocol == "UCCI":
+                self.send("setoption %s %s" % (option, str(value)))
+            else:
+                self.send("setoption name %s value %s" % (option, str(value)))
+
         stdout = self.isready()
         if stdout.find("No such") >= 0:
             logger.debug(">> %s" % stdout)
@@ -101,7 +106,6 @@ class PopenEngine(subprocess.Popen):
 
         while True:
             line = self.stdout.readline().strip()
-            print("...", line)
             if line == "":
                 continue
             parts = line.split()
@@ -118,6 +122,8 @@ class PopenEngine(subprocess.Popen):
                 movelist.append(parts[0][:-1])
             elif parts[0] == "Nodes" and parts[1] == "searched:":
                 return movelist
+            else:
+                print(parts)
 
     def isready(self):
         self.send("isready")
@@ -137,7 +143,8 @@ class PopenEngine(subprocess.Popen):
             if line.startswith("id name"):
                 self.name = line[7:]
             elif line.startswith("option"):
-                parts = line.split("option " if self.protocol == "UCCI" else "option name ")
+                op = "option " if self.protocol == "UCCI" else "option name "
+                parts = line.split(op)
                 option_name = parts[1].split(" type")[0]
                 self.supported_options.append(option_name)
             elif line == "usiok" or line == "uciok" or line == "ucciok":
@@ -174,16 +181,14 @@ class GeneralEngine:
 
         commands = commands[0] if len(commands) == 1 else commands
         self.go_commands = options.get("go_commands", {})
+        self.threads = options.get("Threads", 1)
 
         self.engine = PopenEngine(commands, options, protocol=self.protocol)
         self.engine.init()
 
-        for option, value in options.items():
-            if option == "go_commands":
-                continue
-            self.engine.setoption(option, value)
+        options["UCI_Variant"] = variant
+        self.engine.setoption(options)
 
-        self.engine.setoption("UCI_Variant", variant)
         self.engine.newgame()
         self.engine.position(board)
 
@@ -243,3 +248,12 @@ class GeneralEngine:
 
     def quit(self):
         self.engine.terminate()
+
+    def set_skill_level(self, lvl):
+        level = LVL_SKILL[lvl - 1]
+        movetime = int(round(LVL_MOVETIMES[lvl - 1] / (
+            self.threads * 0.9 ** (self.threads - 1))))
+        depth = LVL_DEPTHS[lvl - 1]
+
+        self.engine.setoption({"Skill Level": level})
+        self.go_commands = {"movetime": movetime, "depth": depth}

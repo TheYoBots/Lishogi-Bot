@@ -5,7 +5,7 @@ import chess.uci
 import backoff
 import subprocess
 
-from engine import GeneralEngine
+from engine import GeneralEngine, LVL_SKILL, LVL_MOVETIMES, LVL_DEPTHS
 
 
 @backoff.on_exception(backoff.expo, BaseException, max_time=120)
@@ -72,6 +72,7 @@ class UCIEngine(EngineWrapper):
     def __init__(self, board, commands, options, silence_stderr=False):
         commands = commands[0] if len(commands) == 1 else commands
         self.go_commands = options.get("go_commands", {})
+        self.threads = options.get("Threads", 1)
 
         self.engine = chess.uci.popen_engine(commands, stderr = subprocess.DEVNULL if silence_stderr else None)
         self.engine.uci()
@@ -87,7 +88,6 @@ class UCIEngine(EngineWrapper):
 
         info_handler = chess.uci.InfoHandler()
         self.engine.info_handlers.append(info_handler)
-
 
     def first_search(self, board, movetime):
         self.engine.position(board)
@@ -120,6 +120,14 @@ class UCIEngine(EngineWrapper):
 
     def get_stats(self):
         return self.get_handler_stats(self.engine.info_handlers[0].info, ["depth", "nps", "nodes", "score"])
+
+    def set_skill_level(self, lvl):
+        level = LVL_SKILL[lvl - 1]
+        movetime = int(round(LVL_MOVETIMES[lvl - 1] / (self.threads * 0.9 ** (self.threads - 1))))
+        depth=LVL_DEPTHS[lvl - 1]
+
+        self.engine.setoption({"Skill Level": level})
+        self.go_commands = {"movetime": movetime, "depth": depth}
 
 
 class XBoardEngine(EngineWrapper):

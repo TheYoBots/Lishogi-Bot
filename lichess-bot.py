@@ -94,10 +94,7 @@ def start(li, user_profile, engine_factory, config):
             elif event["type"] == "local_game_done":
                 busy_processes -= 1
                 logger.info("+++ Process Free. Total Queued: {}. Total Used: {}".format(queued_processes, busy_processes))
-                logger.info("Creating new seek for %s" % variant)
-                li.create_seek(event["variant"])
             elif event["type"] == "challenge":
-                print(event)
                 chlng = model.Challenge(event["challenge"])
                 if chlng.is_supported(challenge_config):
                     challenge_queue.append(chlng)
@@ -118,7 +115,8 @@ def start(li, user_profile, engine_factory, config):
                 else:
                     queued_processes -= 1
                 game_id = event["game"]["id"]
-                pool.apply_async(play_game, [li, game_id, control_queue, engine_factory, user_profile, config, challenge_queue])
+                skill_level = int(event["game"]["skill_level"])
+                pool.apply_async(play_game, [li, game_id, control_queue, engine_factory, user_profile, config, challenge_queue, skill_level])
                 busy_processes += 1
                 logger.info("--- Process Used. Total Queued: {}. Total Used: {}".format(queued_processes, busy_processes))
             while ((queued_processes + busy_processes) < max_games and challenge_queue): # keep processing the queue until empty or max_games is reached
@@ -137,8 +135,8 @@ def start(li, user_profile, engine_factory, config):
     control_stream.terminate()
     control_stream.join()
 
-@backoff.on_exception(backoff.expo, BaseException, max_time=600, giveup=is_final)
-def play_game(li, game_id, control_queue, engine_factory, user_profile, config, challenge_queue):
+#@backoff.on_exception(backoff.expo, BaseException, max_time=600, giveup=is_final)
+def play_game(li, game_id, control_queue, engine_factory, user_profile, config, challenge_queue, skill_level):
     response = li.get_game_stream(game_id)
     lines = response.iter_lines()
 
@@ -153,6 +151,8 @@ def play_game(li, game_id, control_queue, engine_factory, user_profile, config, 
     engine_cfg = config["engine"]
     polyglot_cfg = engine_cfg.get("polyglot", {})
     book_cfg = polyglot_cfg.get("book", {})
+
+    engine.set_skill_level(skill_level)
 
     try:
         if not polyglot_cfg.get("enabled") or not play_first_book_move(game, engine, board, li, book_cfg):
@@ -205,7 +205,7 @@ def play_game(li, game_id, control_queue, engine_factory, user_profile, config, 
         engine.quit()
         # This can raise queue.NoFull, but that should only happen if we're not processing
         # events fast enough and in this case I believe the exception should be raised
-        control_queue.put_nowait({"type": "local_game_done", "variant": game.variant_name})
+        control_queue.put_nowait({"type": "local_game_done"})
 
 
 def play_first_move(game, engine, board, li):
