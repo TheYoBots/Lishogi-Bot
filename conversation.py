@@ -27,8 +27,11 @@ class Conversation():
         elif cmd == "howto":
             self.send_reply(line, "How to run your own bot: lichess.org/api#tag/Chess-Bot")
         elif cmd == "eval" and line.room == "spectator":
-            stats = self.engine.get_stats()
-            self.send_reply(line, ", ".join(stats))
+            try:
+                stats = self.engine.get_stats()
+                self.send_reply(line, ", ".join(stats))
+            except Exception as e:
+                print("*** Failed to send eval!", e)
         elif cmd == "eval":
             self.send_reply(line, "I don't tell that to my opponent, sorry.")
         elif cmd == "queue":

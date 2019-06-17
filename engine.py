@@ -19,6 +19,7 @@ class PopenEngine(subprocess.Popen):
         self.protocol = protocol
         self.name = ""
         self.supported_options = []
+        self.info = ""
 
     def send(self, command):
         self.stdin.write(command + "\n")
@@ -117,6 +118,7 @@ class PopenEngine(subprocess.Popen):
                 logger.debug(">> %s" % line)
                 return parts[1], ponder
             elif parts[0] == "info" and "pv" in parts:
+                self.info = line
                 logger.debug(">> %s" % line)
             elif parts[0][-1] == ":":
                 movelist.append(parts[0][:-1])
@@ -195,9 +197,30 @@ class GeneralEngine:
     def set_time_control(self, game):
         pass
 
+    def get_handler_stats(self, info, stats):
+        stats_str = []
+        for stat in stats:
+            if stat in info:
+                stats_str.append("{}: {}".format(stat, info[stat]))
+
+        return stats_str
+
     def get_stats(self):
-        # TODO
-        pass
+        # info depth 10 seldepth 12 multipv 1 score cp 79 nodes 52782 nps 502685 tbhits 0 time 105 pv e2e4 e7e5 g1f3 d7d5 f3e5 g8f6 d2d4 d5e4
+        info = {}
+        parts = self.engine.info.split()
+        if "depth" in parts:
+            info["depth"] = parts[parts.index("depth") + 1]
+        if "nps" in parts:
+            info["nps"] = parts[parts.index("nps") + 1]
+        if "nodes" in parts:
+            info["nodes"] = parts[parts.index("nodes") + 1]
+        if "score" in parts:
+            info["score"] = parts[parts.index("score") + 2]
+        if "pv" in parts:
+            info["pv"] = " ".join(parts[parts.index("pv") + 1:])
+        
+        return self.get_handler_stats(info, ["depth", "nps", "nodes", "score", "pv"])
 
     def first_search(self, board, movetime):
         self.engine.position(board)
