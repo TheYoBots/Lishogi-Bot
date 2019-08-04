@@ -41,7 +41,7 @@ engine:                      # engine settings
   silence_stderr: false      # some engines (yes you, leela) are very noisy
 
 abort_time: 20               # time to abort a game in seconds when there is no activity
-fake_think_time: false       # artificially slow down the bot to pretend like it's thinking
+fake_think_time: true       # artificially slow down the bot to pretend like it's thinking
 
 challenge:                   # incoming challenges
   concurrency: 100             # number of games to play simultaneously
@@ -65,6 +65,7 @@ challenge:                   # incoming challenges
     - placement
     - shogi
     - capablanca
+    - seirawan
   time_controls:             # time controls to accept
     - ultraBullet
     - bullet
