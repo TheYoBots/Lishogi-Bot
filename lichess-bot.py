@@ -58,7 +58,12 @@ def watch_control_stream(control_queue, li):
     try:
         for line in response.iter_lines():
             if line:
-                event = json.loads(line.decode('utf-8'))
+                try:
+                    event = json.loads(line.decode('utf-8'))
+                except Exception:
+                    print("ERROR: Cant json.loads() line in watch_control_stream:")
+                    print(line)
+                    continue
                 control_queue.put_nowait(event)
             else:
                 control_queue.put_nowait({"type": "ping"})
@@ -115,7 +120,13 @@ def start(li, user_profile, engine_factory, config):
                 else:
                     queued_processes -= 1
                 game_id = event["game"]["id"]
-                skill_level = int(event["game"]["skill_level"])
+                print("-----------------gameStart------------")
+                print(event)
+                print(event["game"])
+                try:
+                    skill_level = int(event["game"]["skill_level"])
+                except Exception:
+                    skill_level = 8
                 pool.apply_async(play_game, [li, game_id, control_queue, engine_factory, user_profile, config, challenge_queue, skill_level])
                 busy_processes += 1
                 logger.info("--- Process Used. Total Queued: {}. Total Used: {}".format(queued_processes, busy_processes))
