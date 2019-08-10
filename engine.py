@@ -190,6 +190,8 @@ class GeneralEngine:
 
         options["UCI_Variant"] = variant
         self.engine.setoption(options)
+        if board.chess960:
+            self.engine.setoption({"UCI_Chess960": "true"})
 
         self.engine.newgame()
         self.engine.position(board)
@@ -206,7 +208,6 @@ class GeneralEngine:
         return stats_str
 
     def get_stats(self):
-        # info depth 10 seldepth 12 multipv 1 score cp 79 nodes 52782 nps 502685 tbhits 0 time 105 pv e2e4 e7e5 g1f3 d7d5 f3e5 g8f6 d2d4 d5e4
         info = {}
         parts = self.engine.info.split()
         if "depth" in parts:
@@ -219,8 +220,10 @@ class GeneralEngine:
             info["score"] = parts[parts.index("score") + 2]
         if "pv" in parts:
             info["pv"] = " ".join(parts[parts.index("pv") + 1:])
-        
-        return self.get_handler_stats(info, ["depth", "nps", "nodes", "score", "pv"])
+
+        return self.get_handler_stats(info, [
+            "depth", "nps", "nodes", "score", "pv"
+        ])
 
     def first_search(self, board, movetime):
         self.engine.position(board)

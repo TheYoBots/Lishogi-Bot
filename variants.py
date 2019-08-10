@@ -3,10 +3,11 @@ import chess.variant
 
 
 class SimpleBoard:
-    def __init__(self, initial_fen=None):
+    def __init__(self, initial_fen=None, chess960=False):
         self.initial_fen = initial_fen
         self.move_stack = []
         self.color = True if initial_fen.split()[1] == "w" else False
+        self.chess960 = chess960
 
     def push(self, move):
         self.move_stack.append(move)

@@ -51,26 +51,47 @@ def upgrade_account(li):
     logger.info("Succesfully upgraded to Bot Account!")
     return True
 
-@backoff.on_exception(backoff.expo, BaseException, max_time=600, giveup=is_final)
+#@backoff.on_exception(backoff.expo, BaseException, max_time=600, giveup=is_final)
+#def watch_control_stream(control_queue, li):
+#    response = li.get_event_stream()
+#    control_queue.put_nowait({"type": "connected"})
+#    try:
+#        for line in response.iter_lines():
+#            if line:
+#                event = json.loads(line.decode('utf-8'))
+#                control_queue.put_nowait(event)
+#            else:
+#                control_queue.put_nowait({"type": "ping"})
+#    except (RemoteDisconnected, ChunkedEncodingError, ConnectionError, ProtocolError) as exception:
+#        logger.error("Terminating client due to connection error")
+#        traceback.print_exception(type(exception), exception, exception.__traceback__)
+#        control_queue.put_nowait({"type": "terminated"})
+
 def watch_control_stream(control_queue, li):
-    response = li.get_event_stream()
-    control_queue.put_nowait({"type": "connected"})
-    try:
-        for line in response.iter_lines():
-            if line:
-                try:
-                    event = json.loads(line.decode('utf-8'))
-                except Exception:
-                    print("ERROR: Cant json.loads() line in watch_control_stream:")
-                    print(line)
-                    continue
-                control_queue.put_nowait(event)
-            else:
-                control_queue.put_nowait({"type": "ping"})
-    except (RemoteDisconnected, ChunkedEncodingError, ConnectionError, ProtocolError) as exception:
-        logger.error("Terminating client due to connection error")
-        traceback.print_exception(type(exception), exception, exception.__traceback__)
-        control_queue.put_nowait({"type": "terminated"})
+    while True:
+        try:
+            response = li.get_event_stream()
+            control_queue.put_nowait({"type": "connected"})
+            for line in response.iter_lines():
+                if line:
+                    try:
+                        event = json.loads(line.decode('utf-8'))
+                    except Exception:
+                        print("Failed json.loads()", line)
+                        raise
+                    if event["type"] == "terminated":
+                        logger.info("Server sent 'terminated' event. Going to get new event stream...")
+                        # try to get new event stream
+                        time.sleep(10)
+                        break
+                    else:
+                        control_queue.put_nowait(event)
+                else:
+                    control_queue.put_nowait({"type": "ping"})
+        except Exception:
+            logger.exception("ERROR: Exception in whatch_control_stream!")
+            time.sleep(10)
+
 
 def start(li, user_profile, engine_factory, config):
     challenge_config = config["challenge"]
@@ -123,11 +144,18 @@ def start(li, user_profile, engine_factory, config):
                 print("-----------------gameStart------------")
                 print(event)
                 print(event["game"])
+
                 try:
                     skill_level = int(event["game"]["skill_level"])
                 except Exception:
                     skill_level = 8
-                pool.apply_async(play_game, [li, game_id, control_queue, engine_factory, user_profile, config, challenge_queue, skill_level])
+
+                try:
+                    chess960 = bool(event["game"]["chess960"])
+                except Exception:
+                    chess960 = False
+
+                pool.apply_async(play_game, [li, game_id, control_queue, engine_factory, user_profile, config, challenge_queue, skill_level, chess960])
                 busy_processes += 1
                 logger.info("--- Process Used. Total Queued: {}. Total Used: {}".format(queued_processes, busy_processes))
             while ((queued_processes + busy_processes) < max_games and challenge_queue): # keep processing the queue until empty or max_games is reached
@@ -146,14 +174,17 @@ def start(li, user_profile, engine_factory, config):
     control_stream.terminate()
     control_stream.join()
 
-@backoff.on_exception(backoff.expo, BaseException, max_time=600, giveup=is_final)
-def play_game(li, game_id, control_queue, engine_factory, user_profile, config, challenge_queue, skill_level):
+#@backoff.on_exception(backoff.expo, BaseException, max_time=600, giveup=is_final)
+def play_game(li, game_id, control_queue, engine_factory, user_profile, config, challenge_queue, skill_level, chess960):
     response = li.get_game_stream(game_id)
     lines = response.iter_lines()
-
+    line0 = next(lines)
+    print("line0 =", line0)
+    while len(line0) == 0:
+        line0 = next(lines)
     #Initial response of stream will be the full game info. Store it
-    game = model.Game(json.loads(next(lines).decode('utf-8')), user_profile["username"], li.baseUrl, config.get("abort_time", 20))
-    board = setup_board(game)
+    game = model.Game(json.loads(line0.decode('utf-8')), user_profile["username"], li.baseUrl, config.get("abort_time", 20))
+    board = setup_board(game, chess960)
     engine = engine_factory(board)
     conversation = Conversation(game, engine, li, __version__, challenge_queue)
 
@@ -270,14 +301,14 @@ def get_book_move(board, config):
     return move
 
 
-def setup_board(game):
+def setup_board(game, chess960):
     if game.variant_name.lower() == "chess960":
         board = chess.Board(game.initial_fen, chess960=True)
     elif game.variant_name == "From Position":
         board = chess.Board(game.initial_fen)
     else:
         VariantBoard = find_variant(game.variant_name)
-        board = VariantBoard(game.initial_fen)
+        board = VariantBoard(game.initial_fen, chess960=chess960)
     moves = game.state["moves"].split()
     for move in moves:
         board = update_board(board, move)
