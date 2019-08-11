@@ -151,7 +151,7 @@ def start(li, user_profile, engine_factory, config):
                     skill_level = 8
 
                 try:
-                    chess960 = bool(event["game"]["chess960"])
+                    chess960 = event["game"]["chess960"] == "True"
                 except Exception:
                     chess960 = False
 
