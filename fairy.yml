@@ -65,6 +65,7 @@ challenge:                   # incoming challenges
     - placement
     - shogi
     - capablanca
+    - capahouse
     - seirawan
   time_controls:             # time controls to accept
     - ultraBullet

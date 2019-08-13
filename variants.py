@@ -56,7 +56,13 @@ class PlacementBoard(SimpleBoard):
 class CapablancaBoard(SimpleBoard):
     aliases = ["Capablanca"]
     uci_variant = "capablanca"
-    starting_fen = "rnnbqkbnnr/pppppppppp/10/10/10/10/PPPPPPPPPP/RNNBQKBNNR w - - 0 1"
+    starting_fen = "rnabqkbcnr/pppppppppp/10/10/10/10/PPPPPPPPPP/RNABQKBCNR w - - 0 1"
+
+
+class CapahouseBoard(SimpleBoard):
+    aliases = ["Capahouse"]
+    uci_variant = "capahouse"
+    starting_fen = "rnabqkbcnr/pppppppppp/10/10/10/10/PPPPPPPPPP/RNABQKBCNR[] w - - 0 1"
 
 
 class SeirawanBoard(SimpleBoard):
@@ -72,5 +78,6 @@ chess.variant.VARIANTS += [
     XiangqiBoard,
     PlacementBoard,
     CapablancaBoard,
+    CapahouseBoard,
     SeirawanBoard,
 ]
