@@ -67,6 +67,7 @@ challenge:                   # incoming challenges
     - capablanca
     - capahouse
     - seirawan
+    - shouse
   time_controls:             # time controls to accept
     - ultraBullet
     - bullet

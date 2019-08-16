@@ -71,6 +71,12 @@ class SeirawanBoard(SimpleBoard):
     starting_fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR[HEhe] w KQBCDFGkqbcdfg - 0 1"
 
 
+class ShouseBoard(SimpleBoard):
+    aliases = ["Shouse"]
+    uci_variant = "shouse"
+    starting_fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR[HEhe] w KQBCDFGkqbcdfg - 0 1"
+
+
 chess.variant.VARIANTS += [
     MakrukBoard,
     SittuyinBoard,
@@ -80,4 +86,5 @@ chess.variant.VARIANTS += [
     CapablancaBoard,
     CapahouseBoard,
     SeirawanBoard,
+    ShouseBoard,
 ]
