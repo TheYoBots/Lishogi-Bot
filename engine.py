@@ -53,6 +53,14 @@ class PopenEngine(subprocess.Popen):
         if ponder:
             builder.append("ponder")
 
+        if depth is not None:
+            builder.append("depth")
+            builder.append(str(int(depth)))
+
+        if nodes is not None:
+            builder.append("nodes")
+            builder.append(str(int(nodes)))
+
         if self.protocol == "UCCI":
             if time is not None:
                 builder.append("time")
@@ -94,14 +102,6 @@ class PopenEngine(subprocess.Popen):
                 builder.append("perft")
                 builder.append(str(int(perft)))
                 movelist = []
-
-        if depth is not None:
-            builder.append("depth")
-            builder.append(str(int(depth)))
-
-        if nodes is not None:
-            builder.append("nodes")
-            builder.append(str(int(nodes)))
 
         self.send(" ".join(builder))
 
