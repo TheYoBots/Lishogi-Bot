@@ -77,6 +77,12 @@ class ShouseBoard(SimpleBoard):
     starting_fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR[HEhe] w KQBCDFGkqbcdfg - 0 1"
 
 
+class GrandBoard(SimpleBoard):
+    aliases = ["Grand"]
+    uci_variant = "grand"
+    starting_fen = "r8r/1nbqkcabn1/pppppppppp/10/10/10/10/PPPPPPPPPP/1NBQKCABN1/R8R w - - 0 1"
+
+
 chess.variant.VARIANTS += [
     MakrukBoard,
     SittuyinBoard,
@@ -87,4 +93,5 @@ chess.variant.VARIANTS += [
     CapahouseBoard,
     SeirawanBoard,
     ShouseBoard,
+    GrandBoard,
 ]
