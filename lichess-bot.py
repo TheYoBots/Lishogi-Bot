@@ -246,40 +246,6 @@ def play_game(li, game_id, control_queue, engine_factory, user_profile, config, 
     engine.set_skill_level(skill_level)
 
     try:
-        for binary_chunk in lines:
-            upd = json.loads(binary_chunk.decode('utf-8')) if binary_chunk else None
-            u_type = upd["type"] if upd else "ping"
-            if u_type == "gameEnd":
-                break
-            elif u_type == "gameState":
-                game.state = upd
-                moves = upd["moves"].split()
-                board = update_board(board, moves[-1])
-                if not board.is_game_over() and is_engine_move(game, moves):
-                    best_move = None
-                    if best_move == None:
-                        best_move = engine.search(board, upd["wtime"], upd["btime"], upd["winc"], upd["binc"])
-                    li.make_move(game.id, best_move)
-                    game.abort_in(config.get("abort_time", 20))
-
-    except HTTPError as e:
-        ongoing_games = li.get_ongoing_games()
-        game_over = True
-        for ongoing_game in ongoing_games:
-            if ongoing_game["gameId"] == game.id:
-                game_over = False
-                break
-        if not game_over:
-            logger.warn("Abandoning game due to HTTP "+response.status_code)
-    except (RemoteDisconnected, ChunkedEncodingError, ConnectionError, ProtocolError) as exception:
-        logger.error("Abandoning game due to connection error")
-        traceback.print_exception(type(exception), exception, exception.__traceback__)
-    finally:
-        logger.info("--- {} Game over".format(game.url()))
-        engine.quit()
-        control_queue.put_nowait({"type": "local_game_done"})
-
-    try:
         if not polyglot_cfg.get("enabled") or not play_first_book_move(game, engine, board, li, book_cfg):
             play_first_move(game, engine, board, li)
 
