@@ -109,17 +109,22 @@ def start(li, user_profile, engine_factory, config):
         while not terminated:
             event = control_queue.get()
             logger.info("||| control_queue event: %s" % event["type"])
+
             if event["type"] == "terminated":
                 break
+
             elif event["type"] == "ping":
                 li.pong()
+
             elif event["type"] == "connected":
                 for variant in challenge_config["variants"]:
                     logger.info("Creating seek for %s" % variant)
                     li.create_seek(variant)
+
             elif event["type"] == "local_game_done":
                 busy_processes -= 1
                 logger.info("+++ Process Free. Total Queued: {}. Total Used: {}".format(queued_processes, busy_processes))
+
             elif event["type"] == "challenge":
                 chlng = model.Challenge(event["challenge"])
                 if chlng.is_supported(challenge_config):
@@ -135,15 +140,13 @@ def start(li, user_profile, engine_factory, config):
                     except HTTPError as exception:
                         if exception.response.status_code != 404: # ignore missing challenge
                             raise exception
+
             elif event["type"] == "gameStart":
                 if queued_processes <= 0:
                     logger.debug("Something went wrong. Game is starting and we don't have a queued process")
                 else:
                     queued_processes -= 1
                 game_id = event["game"]["id"]
-                print("-----------------gameStart------------")
-                print(event)
-                print(event["game"])
 
                 try:
                     skill_level = int(event["game"]["skill_level"])
@@ -158,6 +161,28 @@ def start(li, user_profile, engine_factory, config):
                 pool.apply_async(play_game, [li, game_id, control_queue, engine_factory, user_profile, config, challenge_queue, skill_level, chess960])
                 busy_processes += 1
                 logger.info("--- Process Used. Total Queued: {}. Total Used: {}".format(queued_processes, busy_processes))
+
+            elif event["type"] == "analysisStart":
+                if queued_processes <= 0:
+                    logger.debug("Something went wrong. Game analysis is starting and we don't have a queued process")
+                else:
+                    queued_processes -= 1
+                game_id = event["game"]["id"]
+
+                try:
+                    skill_level = int(event["game"]["skill_level"])
+                except Exception:
+                    skill_level = 8
+
+                try:
+                    chess960 = event["game"]["chess960"] == "True"
+                except Exception:
+                    chess960 = False
+
+                pool.apply_async(analyze_game, [li, game_id, control_queue, engine_factory, user_profile, config, skill_level, chess960, event["username"]])
+                busy_processes += 1
+                logger.info("--- Analysis Process Used. Total Queued: {}. Total Used: {}".format(queued_processes, busy_processes))
+
             while ((queued_processes + busy_processes) < max_games and challenge_queue): # keep processing the queue until empty or max_games is reached
                 chlng = challenge_queue.pop(0)
                 try:
@@ -173,6 +198,30 @@ def start(li, user_profile, engine_factory, config):
     logger.info("Terminated")
     control_stream.terminate()
     control_stream.join()
+
+def analyze_game(li, game_id, control_queue, engine_factory, user_profile, config, skill_level, chess960, username):
+    response = li.get_game_stream(game_id)
+    lines = response.iter_lines()
+    line0 = next(lines)
+    print("line0 =", line0)
+    while len(line0) == 0:
+        line0 = next(lines)
+    #Initial response of stream will be the full game info. Store it
+    game = model.Game(json.loads(line0.decode('utf-8')), user_profile["username"], li.baseUrl, config.get("abort_time", 20))
+    board = setup_board(game, chess960)
+    engine = engine_factory(board)
+
+    logger.info("+++ {}".format(game))
+
+    engine.go_commands = {"movetime": 3000, "depth": 23}
+
+    while board.move_stack:
+        best_move = engine.search(board, 0, 0, 0, 0)
+        print("best_move", best_move)
+        stats = engine.get_stats()
+        print("stats", stats)
+        li.analysis(username, game_id, ", ".join(stats))
+        board.pop()
 
 @backoff.on_exception(backoff.expo, BaseException, max_time=600, giveup=is_final)
 def play_game(li, game_id, control_queue, engine_factory, user_profile, config, challenge_queue, skill_level, chess960):
@@ -195,6 +244,40 @@ def play_game(li, game_id, control_queue, engine_factory, user_profile, config, 
     book_cfg = polyglot_cfg.get("book", {})
 
     engine.set_skill_level(skill_level)
+
+    try:
+        for binary_chunk in lines:
+            upd = json.loads(binary_chunk.decode('utf-8')) if binary_chunk else None
+            u_type = upd["type"] if upd else "ping"
+            if u_type == "gameEnd":
+                break
+            elif u_type == "gameState":
+                game.state = upd
+                moves = upd["moves"].split()
+                board = update_board(board, moves[-1])
+                if not board.is_game_over() and is_engine_move(game, moves):
+                    best_move = None
+                    if best_move == None:
+                        best_move = engine.search(board, upd["wtime"], upd["btime"], upd["winc"], upd["binc"])
+                    li.make_move(game.id, best_move)
+                    game.abort_in(config.get("abort_time", 20))
+
+    except HTTPError as e:
+        ongoing_games = li.get_ongoing_games()
+        game_over = True
+        for ongoing_game in ongoing_games:
+            if ongoing_game["gameId"] == game.id:
+                game_over = False
+                break
+        if not game_over:
+            logger.warn("Abandoning game due to HTTP "+response.status_code)
+    except (RemoteDisconnected, ChunkedEncodingError, ConnectionError, ProtocolError) as exception:
+        logger.error("Abandoning game due to connection error")
+        traceback.print_exception(type(exception), exception, exception.__traceback__)
+    finally:
+        logger.info("--- {} Game over".format(game.url()))
+        engine.quit()
+        control_queue.put_nowait({"type": "local_game_done"})
 
     try:
         if not polyglot_cfg.get("enabled") or not play_first_book_move(game, engine, board, li, book_cfg):

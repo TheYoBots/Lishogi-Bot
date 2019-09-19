@@ -7,8 +7,8 @@ WHITE = True
 
 # From https://github.com/niklasf/fishnet
 LVL_SKILL = [0, 3, 6, 10, 14, 16, 18, 20]
-LVL_MOVETIMES = [50, 100, 150, 200, 300, 400, 500, 1000]
-LVL_DEPTHS = [1, 1, 2, 3, 5, 8, 13, 22]
+LVL_MOVETIMES = [50, 100, 150, 200, 300, 400, 500, 1100]
+LVL_DEPTHS = [1, 1, 2, 3, 5, 8, 13, 23]
 
 
 class PopenEngine(subprocess.Popen):

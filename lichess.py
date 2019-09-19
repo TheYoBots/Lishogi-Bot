@@ -18,6 +18,7 @@ ENDPOINTS = {
     "stream_event": "/api/stream/event",
     "game": "/api/bot/game/{}",
     "move": "/api/bot/game/{}/move/{}",
+    "analysis": "/api/bot/game/{}/analysis",
     "chat": "/api/bot/game/{}/chat",
     "abort": "/api/bot/game/{}/abort",
     "pong": "/api/pong",
@@ -72,6 +73,10 @@ class Lichess():
 
     def make_move(self, game_id, move):
         return self.api_post(ENDPOINTS["move"].format(game_id, move))
+
+    def analysis(self, username, game_id, text):
+        payload = {'username': username, 'text': text}
+        return self.api_post(ENDPOINTS["analysis"].format(game_id), data=payload)
 
     def chat(self, game_id, room, text):
         payload = {'room': room, 'text': text}

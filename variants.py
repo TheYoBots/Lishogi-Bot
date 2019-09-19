@@ -13,6 +13,10 @@ class SimpleBoard:
         self.move_stack.append(move)
         self.color = not self.color
 
+    def pop(self):
+        del self.move_stack[-1]
+        self.color = not self.color
+
     def is_game_over(self):
         return False
 
