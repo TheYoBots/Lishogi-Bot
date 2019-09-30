@@ -1,3 +1,4 @@
+import json
 import requests
 from urllib.parse import urljoin
 from requests.exceptions import ConnectionError, HTTPError
@@ -74,8 +75,8 @@ class Lichess():
     def make_move(self, game_id, move):
         return self.api_post(ENDPOINTS["move"].format(game_id, move))
 
-    def analysis(self, username, game_id, text):
-        payload = {'username': username, 'text': text}
+    def analysis(self, username, game_id, ply, color, ceval):
+        payload = {'username': username, 'ply': ply, 'color': color, 'ceval': json.dumps(ceval)}
         return self.api_post(ENDPOINTS["analysis"].format(game_id), data=payload)
 
     def chat(self, game_id, room, text):

@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-import chess.variant
 
 
 class SimpleBoard:
@@ -27,38 +26,42 @@ class SimpleBoard:
             return self.initial_fen
 
 
+class StandardBoard(SimpleBoard):
+    uci_variant = "standard"
+    starting_fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
+
+
+class CrazyhouseBoard(SimpleBoard):
+    uci_variant = "crazyhouse"
+    starting_fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR[] w KQkq - 0 1"
+
+
 class MakrukBoard(SimpleBoard):
-    aliases = ["Makruk"]
     uci_variant = "makruk"
     starting_fen = "rnsmksnr/8/pppppppp/8/8/PPPPPPPP/8/RNSKMSNR w - - 0 1"
 
 
 class SittuyinBoard(SimpleBoard):
-    aliases = ["Sittuyin"]
     uci_variant = "sittuyin"
     starting_fen = "8/8/4pppp/pppp4/4PPPP/PPPP4/8/8[rrnnssfkRRNNSSFK] w - - 0 1"
 
 
 class ShogiBoard(SimpleBoard):
-    aliases = ["Shogi"]
     uci_variant = "shogi"
     starting_fen = "lnsgkgsnl/1r5b1/ppppppppp/9/9/9/PPPPPPPPP/1B5R1/LNSGKGSNL b - 1"
 
 
 class XiangqiBoard(SimpleBoard):
-    aliases = ["Xiangqi"]
     uci_variant = "xiangqi"
     starting_fen = "rnbakabnr/9/1c5c1/p1p1p1p1p/9/9/P1P1P1P1P/1C5C1/9/RNBAKABNR w - - 0 1"
 
 
 class PlacementBoard(SimpleBoard):
-    aliases = ["Placement", "Bronstein", "Benko"]
     uci_variant = "placement"
     starting_fen = "8/pppppppp/8/8/8/8/PPPPPPPP/8[nnbbrrqkNNBBRRQK] w - - 0 1"
 
 
 class CapablancaBoard(SimpleBoard):
-    aliases = ["Capablanca"]
     uci_variant = "capablanca"
     starting_fen = "rnabqkbcnr/pppppppppp/10/10/10/10/PPPPPPPPPP/RNABQKBCNR w - - 0 1"
 
@@ -70,39 +73,37 @@ class CapahouseBoard(SimpleBoard):
 
 
 class SeirawanBoard(SimpleBoard):
-    aliases = ["Seirawan"]
     uci_variant = "seirawan"
     starting_fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR[HEhe] w KQBCDFGkqbcdfg - 0 1"
 
 
 class ShouseBoard(SimpleBoard):
-    aliases = ["Shouse"]
     uci_variant = "shouse"
     starting_fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR[HEhe] w KQBCDFGkqbcdfg - 0 1"
 
 
 class GrandBoard(SimpleBoard):
-    aliases = ["Grand"]
     uci_variant = "grand"
     starting_fen = "r8r/1nbqkcabn1/pppppppppp/10/10/10/10/PPPPPPPPPP/1NBQKCABN1/R8R w - - 0 1"
 
 
 class GrandhouseBoard(SimpleBoard):
-    aliases = ["Grandhouse"]
     uci_variant = "grandhouse"
     starting_fen = "r8r/1nbqkcabn1/pppppppppp/10/10/10/10/PPPPPPPPPP/1NBQKCABN1/R8R[] w - - 0 1"
 
 
-chess.variant.VARIANTS += [
-    MakrukBoard,
-    SittuyinBoard,
-    ShogiBoard,
-    XiangqiBoard,
-    PlacementBoard,
-    CapablancaBoard,
-    CapahouseBoard,
-    SeirawanBoard,
-    ShouseBoard,
-    GrandBoard,
-    GrandhouseBoard,
-]
+VARIANT2BOARD = {
+    "standard": StandardBoard,
+    "crazyhouse": CrazyhouseBoard,
+    "makruk": MakrukBoard,
+    "sittuyin": SittuyinBoard,
+    "shogi": ShogiBoard,
+    "xiangqi": XiangqiBoard,
+    "placement": PlacementBoard,
+    "capablanca": CapablancaBoard,
+    "capahouse": CapahouseBoard,
+    "seirawan": SeirawanBoard,
+    "shouse": ShouseBoard,
+    "grand": GrandBoard,
+    "grandhouse": GrandhouseBoard,
+}

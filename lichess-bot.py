@@ -1,7 +1,6 @@
 import variants
 import argparse
 import chess
-from chess.variant import find_variant
 import chess.polyglot
 import engine_wrapper
 import model
@@ -213,14 +212,12 @@ def analyze_game(li, game_id, control_queue, engine_factory, user_profile, confi
 
     logger.info("+++ {}".format(game))
 
-    engine.go_commands = {"movetime": 3000, "depth": 23}
+    engine.go_commands = {"movetime": 500, "depth": 13}
 
     while board.move_stack:
         best_move = engine.search(board, 0, 0, 0, 0)
-        print("best_move", best_move)
-        stats = engine.get_stats()
-        print("stats", stats)
-        li.analysis(username, game_id, ", ".join(stats))
+        stats = engine.get_info()
+        li.analysis(username, game_id, len(board.move_stack), "w" if board.color else "b", stats)
         board.pop()
 
 @backoff.on_exception(backoff.expo, BaseException, max_time=600, giveup=is_final)
@@ -351,17 +348,11 @@ def get_book_move(board, config):
 
 
 def setup_board(game, chess960):
-    if game.variant_name.lower() == "chess960":
-        board = chess.Board(game.initial_fen, chess960=True)
-    elif game.variant_name == "From Position":
-        board = chess.Board(game.initial_fen)
-    else:
-        VariantBoard = find_variant(game.variant_name)
-        board = VariantBoard(game.initial_fen, chess960=chess960)
+    VariantBoard = variants.VARIANT2BOARD[game.variant_name]
+    board = VariantBoard(game.initial_fen, chess960=chess960)
     moves = game.state["moves"].split()
     for move in moves:
         board = update_board(board, move)
-
     return board
 
 
@@ -374,12 +365,7 @@ def is_engine_move(game, moves):
 
 
 def update_board(board, move):
-    if not isinstance(board, chess.Board):
-        board.push(move)
-        return board
-
-    uci_move = chess.Move.from_uci(move)
-    board.push(uci_move)
+    board.push(move)
     return board
 
 def intro():

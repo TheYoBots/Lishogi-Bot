@@ -207,7 +207,7 @@ class GeneralEngine:
 
         return stats_str
 
-    def get_stats(self):
+    def get_info(self):
         info = {}
         parts = self.engine.info.split()
         if "depth" in parts:
@@ -217,11 +217,15 @@ class GeneralEngine:
         if "nodes" in parts:
             info["nodes"] = parts[parts.index("nodes") + 1]
         if "score" in parts:
-            info["score"] = parts[parts.index("score") + 2]
+            info["score"] = {"cp": parts[parts.index("score") + 2]}
+        if "mate" in parts:
+            info["score"] = {"mate": parts[parts.index("mate") + 1]}
         if "pv" in parts:
             info["pv"] = " ".join(parts[parts.index("pv") + 1:])
+        return info
 
-        return self.get_handler_stats(info, [
+    def get_stats(self):
+        return self.get_handler_stats(get_info(), [
             "depth", "nps", "nodes", "score", "pv"
         ])
 
