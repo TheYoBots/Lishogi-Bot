@@ -67,7 +67,6 @@ class CapablancaBoard(SimpleBoard):
 
 
 class CapahouseBoard(SimpleBoard):
-    aliases = ["Capahouse"]
     uci_variant = "capahouse"
     starting_fen = "rnabqkbcnr/pppppppppp/10/10/10/10/PPPPPPPPPP/RNABQKBCNR[] w - - 0 1"
 
@@ -92,6 +91,17 @@ class GrandhouseBoard(SimpleBoard):
     starting_fen = "r8r/1nbqkcabn1/pppppppppp/10/10/10/10/PPPPPPPPPP/1NBQKCABN1/R8R[] w - - 0 1"
 
 
+class GothicBoard(SimpleBoard):
+    uci_variant = "gothic"
+    starting_fen = "rnbqckabnr/pppppppppp/10/10/10/10/PPPPPPPPPP/RNBQCKABNR w KQkq - 0 1"
+
+
+class GothhouseBoard(SimpleBoard):
+    aliases = ["Gothhouse"]
+    uci_variant = "gothhouse"
+    starting_fen = "rnbqckabnr/pppppppppp/10/10/10/10/PPPPPPPPPP/RNBQCKABNR[] w KQkq - 0 1"
+
+
 VARIANT2BOARD = {
     "standard": StandardBoard,
     "crazyhouse": CrazyhouseBoard,
@@ -106,4 +116,6 @@ VARIANT2BOARD = {
     "shouse": ShouseBoard,
     "grand": GrandBoard,
     "grandhouse": GrandhouseBoard,
+    "gothic": GothicBoard,
+    "gothhouse": GothhouseBoard,
 }
