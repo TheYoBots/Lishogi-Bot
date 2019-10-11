@@ -174,7 +174,7 @@ class PopenEngine(subprocess.Popen):
 class GeneralEngine:
     def __init__(self, board, commands, options=None, silence_stderr=False):
         variant = board.uci_variant
-        if variant == "shogi":
+        if variant[-5:] == "shogi":
             self.protocol = "USI"
         elif variant == "xiangqi":
             self.protocol = "UCCI"

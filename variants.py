@@ -48,7 +48,7 @@ class SittuyinBoard(SimpleBoard):
 
 class ShogiBoard(SimpleBoard):
     uci_variant = "shogi"
-    starting_fen = "lnsgkgsnl/1r5b1/ppppppppp/9/9/9/PPPPPPPPP/1B5R1/LNSGKGSNL b - 1"
+    starting_fen = "lnsgkgsnl/1r5b1/ppppppppp/9/9/9/PPPPPPPPP/1B5R1/LNSGKGSNL[] b - 1"
 
 
 class XiangqiBoard(SimpleBoard):
@@ -97,9 +97,13 @@ class GothicBoard(SimpleBoard):
 
 
 class GothhouseBoard(SimpleBoard):
-    aliases = ["Gothhouse"]
     uci_variant = "gothhouse"
     starting_fen = "rnbqckabnr/pppppppppp/10/10/10/10/PPPPPPPPPP/RNBQCKABNR[] w KQkq - 0 1"
+
+
+class MiniShogiBoard(SimpleBoard):
+    uci_variant = "minishogi"
+    starting_fen = "rbsgk/4p/5/P4/KGSBR[-] b - 1"
 
 
 VARIANT2BOARD = {
@@ -118,4 +122,5 @@ VARIANT2BOARD = {
     "grandhouse": GrandhouseBoard,
     "gothic": GothicBoard,
     "gothhouse": GothhouseBoard,
+    "minishogi": MiniShogiBoard,
 }
