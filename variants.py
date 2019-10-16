@@ -41,6 +41,11 @@ class MakrukBoard(SimpleBoard):
     starting_fen = "rnsmksnr/8/pppppppp/8/8/PPPPPPPP/8/RNSKMSNR w - - 0 1"
 
 
+class CambodianBoard(SimpleBoard):
+    uci_variant = "cambodian"
+    starting_fen = "rnsmksnr/8/pppppppp/8/8/PPPPPPPP/8/RNSKMSNR w DEde - 0 1"
+
+
 class SittuyinBoard(SimpleBoard):
     uci_variant = "sittuyin"
     starting_fen = "8/8/4pppp/pppp4/4PPPP/PPPP4/8/8[rrnnssfkRRNNSSFK] w - - 0 1"
@@ -123,4 +128,5 @@ VARIANT2BOARD = {
     "gothic": GothicBoard,
     "gothhouse": GothhouseBoard,
     "minishogi": MiniShogiBoard,
+    "cambodian": CambodianBoard,
 }
