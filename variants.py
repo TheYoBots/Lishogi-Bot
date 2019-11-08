@@ -27,7 +27,7 @@ class SimpleBoard:
 
 
 class StandardBoard(SimpleBoard):
-    uci_variant = "standard"
+    uci_variant = "chess"
     starting_fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
 
 
@@ -112,7 +112,7 @@ class MiniShogiBoard(SimpleBoard):
 
 
 VARIANT2BOARD = {
-    "standard": StandardBoard,
+    "chess": StandardBoard,
     "crazyhouse": CrazyhouseBoard,
     "makruk": MakrukBoard,
     "sittuyin": SittuyinBoard,

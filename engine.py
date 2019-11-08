@@ -176,8 +176,6 @@ class GeneralEngine:
         variant = board.uci_variant
         if variant[-5:] == "shogi":
             self.protocol = "USI"
-        elif variant == "xiangqi":
-            self.protocol = "UCCI"
         else:
             self.protocol = "UCI"
 
