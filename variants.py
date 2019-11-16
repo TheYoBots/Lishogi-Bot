@@ -111,6 +111,16 @@ class MiniShogiBoard(SimpleBoard):
     starting_fen = "rbsgk/4p/5/P4/KGSBR[-] b - 1"
 
 
+class MiniXiangqiBoard(SimpleBoard):
+    uci_variant = "minixiangqi"
+    starting_fen = "rcnkncr/p1ppp1p/7/7/7/P1PPP1P/RCNKNCR w - - 0 1"
+
+
+class ShakoBoard(SimpleBoard):
+    uci_variant = "shako"
+    starting_fen = "c8c/ernbqkbnre/pppppppppp/10/10/10/10/PPPPPPPPPP/ERNBQKBNRE/C8C w KQkq - 0 1"
+
+
 VARIANT2BOARD = {
     "chess": StandardBoard,
     "crazyhouse": CrazyhouseBoard,
@@ -129,4 +139,6 @@ VARIANT2BOARD = {
     "gothhouse": GothhouseBoard,
     "minishogi": MiniShogiBoard,
     "cambodian": CambodianBoard,
+    "minixiangqi": MiniXiangqiBoard,
+    "shako": ShakoBoard,
 }
