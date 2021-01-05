@@ -1,13 +1,13 @@
-token: "token_PyChess"    # lichess OAuth2 Token
-#url: "http://0.0.0.1:8080"  # lichess base URL
-url: "https://pychess-variants.herokuapps.com"
+token: "token_PyChess"    # lishogi OAuth2 Token
+#url: "https://lishogi.org/"  # lishogi base URL
+url: "https://lishogi.org/"
 
 engine:                      # engine settings
   dir: "./engines/"          # dir containing engines, relative to this project
-  name: "pychess-engine"     # binary name of the engine to use
+  name: "./pychess-engine"     # binary name of the engine to use
   protocol: "xboard"         # "uci" or "xboard"
   polyglot:
-    enabled: false            # activate polyglot book
+    enabled: true            # activate polyglot book
     book:
       standard: "engines/Perfect2017.bin" # book file path
       crazyhouse: "engines/Perfect2017.bin" # book file path
@@ -20,7 +20,7 @@ engine:                      # engine settings
     max_depth: 16             # half move max depth
     selection: "weighted_random"
   uci_options:               # arbitrary UCI options passed to the engine
-    Move Overhead: 100       # increase if your bot flags games too often
+    Move Overhead: 5000       # increase if your bot flags games too often
     Threads: 2               # max CPU threads the engine can use
     Hash: 256                # max memory (in megabytes) the engine can allocate
 #   go_commands:             # additional options to pass to the UCI go command
@@ -43,21 +43,24 @@ engine:                      # engine settings
 #   noise: true              # ?
   silence_stderr: false      # some engines (yes you, leela) are very noisy
 
-abort_time: 20               # time to abort a game in seconds when there is no activity
+abort_time: 120               # time to abort a game in seconds when there is no activity
 fake_think_time: false       # artificially slow down the bot to pretend like it's thinking
 
 challenge:                   # incoming challenges
-  concurrency: 2             # number of games to play simultaneously
+  concurrency: 100             # number of games to play simultaneously
   sort_by: "best"            # possible values: "best", "first"
   accept_bot: true          # accepts challenges coming from other bots
   max_increment: 180         # maximum amount of increment to accaept a challenge. the max is 180. set to 0 for no increment
   min_increment: 0           # minimum amount of increment to accept a challenge
-  variants:                  # chess variants to accept (http://lichess.org/variant)
+  variants:                  # chess variants to accept
     - standard
   time_controls:             # time controls to accept
+    - ultraBullet
     - bullet
     - blitz
     - rapid
+    - classical
+    - correspondence
   modes:                     # game modes to accept
     - casual                 # unrated games
     - rated                  # rated games - must comment if the engine doesn't try to win
