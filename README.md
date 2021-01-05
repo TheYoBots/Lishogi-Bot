@@ -39,7 +39,8 @@ A bridge between [Lichess API](https://lichess.org/api#tag/Chess-Bot) and Lishog
 - [Placement](https://www.pychess.org/variant/placement)
 - [Capablanca](https://www.pychess.org/variant/capablanca)
 - [Capahouse](https://www.pychess.org/variant/capahouse)
-- [Shouse](https://www.pychess.org/variant/shouse)
+- [SHouse](https://www.pychess.org/variant/shouse)
+- **Note:** Other Variants can also be added, but on [Lishogi.org](https://lishogi.org/), the bot will only play [Shogi](https://www.pychess.org/variant/shogi). Changes can be made for the Bot to play on other websites with the above Variants and more can be added.
 
 # Acknowledgements
 Thanks to the Lichess Team for creating a [repository](https://github.com/ShailChoksi/lichess-bot) that could be easily accessed and modified to help converting it to a format that supports Lishogi.
