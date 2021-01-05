@@ -5,7 +5,7 @@ import chess.polyglot
 import engine_wrapper
 import model
 import json
-import lichess
+import lishogi
 import logging
 import multiprocessing
 import traceback
