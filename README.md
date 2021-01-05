@@ -22,6 +22,25 @@ A bridge between [Lichess API](https://lichess.org/api#tag/Chess-Bot) and Lishog
 - Press `CTRL+C`.
 - It may take some time to quit.
 
+# Supported Chess Variants
+- [Standard Chess](https://www.pychess.org/variant/chess)
+- [Crazyhouse](https://lichess.org/variant/crazyhouse)
+- [Chess960](https://lichess.org/variant/chess960)
+- [King of the Hill](https://lichess.org/variant/kingOfTheHill)
+- [Three-Check](https://lichess.org/variant/threeCheck)
+- [AntiChess](https://lichess.org/variant/antichess)
+- [Atomic](https://lichess.org/variant/atomic)
+- [Horde](https://lichess.org/variant/horde)
+- [Racing Kings](https://lichess.org/variant/racingKings)
+- [Shogi](https://www.pychess.org/variant/shogi)
+- [Xiangqi](https://www.pychess.org/variant/xiangqi)
+- [Makruk](https://www.pychess.org/variant/makruk)
+- [Sittuyin](https://www.pychess.org/variant/sittuyin)
+- [Placement](https://www.pychess.org/variant/placement)
+- [Capablanca](https://www.pychess.org/variant/capablanca)
+- [Capahouse](https://www.pychess.org/variant/capahouse)
+- [Shouse](https://www.pychess.org/variant/shouse)
+
 # Acknowledgements
 Thanks to the Lichess Team for creating a [repository](https://github.com/ShailChoksi/lichess-bot) that could be easily accessed and modified to help converting it to a format that supports Lishogi.
 
