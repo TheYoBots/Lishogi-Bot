@@ -18,7 +18,7 @@ A bridge between [Lichess API](https://lichess.org/api#tag/Chess-Bot) and Lishog
 **WARNING** This is irreversible. [Read more about upgrading to bot account](https://lichess.org/api#operation/botAccountUpgrade).
 - run `python lichess-bot.py -u`
 
-## To Quit
+## To Quit Python after Upgrading to Bot Account
 - Press `CTRL+C`.
 - It may take some time to quit.
 
