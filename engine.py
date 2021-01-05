@@ -136,7 +136,7 @@ class PopenEngine(subprocess.Popen):
                 return line
 
     def init(self):
-        self.send("usi" if self.protocol == "USI" else
+        self.send("uci" if self.protocol == "UCI" else
                   "ucci" if self.protocol == "UCCI" else
                   "uci")
         while True:
@@ -149,12 +149,12 @@ class PopenEngine(subprocess.Popen):
                 parts = line.split(op)
                 option_name = parts[1].split(" type")[0]
                 self.supported_options.append(option_name)
-            elif line == "usiok" or line == "uciok" or line == "ucciok":
+            elif line == "uciok" or line == "uciok" or line == "ucciok":
                 return line
 
     def position(self, board):
         builder = ["position"]
-        builder.append("sfen" if self.protocol == "USI" else "fen")
+        builder.append("sfen" if self.protocol == "UCI" else "fen")
         builder.append(board.fen())
 
         if board.move_stack:
@@ -165,7 +165,7 @@ class PopenEngine(subprocess.Popen):
         self.isready()
 
     def newgame(self):
-        self.send("usinewgame" if self.protocol == "USI" else
+        self.send("ucinewgame" if self.protocol == "UCI" else
                   "uccinewgame" if self.protocol == "UCCI" else
                   "ucinewgame")
         self.isready()
@@ -175,7 +175,7 @@ class GeneralEngine:
     def __init__(self, board, commands, options=None, silence_stderr=False):
         variant = board.uci_variant
         if variant[-5:] == "shogi":
-            self.protocol = "USI"
+            self.protocol = "UCI"
         else:
             self.protocol = "UCI"
 
