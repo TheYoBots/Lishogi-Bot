@@ -5,7 +5,7 @@ import chess.polyglot
 import engine_wrapper
 import model
 import json
-import lichess
+import lishogi
 import logging
 import multiprocessing
 import traceback
@@ -299,7 +299,7 @@ def play_game(li, game_id, control_queue, engine_factory, user_profile, config, 
 def play_first_move(game, engine, board, li):
     moves = game.state["moves"].split()
     if is_engine_move(game, moves):
-        # need to hardcode first movetime since Lichess has 30 sec limit.
+        # need to hardcode first movetime since Lishogi has 30 sec limit.
         # best_move = engine.first_search(board, 10000)
         best_move = engine.first_search(board, 100)
         li.make_move(game.id, best_move)
@@ -338,7 +338,7 @@ def get_book_move(board, config):
             elif selection == "best_move":
                 move = reader.find(board, config.get("min_weight", 1)).move()
         except IndexError:
-            # python-chess raises "IndexError" if no entries found
+            # python-shogi raises "IndexError" if no entries found
             move = None
 
     if move is not None:
@@ -370,15 +370,15 @@ def update_board(board, move):
 
 def intro():
     return r"""
-    .   _/|
-    .  // o\
-    .  || ._)  lichess-bot %s
-    .  //__\
-    .  )___(   Play on Lichess with a bot
+    .   _/\_
+    .  //o o\\
+    .  ||   ||  lishogi-bot %s
+    .  ||   ||
+    .  ||___||  Play on Lishogi with a bot
     """ % __version__
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description='Play on Lichess with a bot')
+    parser = argparse.ArgumentParser(description='Play on Lishogi with a bot')
     parser.add_argument('-u', action='store_true', help='Add this flag to upgrade your account to a bot account.')
     parser.add_argument('-v', action='store_true', help='Verbose output. Changes log level from INFO to DEBUG.')
     parser.add_argument('--config', help='Specify a configuration file (defaults to ./config.yml)')
@@ -390,7 +390,7 @@ if __name__ == "__main__":
     enable_color_logging(debug_lvl=logging.DEBUG if args.v else logging.INFO)
     logger.info(intro())
     CONFIG = load_config(args.config or "./config.yml")
-    li = lichess.Lichess(CONFIG["token"], CONFIG["url"], __version__)
+    li = lishogi.Lishogi(CONFIG["token"], CONFIG["url"], __version__)
 
     user_profile = li.get_profile()
     username = user_profile["username"]

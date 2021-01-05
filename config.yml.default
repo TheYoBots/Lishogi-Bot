@@ -1,5 +1,5 @@
-token: "xxxxxxxxxxxxxxxx"    # lichess OAuth2 Token
-url: "https://lichess.org/"  # lichess base URL
+token: "xxxxxxxxxxxxxxxx"    # lishogi OAuth2 Token
+url: "https://lishogi.org/"  # lishogi base URL
 
 engine:                      # engine settings
   dir: "./engines/"          # dir containing engines, relative to this project
@@ -8,7 +8,7 @@ engine:                      # engine settings
   polyglot:
     enabled: false           # activate polyglot book
     book:
-      standard: "engines/book.bin" # book file path of standard chess
+      standard: "engines/book.bin" # book file path of shogi
 #      atomic: "atomic book path"
 #      giveaway: "antichess book path"
 #      crazyhouse: "crazyhouse book path"
@@ -48,24 +48,17 @@ challenge:                   # incoming challenges
   accept_bot: false          # accepts challenges coming from other bots
   max_increment: 180         # maximum amount of increment to accaept a challenge. the max is 180. set to 0 for no increment
   min_increment: 0           # minimum amount of increment to accept a challenge
-  variants:                  # chess variants to accept (http://lichess.org/variant)
+  variants:                  # shogi variants to accept
     - standard
-#   - fromPosition
-#   - antichess
-#   - atomic
-#   - chess960
-#   - crazyhouse
-#   - horde
-#   - kingOfTheHill
-#   - racingKings
-#   - threeCheck
+    - fromPosition
+    - shogi
   time_controls:             # time controls to accept
-#   - ultraBullet
+    - ultraBullet
     - bullet
     - blitz
     - rapid
-#   - classical
-#   - correspondence
+    - classical
+    - correspondence
   modes:                     # game modes to accept
     - casual                 # unrated games
     - rated                  # rated games - must comment if the engine doesn't try to win
