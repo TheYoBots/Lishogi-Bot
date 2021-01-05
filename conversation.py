@@ -23,7 +23,7 @@ class Conversation():
             game.abort_in(60)
             self.send_reply(line, "Waiting 60 seconds...")
         elif cmd == "name":
-            self.send_reply(line, "{} (lishogi-bot v{})".format(self.engine.name(), self.version))
+            self.send_reply(line, "YoBot_v2! I thought you can see my username?")
         elif cmd == "howto":
             self.send_reply(line, "How to run your own bot: https://github.com/TheYoBots/Lishogi-Bot")
         elif cmd == "eval" and line.room == "spectator":
