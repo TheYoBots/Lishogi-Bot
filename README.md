@@ -1,4 +1,4 @@
-# Lishogi-Bot
+# Lishogi Bot
 A bridge between [Lichess API](https://lichess.org/api#tag/Chess-Bot) and Lishogi Bots.
 
 ## Lishogi OAuth
@@ -40,6 +40,7 @@ A bridge between [Lichess API](https://lichess.org/api#tag/Chess-Bot) and Lishog
 - [Capablanca](https://www.pychess.org/variant/capablanca)
 - [Capahouse](https://www.pychess.org/variant/capahouse)
 - [SHouse](https://www.pychess.org/variant/shouse)
+- [Seirawan](https://www.pychess.org/variant/seirawan)
 - **Note:** Other Variants can also be added, but on [Lishogi.org](https://lishogi.org/), the bot will only play [Shogi](https://www.pychess.org/variant/shogi). Changes can be made for the Bot to play on other websites with the above Variants and more can be added.
 
 # Acknowledgements
