@@ -10,7 +10,7 @@ A bridge between [Lichess API](https://lichess.org/api#tag/Chess-Bot) and Lishog
 - Install virtualenv: `pip install virtualenv`.
 - Setup virtualenv:
 
-`virtualenv .venv -p python3` #if this fails you probably need to add Python3 to your PATH
+`virtualenv .venv -p python3` (if this fails you probably need to add Python3 to your PATH)
 ```
 source .venv/bin/activate
 pip install -r requirements.txt
