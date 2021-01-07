@@ -51,7 +51,7 @@ pip install -r requirements.txt
 
 
 ## Lishogi Upgrade to Bot Account
-**WARNING** This is irreversible. [Read more about upgrading to bot account](https://lichess.org/api#operation/botAccountUpgrade).
+**WARNING** This is irreversible. Read more about [upgrading to bot account](https://lichess.org/api#operation/botAccountUpgrade).
 - run `python lichess-bot.py -u`
 
 ## To Quit Python after Upgrading to Bot Account
