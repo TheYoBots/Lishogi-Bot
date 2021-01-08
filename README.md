@@ -1,5 +1,5 @@
 # Lishogi Bot
-A bridge between [Lichess API](https://lichess.org/api#tag/Chess-Bot) and Lishogi Bots. In case you don't know English, view the [Japanese Translation (日本語翻訳)](https://github.com/TheYoBots/Lishogi-Bot/wiki/Japanese-Translation).
+A bridge between [Lichess API](https://lichess.org/api#tag/Chess-Bot) and Lishogi Bots. In case you don't know English, view the [Japanese Translation here (日本語翻訳)](https://github.com/TheYoBots/Lishogi-Bot/wiki/Japanese-Translation).
 
 ## How to Install
 
