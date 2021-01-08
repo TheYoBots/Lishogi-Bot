@@ -24,7 +24,7 @@ pip install -r requirements.txt
 - To type commands it's better to use PowerShell. Go to Start menu and type "PowerShell" (you may use cmd too, but sometimes it may not work).
 - Then you may need to upgrade pip. Execute `python -m pip install --upgrade pip` in PowerShell.
 - Download the repo into lishogi-bot directory.
-- Navigate to the directory in PowerShell: `cd [folder's adress]` (like "cd C:\chess\lishogi-bot").
+- Navigate to the directory in PowerShell: `cd [folder's adress]` (like "cd C:\shogi\lishogi-bot").
 - Install virtualenv: `pip install virtualenv`.
 - Setup virtualenv:
 
