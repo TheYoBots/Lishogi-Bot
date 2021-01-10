@@ -18,12 +18,12 @@ class Conversation():
 
     def command(self, line, game, cmd):
         if cmd == "commands" or cmd == "help":
-            self.send_reply(line, "Supported commands: !name, !howto, !eval, !queue")
+            self.send_reply(line, "Supported commands: !name, !wait, !howto, !eval, !queue")
         if cmd == "wait" and game.is_abortable():
             game.abort_in(60)
             self.send_reply(line, "Waiting 60 seconds...")
         elif cmd == "name":
-            self.send_reply(line, "YoBot_v2! I thought you can see my username?")
+            self.send_reply(line, "lishogi-bot v0.1")
         elif cmd == "howto":
             self.send_reply(line, "How to run your own bot: https://github.com/TheYoBots/Lishogi-Bot")
         elif cmd == "eval" and line.room == "spectator":
