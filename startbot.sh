@@ -1,2 +1,2 @@
-chmod +x engines/Fairy-Stockfish.exe
+chmod +x engines/Fairy-Stockfish
 python lishogi-bot.py
