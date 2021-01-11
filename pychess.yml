@@ -18,7 +18,7 @@ engine:                      # engine settings
       racingkings: "engines/racingKings.bin"
       3check: "engines/threeCheck.bin"
     max_depth: 16             # half move max depth
-    selection: "weighted_random"
+    selection: "best_move"
   uci_options:               # arbitrary UCI options passed to the engine
     Move Overhead: 5000       # increase if your bot flags games too often
     Threads: 2               # max CPU threads the engine can use
