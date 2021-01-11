@@ -230,7 +230,7 @@ def play_game(li, game_id, control_queue, engine_factory, user_profile, config, 
     print("line0 =", line0)
     while len(line0) == 0:
         line0 = next(lines)
-    #Initial response of stream will be the full game info.y Store it
+    #Initial response of stream will be the full game info. Store it
     game = model.Game(json.loads(line0.decode('utf-8')), user_profile["username"], li.baseUrl, config.get("abort_time", 20))
     board = setup_board(game, chess960)
     engine = engine_factory(board)
