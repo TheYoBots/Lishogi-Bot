@@ -50,21 +50,21 @@ def upgrade_account(li):
     logger.info("Succesfully upgraded to Bot Account!")
     return True
 
-#@backoff.on_exception(backoff.expo, BaseException, max_time=600, giveup=is_final)
-#def watch_control_stream(control_queue, li):
-#    response = li.get_event_stream()
-#    control_queue.put_nowait({"type": "connected"})
-#    try:
-#        for line in response.iter_lines():
-#            if line:
-#                event = json.loads(line.decode('utf-8'))
-#                control_queue.put_nowait(event)
-#            else:
-#                control_queue.put_nowait({"type": "ping"})
-#    except (RemoteDisconnected, ChunkedEncodingError, ConnectionError, ProtocolError) as exception:
-#        logger.error("Terminating client due to connection error")
-#        traceback.print_exception(type(exception), exception, exception.__traceback__)
-#        control_queue.put_nowait({"type": "terminated"})
+@backoff.on_exception(backoff.expo, BaseException, max_time=600, giveup=is_final)
+def watch_control_stream(control_queue, li):
+    response = li.get_event_stream()
+    control_queue.put_nowait({"type": "connected"})
+    try:
+        for line in response.iter_lines():
+            if line:
+                event = json.loads(line.decode('utf-8'))
+                control_queue.put_nowait(event)
+            else:
+                control_queue.put_nowait({"type": "ping"})
+    except (RemoteDisconnected, ChunkedEncodingError, ConnectionError, ProtocolError) as exception:
+        logger.error("Terminating client due to connection error")
+        traceback.print_exception(type(exception), exception, exception.__traceback__)
+        control_queue.put_nowait({"type": "terminated"})
 
 def watch_control_stream(control_queue, li):
     while True:
@@ -206,6 +206,8 @@ def analyze_game(li, game_id, control_queue, engine_factory, user_profile, confi
     while len(line0) == 0:
         line0 = next(lines)
     #Initial response of stream will be the full game info. Store it
+    
+    
     game = model.Game(json.loads(line0.decode('utf-8')), user_profile["username"], li.baseUrl, config.get("abort_time", 20))
     board = setup_board(game, chess960)
     engine = engine_factory(board)
@@ -228,7 +230,7 @@ def play_game(li, game_id, control_queue, engine_factory, user_profile, config, 
     print("line0 =", line0)
     while len(line0) == 0:
         line0 = next(lines)
-    #Initial response of stream will be the full game info. Store it
+    #Initial response of stream will be the full game info.y Store it
     game = model.Game(json.loads(line0.decode('utf-8')), user_profile["username"], li.baseUrl, config.get("abort_time", 20))
     board = setup_board(game, chess960)
     engine = engine_factory(board)
@@ -301,7 +303,7 @@ def play_first_move(game, engine, board, li):
     if is_engine_move(game, moves):
         # need to hardcode first movetime since Lishogi has 30 sec limit.
         # best_move = engine.first_search(board, 10000)
-        best_move = engine.first_search(board, 100)
+        best_move = engine.first_search(board, 1000)
         li.make_move(game.id, best_move)
         return True
     return False
