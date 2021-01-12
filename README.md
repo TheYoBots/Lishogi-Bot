@@ -62,6 +62,7 @@ pip install -r requirements.txt
 ## Lishogi Upgrade to Bot Account
 **WARNING** This is irreversible. Read more about [upgrading to bot account](https://lichess.org/api#operation/botAccountUpgrade).
 - run `python lichess-bot.py -u`
+- for more verbrose logs run `python lichess-bot.py -v`
 
 ## To Quit Python after Upgrading to Bot Account
 - Press `CTRL+C`.
