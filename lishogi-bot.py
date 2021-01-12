@@ -1,7 +1,5 @@
 import variants
 import argparse
-import chess
-import chess.polyglot
 import engine_wrapper
 import model
 import json
@@ -13,7 +11,6 @@ import logging_pool
 import signal
 import sys
 import time
-import backoff
 from config import load_config
 from conversation import Conversation, ChatLine
 from functools import partial
@@ -50,7 +47,6 @@ def upgrade_account(li):
     logger.info("Succesfully upgraded to Bot Account!")
     return True
 
-@backoff.on_exception(backoff.expo, BaseException, max_time=600, giveup=is_final)
 def watch_control_stream(control_queue, li):
     response = li.get_event_stream()
     control_queue.put_nowait({"type": "connected"})
@@ -222,7 +218,6 @@ def analyze_game(li, game_id, control_queue, engine_factory, user_profile, confi
         li.analysis(username, game_id, len(board.move_stack), "w" if board.color else "b", stats)
         board.pop()
 
-@backoff.on_exception(backoff.expo, BaseException, max_time=600, giveup=is_final)
 def play_game(li, game_id, control_queue, engine_factory, user_profile, config, challenge_queue, skill_level, chess960):
     response = li.get_game_stream(game_id)
     lines = response.iter_lines()
