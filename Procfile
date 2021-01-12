@@ -1,1 +1,1 @@
-worker: python3 lishogi-bot.py -v --config $CONFIG
+worker: bash startbot.sh
