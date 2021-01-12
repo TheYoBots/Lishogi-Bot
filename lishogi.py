@@ -41,7 +41,7 @@ class Lishogi():
         self.session.headers.update(self.header)
         self.set_user_agent("?")
 
-    def is_final(exception):
+    def is_final(self):
         return isinstance(exception, HTTPError) and exception.response.status_code < 500
 
         (RemoteDisconnected, ConnectionError, ProtocolError, HTTPError),
