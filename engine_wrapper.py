@@ -1,10 +1,8 @@
 import os
-import backoff
 
 from engine import GeneralEngine
 
 
-@backoff.on_exception(backoff.expo, BaseException, max_time=120)
 def create_engine(config, board):
     cfg = config["engine"]
     engine_path = os.path.join(cfg["dir"], cfg["name"])
