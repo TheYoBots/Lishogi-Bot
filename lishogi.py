@@ -10,8 +10,6 @@ try:
 except ImportError:
     from http.client import BadStatusLine as RemoteDisconnected
 
-import backoff
-
 ENDPOINTS = {
     "profile": "/api/account",
     "playing": "/api/account/playing",
@@ -46,7 +44,6 @@ class Lishogi():
     def is_final(exception):
         return isinstance(exception, HTTPError) and exception.response.status_code < 500
 
-    @backoff.on_exception(backoff.expo,
         (RemoteDisconnected, ConnectionError, ProtocolError, HTTPError),
         max_time=120,
         giveup=is_final)
@@ -56,7 +53,6 @@ class Lishogi():
         response.raise_for_status()
         return response.json()
 
-    @backoff.on_exception(backoff.expo,
         (RemoteDisconnected, ConnectionError, ProtocolError, HTTPError),
         max_time=20,
         giveup=is_final)
