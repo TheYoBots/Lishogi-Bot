@@ -126,7 +126,7 @@ VARIANT2BOARD = {
     "crazyhouse": CrazyhouseBoard,
     "makruk": MakrukBoard,
     "sittuyin": SittuyinBoard,
-    "shogi": ShogiBoard
+    "shogi": ShogiBoard,
     "xiangqi": XiangqiBoard,
     "placement": PlacementBoard,
     "capablanca": CapablancaBoard,
