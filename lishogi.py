@@ -46,7 +46,7 @@ class Lishogi():
 
         (RemoteDisconnected, ConnectionError, ProtocolError, HTTPError),
         max_time=120,
-        giveup=is_final)
+        giveup=is_final
     def api_get(self, path):
         url = urljoin(self.baseUrl, path)
         response = self.session.get(url)
@@ -55,7 +55,7 @@ class Lishogi():
 
         (RemoteDisconnected, ConnectionError, ProtocolError, HTTPError),
         max_time=20,
-        giveup=is_final)
+        giveup=is_final
     def api_post(self, path, data=None):
         url = urljoin(self.baseUrl, path)
         response = self.session.post(url, data=data)
