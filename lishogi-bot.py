@@ -108,9 +108,6 @@ def start(li, user_profile, engine_factory, config):
             if event["type"] == "terminated":
                 break
 
-            elif event["type"] == "ping":
-                li.pong()
-
             elif event["type"] == "connected":
                 for variant in challenge_config["variants"]:
                     logger.info("Creating seek for %s" % variant)

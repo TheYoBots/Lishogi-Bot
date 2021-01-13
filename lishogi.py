@@ -100,9 +100,6 @@ class Lishogi():
         payload = {'variant': variant}
         return self.api_post(ENDPOINTS["seek"], data=payload)
 
-    def pong(self):
-        return self.api_post(ENDPOINTS["pong"])
-
     def get_profile(self):
         profile = self.api_get(ENDPOINTS["profile"])
         self.set_user_agent(profile["username"])
