@@ -5,7 +5,7 @@ import os.path
 def load_config(config_file):
     with open(config_file) as stream:
         try:
-            CONFIG = yaml.load(stream)
+            CONFIG = yaml.safe_load(stream)
         except Exception as e:
             print("There appears to be a syntax problem with your config.yml")
             raise e
@@ -30,7 +30,7 @@ def load_config(config_file):
                 raise Exception("´engine´ subsection {}".format(subsection[2]))
 
         if CONFIG["token"] == "xxxxxxxxxxxxxxxx":
-            raise Exception("Your config.yml has the default Lishogi API token. This is probably wrong.")
+            raise Exception("Your config.yml has the default Lichess API token. This is probably wrong.")
 
         if not os.path.isdir(CONFIG["engine"]["dir"]):
             raise Exception("Your engine directory `{}` is not a directory.")
