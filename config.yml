@@ -3,7 +3,7 @@ url: "http://localhost:9663"  # lishogi base URL
 
 engine:                      # engine settings
   dir: "./engines/"          # dir containing engines, relative to this project
-  name: "stockfish-x86_64"   # binary name of the engine to use
+  name: "Fairy-Stockfish"   # binary name of the engine to use
   #name: "YaneuraOu-by-gcc"   # binary name of the engine to use
   protocol: "usi"            # "usi"
   ponder: false              # not supported!
@@ -21,10 +21,10 @@ engine:                      # engine settings
 
 abort_time: 20               # time to abort a game in seconds when there is no activity
 fake_think_time: false       # artificially slow down the bot to pretend like it's thinking
-move_overhead: 2000          # increase if your bot flags games too often
+move_overhead: 5000          # increase if your bot flags games too often
 
 challenge:                   # incoming challenges
-  concurrency: 1             # number of games to play simultaneously
+  concurrency: 100             # number of games to play simultaneously
   sort_by: "best"            # possible values: "best", "first"
   accept_bot: false          # accepts challenges coming from other bots
   max_increment: 180         # maximum amount of increment to accaept a challenge. the max is 180. set to 0 for no increment
@@ -32,11 +32,12 @@ challenge:                   # incoming challenges
   variants:                  # chess variants to accept
     - standard
   time_controls:             # time controls to accept
+    - ultraBullet
     - bullet
     - blitz
     - rapid
-#   - classical
-#   - correspondence
+    - classical
+    - correspondence
   modes:                     # game modes to accept
     - casual                 # unrated games
     - rated                  # rated games - must comment if the engine doesn't try to win
