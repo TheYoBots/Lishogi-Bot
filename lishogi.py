@@ -108,5 +108,5 @@ class Lishogi():
         self.api_post(ENDPOINTS["resign"].format(game_id))
 
     def set_user_agent(self, username):
-        self.header.update({"User-Agent": "lichess-bot/{} user:{}".format(self.version, username)})
+        self.header.update({"User-Agent": "lishogi-bot/{} user:{}".format(self.version, username)})
         self.session.headers.update(self.header)     

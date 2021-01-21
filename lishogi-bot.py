@@ -282,7 +282,7 @@ def play_game(li, game_id, control_queue, engine_factory, user_profile, config, 
 def play_first_move(game, engine, board, li):
     moves = game.state["moves"].split()
     if is_engine_move(game, moves):
-        # need to hardcode first movetime since Lichess has 30 sec limit.
+        # need to hardcode first movetime since Lishogi has 30 sec limit.
         best_move = engine.first_search(board, 1000)
         engine.print_stats()
         li.make_move(game.id, best_move)
