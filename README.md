@@ -1,5 +1,6 @@
 # Lishogi Bot
 
+[![Build Status](https://github.com/TheYoBots/Lishogi-Bot/workflows/Python%20application/badge.svg)](https://github.com/TheYoBots/Lishogi-Bot/actions)
 [![Lishogi Bot](https://img.shields.io/badge/YoBot_v2-%40Lishogi_Bot-blue.svg)](https://lishogi.org/@/YoBot_v2)
 [![Play Bot](https://img.shields.io/badge/Play_Bot-%40Lishogi-blue.svg)](https://lishogi.org/?user=YoBot_v2#friend)
 [![Lishogi Team](https://img.shields.io/badge/Lishogi_Team-%40Team-blue.svg)](https://lishogi.org/team/yobot_v2-shogi)
@@ -52,7 +53,6 @@ pip install -r requirements.txt
 - A `token` e.g. `Xb0ddNrLabc0lGK2` will be displayed. Store this in `.yml` as the `token` field.
 - NOTE: You won't see this token again on Lishogi.
 
-
 ## Setup Engine
 - Place your engine(s) in the `engine.dir` directory
 - In your `.yml` file, enter the binary name as the `engine.name` field.
@@ -67,27 +67,6 @@ pip install -r requirements.txt
 ## To Quit Python after Upgrading to Bot Account
 - Press `CTRL+C`.
 - It may take some time to quit.
-
-# Supported Chess Variants
-- [Standard Chess](https://www.pychess.org/variant/chess)
-- [Crazyhouse](https://lichess.org/variant/crazyhouse)
-- [Chess960](https://lichess.org/variant/chess960)
-- [King of the Hill](https://lichess.org/variant/kingOfTheHill)
-- [Three-Check](https://lichess.org/variant/threeCheck)
-- [AntiChess](https://lichess.org/variant/antichess)
-- [Atomic](https://lichess.org/variant/atomic)
-- [Horde](https://lichess.org/variant/horde)
-- [Racing Kings](https://lichess.org/variant/racingKings)
-- [Shogi](https://www.pychess.org/variant/shogi)
-- [Xiangqi](https://www.pychess.org/variant/xiangqi)
-- [Makruk](https://www.pychess.org/variant/makruk)
-- [Sittuyin](https://www.pychess.org/variant/sittuyin)
-- [Placement](https://www.pychess.org/variant/placement)
-- [Capablanca](https://www.pychess.org/variant/capablanca)
-- [Capahouse](https://www.pychess.org/variant/capahouse)
-- [SHouse](https://www.pychess.org/variant/shouse)
-- [Seirawan](https://www.pychess.org/variant/seirawan)
-- **Note:** Other Variants can also be added, but on [Lishogi.org](https://lishogi.org/), the bot will only play [Shogi](https://www.pychess.org/variant/shogi). Changes can be made for the Bot to play on other websites with the above Variants and more can be added.
 
 # Acknowledgements
 Thanks to the Lichess Team for creating a [repository](https://github.com/ShailChoksi/lichess-bot) that could be easily accessed and modified to help converting it to a format that supports Lishogi.
