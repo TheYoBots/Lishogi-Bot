@@ -1,5 +1,5 @@
 token: "xxxxxxxxxxxxxxxx"    # lishogi OAuth2 Token
-url: "http://localhost:9663"  # lishogi base URL
+url: "http://lishogi.org/"  # lishogi base URL
 
 engine:                      # engine settings
   dir: "./engines/"          # dir containing engines, relative to this project
