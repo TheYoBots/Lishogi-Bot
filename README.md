@@ -1,5 +1,6 @@
 # Lishogi Bot
 
+[![Build](https://github.com/ornicar/lila/workflows/Build/badge.svg)](https://github.com/TheYoBots/Lishogi-Bot/actions?query=workflow%3A%22Python+application%22)
 [![Lishogi Bot](https://img.shields.io/badge/YoBot_v2-%40Lishogi_Bot-blue.svg)](https://lishogi.org/@/YoBot_v2)
 [![Play Bot](https://img.shields.io/badge/Play_Bot-%40Lishogi-blue.svg)](https://lishogi.org/?user=YoBot_v2#friend)
 [![Lishogi Team](https://img.shields.io/badge/Lishogi_Team-%40Team-blue.svg)](https://lishogi.org/team/yobot_v2-shogi)
