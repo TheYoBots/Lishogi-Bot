@@ -1,14 +1,16 @@
-import json
 import requests
 from urllib.parse import urljoin
-from requests.exceptions import ConnectionError, HTTPError
+from requests.exceptions import ConnectionError, HTTPError, ReadTimeout
 from urllib3.exceptions import ProtocolError
+from util import makeuci
 
 try:
     from http.client import RemoteDisconnected
     # New in version 3.5: Previously, BadStatusLine('') was raised.
 except ImportError:
     from http.client import BadStatusLine as RemoteDisconnected
+
+import backoff
 
 ENDPOINTS = {
     "profile": "/api/account",
@@ -17,11 +19,8 @@ ENDPOINTS = {
     "stream_event": "/api/stream/event",
     "game": "/api/bot/game/{}",
     "move": "/api/bot/game/{}/move/{}",
-    "analysis": "/api/bot/game/{}/analysis",
     "chat": "/api/bot/game/{}/chat",
     "abort": "/api/bot/game/{}/abort",
-    "pong": "/api/pong",
-    "seek": "/api/seek",
     "accept": "/api/challenge/{}/accept",
     "decline": "/api/challenge/{}/decline",
     "upgrade": "/api/bot/account/upgrade",
@@ -41,24 +40,28 @@ class Lishogi():
         self.session.headers.update(self.header)
         self.set_user_agent("?")
 
-    def is_final(self):
+    def is_final(exception):
         return isinstance(exception, HTTPError) and exception.response.status_code < 500
 
-        (RemoteDisconnected, ConnectionError, ProtocolError, HTTPError),
-        max_time=120,
-        giveup=is_final
+    @backoff.on_exception(backoff.constant,
+        (RemoteDisconnected, ConnectionError, ProtocolError, HTTPError, ReadTimeout),
+        max_time=60,
+        interval=0.1,
+        giveup=is_final)
     def api_get(self, path):
         url = urljoin(self.baseUrl, path)
-        response = self.session.get(url)
+        response = self.session.get(url, timeout=2)
         response.raise_for_status()
         return response.json()
 
-        (RemoteDisconnected, ConnectionError, ProtocolError, HTTPError),
-        max_time=20,
-        giveup=is_final
+    @backoff.on_exception(backoff.constant,
+        (RemoteDisconnected, ConnectionError, ProtocolError, HTTPError, ReadTimeout),
+        max_time=60,
+	interval=0.1,
+        giveup=is_final)
     def api_post(self, path, data=None):
         url = urljoin(self.baseUrl, path)
-        response = self.session.post(url, data=data)
+        response = self.session.post(url, data=data, timeout=2)
         response.raise_for_status()
         return response.json()
 
@@ -69,11 +72,7 @@ class Lishogi():
         return self.api_post(ENDPOINTS["upgrade"])
 
     def make_move(self, game_id, move):
-        return self.api_post(ENDPOINTS["move"].format(game_id, move))
-
-    def analysis(self, username, game_id, ply, color, ceval):
-        payload = {'username': username, 'ply': ply, 'color': color, 'ceval': json.dumps(ceval)}
-        return self.api_post(ENDPOINTS["analysis"].format(game_id), data=payload)
+        return self.api_post(ENDPOINTS["move"].format(game_id, makeuci(move)))
 
     def chat(self, game_id, room, text):
         payload = {'room': room, 'text': text}
@@ -96,10 +95,6 @@ class Lishogi():
     def decline_challenge(self, challenge_id):
         return self.api_post(ENDPOINTS["decline"].format(challenge_id))
 
-    def create_seek(self, variant):
-        payload = {'variant': variant}
-        return self.api_post(ENDPOINTS["seek"], data=payload)
-
     def get_profile(self):
         profile = self.api_get(ENDPOINTS["profile"])
         self.set_user_agent(profile["username"])
@@ -113,5 +108,5 @@ class Lishogi():
         self.api_post(ENDPOINTS["resign"].format(game_id))
 
     def set_user_agent(self, username):
-        self.header.update({"User-Agent": "lishogi-bot/{} user:{}".format(self.version, username)})
-        self.session.headers.update(self.header)
+        self.header.update({"User-Agent": "lichess-bot/{} user:{}".format(self.version, username)})
+        self.session.headers.update(self.header)     
