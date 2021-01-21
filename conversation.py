@@ -1,6 +1,4 @@
-from time import time
-
-class Conversation():
+class Conversation:
     def __init__(self, game, engine, xhr, version, challenge_queue):
         self.game = game
         self.engine = engine
@@ -14,24 +12,20 @@ class Conversation():
         print("*** {} [{}] {}: {}".format(self.game.url(), line.room, line.username, line.text.encode("utf-8")))
         if (line.text[0] == self.command_prefix):
             self.command(line, game, line.text[1:].lower())
-        pass
 
     def command(self, line, game, cmd):
         if cmd == "commands" or cmd == "help":
             self.send_reply(line, "Supported commands: !name, !wait, !howto, !eval, !queue")
-        if cmd == "wait" and game.is_abortable():
-            game.abort_in(60)
+        elif cmd == "wait" and game.is_abortable():
+            game.ping(60, 120)
             self.send_reply(line, "Waiting 60 seconds...")
         elif cmd == "name":
-            self.send_reply(line, "lishogi-bot v0.1")
+            self.send_reply(line, "{} (lishogi-bot v{})".format(self.engine.name(), self.version))
         elif cmd == "howto":
             self.send_reply(line, "How to run your own bot: https://github.com/TheYoBots/Lishogi-Bot")
         elif cmd == "eval" and line.room == "spectator":
-            try:
-                stats = self.engine.get_stats()
-                self.send_reply(line, ", ".join(stats))
-            except Exception as e:
-                print("*** Failed to send eval!", e)
+            stats = self.engine.get_stats()
+            self.send_reply(line, ", ".join(stats))
         elif cmd == "eval":
             self.send_reply(line, "I don't tell that to my opponent, sorry.")
         elif cmd == "queue":
@@ -45,7 +39,7 @@ class Conversation():
         self.xhr.chat(self.game.id, line.room, reply)
 
 
-class ChatLine():
+class ChatLine:
     def __init__(self, json):
         self.room = json.get("room")
         self.username = json.get("username")
