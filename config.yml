@@ -3,7 +3,7 @@ url: "http://lishogi.org/"  # lishogi base URL
 
 engine:                      # engine settings
   dir: "./engines/"          # dir containing engines, relative to this project
-  name: "Fairy-Stockfish"   # binary name of the engine to use
+  name: "fairy-stockfish-largeboard_x86-64-bmi2"   # binary name of the engine to use
   #name: "YaneuraOu-by-gcc"   # binary name of the engine to use
   protocol: "usi"            # "usi"
   ponder: false              # not supported!
