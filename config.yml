@@ -1,42 +1,44 @@
-token: "xxxxxxxxxxxxxxxx"    # lichess OAuth2 Token
-url: "https://lishogi.org/"  # lichess base URL
+token: "xxxxxxxxxxxxxxxx"    # lishogi OAuth Token
+url: "https://lishogi.org/"  # lishogi base URL. Do not change this unless locally hosted.
 
 engine:                      # engine settings
   dir: "./engines/"          # dir containing engines, relative to this project
   name: "fairy-stockfish-largeboard_x86-64-bmi2"   # binary name of the engine to use
-  #name: "YaneuraOu-by-gcc"   # binary name of the engine to use
+  #name: "YaneuraOu-by-gcc"  # binary name of the engine to use. This will not be used and not work.
   protocol: "usi"            # "usi"
-  ponder: false              # not supported!
+  ponder: false              # not supported! Setting it to 'true' will not work.
 # engine_options:            # any custom command line params to pass to the engine
 #   cpuct: 3.1
   uci_options:               # arbitrary USI options passed to the engine
-    Move Overhead: 100       # increase if your bot flags games too often
+    Move Overhead: 5000      # increase if your bot flags games too often. 5000 is the highest accepted value.
     Threads: 2               # max CPU threads the engine can use
-    USI_Hash: 256                # max memory (in megabytes) the engine can allocate
+    USI_Hash: 256            # max memory (in megabytes) the engine can allocate
 #   go_commands:             # additional options to pass to the USI go command
 #     nodes: 1               # Search so many nodes only.
 #     depth: 5               # Search depth ply only.
 #     movetime: 1000         # Integer. Search exactly movetime milliseconds.
-  silence_stderr: false      # some engines (yes you, leela) are very noisy
+  silence_stderr: false      # some engines are very noisy
 
-abort_time: 20               # time to abort a game in seconds when there is no activity
+abort_time: 120              # time to abort a game in seconds when there is no activity
 fake_think_time: false       # artificially slow down the bot to pretend like it's thinking
-move_overhead: 2000          # increase if your bot flags games too often
+move_overhead: 5000          # increase if your bot flags games too often. 5000 is the highest accepted value.
 
 challenge:                   # incoming challenges
-  concurrency: 1             # number of games to play simultaneously
+  concurrency: 100           # number of games to play simultaneously
   sort_by: "best"            # possible values: "best", "first"
-  accept_bot: false          # accepts challenges coming from other bots
+  accept_bot: true           # accepts challenges coming from other bots
   max_increment: 180         # maximum amount of increment to accaept a challenge. the max is 180. set to 0 for no increment
   min_increment: 0           # minimum amount of increment to accept a challenge
-  variants:                  # chess variants to accept
+  variants:                  # shogi variants to accept
     - standard
+    - fromPosition
   time_controls:             # time controls to accept
+    - ultraBullet
     - bullet
     - blitz
     - rapid
-#   - classical
-#   - correspondence
+    - classical
+    - correspondence
   modes:                     # game modes to accept
     - casual                 # unrated games
-    - rated                  # rated games - must comment if the engine doesn't try to win
+    - rated                  # rated games

@@ -334,7 +334,7 @@ def intro():
     return r"""
     .   _/\_
     .  //o o\\
-    .  ||    ||  lishogi-bot v0.2.0
+    .  ||    ||  lishogi-bot %s
     .  ||    ||
     .  ||____||  Play on Lishogi with a bot
     """ % __version__
