@@ -20,7 +20,7 @@ class Conversation:
             game.ping(60, 120)
             self.send_reply(line, "Waiting 60 seconds...")
         elif cmd == "name":
-            self.send_reply(line, "{} (lishogi-bot v{})".format(self.engine.name(), self.version))
+            self.send_reply(line, "lishogi-bot v0.2.0")
         elif cmd == "howto":
             self.send_reply(line, "How to run your own bot: https://github.com/TheYoBots/Lishogi-Bot")
         elif cmd == "eval" and line.room == "spectator":

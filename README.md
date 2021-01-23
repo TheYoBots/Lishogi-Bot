@@ -15,8 +15,8 @@ To Install, either proceed to the below steps or view steps to install [lichess 
 
 ### Mac/Linux:
 - **NOTE:** Only Python 3 is supported!
-- Download the repo into lishogi-bot directory.
-- Navigate to the directory in cmd/Terminal: `cd lishogi-bot`.
+- Download the repo into Lishogi-Bot directory.
+- Navigate to the directory in cmd/Terminal: `cd Lishogi-Bot`.
 - Install virtualenv: `pip install virtualenv`.
 - Setup virtualenv:
 
@@ -25,8 +25,7 @@ To Install, either proceed to the below steps or view steps to install [lichess 
 source .venv/bin/activate
 pip install -r requirements.txt
 ```
-- Copy `config.yml.default` to `config.yml`.
-- Edit the `.yml` files to your liking, so that it plays shogi.
+- Edit the `config.yml` file to your liking, so that it plays shogi.
 
 ### Windows:
 - **NOTE:** Only Python 3 is supported!
@@ -43,19 +42,18 @@ pip install -r requirements.txt
 `./.venv/Scripts/activate` (`.\.venv\Scripts\activate` should work in cmd in administator mode) (This may not work on Windows, and in this case you need to execute "Set-ExecutionPolicy RemoteSigned" first and choose "Y" there [you may need to run Powershell as administrator]. After you executed the script, change execution policy back with "Set-ExecutionPolicy Restricted" and pressing "Y")
 
 `pip install -r requirements.txt`
-- Copy `config.yml.default` to `config.yml`
-- Edit the `.yml` files to your liking, so that it plays shogi.
+- Edit the `config.yml` file to your liking, so that it plays shogi.
 
 ## Lishogi OAuth
 - Create an account for your bot on [Lishogi.org](https://lishogi.org/signup).
-- NOTE: If you have previously played games on an existing account, you will not be able to use it as a bot account.
+- **NOTE:** If you have previously played games on an existing account, you will not be able to use it as a bot account.
 - Once your account has been created and you are logged in, [create a personal OAuth2 token](https://lishogi.org/account/oauth/token/create) with the "Play as a bot" selected and add a description.
-- A `token` e.g. `Xb0ddNrLabc0lGK2` will be displayed. Store this in `.yml` as the `token` field.
-- NOTE: You won't see this token again on Lishogi.
+- A `token` e.g. `Xb0ddNrLabc0lGK2` will be displayed. Store this in `config.yml` as the `token` field.
+- **NOTE:** You won't see this token again on Lishogi.
 
 ## Setup Engine
 - Place your engine(s) in the `engine.dir` directory
-- In your `.yml` file, enter the binary name as the `engine.name` field.
+- In your `config.yml` file, enter the binary name as the `engine.name` field.
 - Using this process any engine can be added to the bot.
 
 
@@ -64,11 +62,5 @@ pip install -r requirements.txt
 - run `python lishogi-bot.py -u`
 - for more verbrose logs run `python lishogi-bot.py -v`
 
-## To Quit Python after Upgrading to Bot Account
-- Press `CTRL+C`.
-- It may take some time to quit.
-
 # Acknowledgements
-Thanks to the Lichess Team for creating a [repository](https://github.com/ShailChoksi/lichess-bot) that could be easily accessed and modified to help converting it to a format that supports Lishogi.
-
-Thanks to the Lichess team, especially T. Alexander Lystad and Thibault Duplessis for working with the LeelaChessZero team to get this API up. Thanks to the Niklas Fiekas and his [python-chess](https://github.com/niklasf/python-chess) code which allows engine communication seamlessly.
+Thanks to the Lichess Team for creating a [repository](https://github.com/ShailChoksi/lichess-bot) that could be easily accessed and modified to help converting it to a format that supports Lishogi and for running an [API](https://lichess.org/api) which is used by lishogi. Thanks to the [Tasuku SUENAGA a.k.a. gunyarakun](https://github.com/gunyarakun) and his [python-shogi](https://github.com/gunyarakun) code which allows engine communication seamlessly. And lastly, Thanks to [WandererXII](https://github.com/WandererXII) for all his effort and [help](https://github.com/WandererXII/lishogi-bot).

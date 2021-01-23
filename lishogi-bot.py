@@ -30,7 +30,7 @@ try:
 except ImportError:
     from http.client import BadStatusLine as RemoteDisconnected
 
-__version__ = "1.1.5"
+__version__ = "0.2.0"
 
 terminated = False
 
@@ -332,11 +332,11 @@ def update_board(board, move):
 
 def intro():
     return r"""
-    .   _/|
-    .  // o\
-    .  || ._)  lishogi-bot %s
-    .  //__\
-    .  )___(   Play on Lishogi with a bot
+    .   _/\_
+    .  //o o\\
+    .  ||    ||  lishogi-bot v0.2.0
+    .  ||    ||
+    .  ||____||  Play on Lishogi with a bot
     """ % __version__
 
 if __name__ == "__main__":
