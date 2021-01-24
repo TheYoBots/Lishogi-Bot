@@ -21,6 +21,8 @@ class Conversation:
             self.send_reply(line, "Waiting 60 seconds...")
         elif cmd == "name":
             self.send_reply(line, "lishogi-bot v0.2.0")
+        elif cmd == "engine":
+            self.send_reply(line, "Fairy Stockfish 11.2")
         elif cmd == "howto":
             self.send_reply(line, "How to run your own bot: https://github.com/TheYoBots/Lishogi-Bot")
         elif cmd == "eval" and line.room == "spectator":
