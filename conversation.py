@@ -20,7 +20,7 @@ class Conversation:
             game.ping(60, 120)
             self.send_reply(line, "Waiting 60 seconds...")
         elif cmd == "name":
-            self.send_reply(line, "lishogi-bot v0.2.0")
+            self.send_reply(line, "lishogi-bot v0.4.1")
         elif cmd == "engine":
             self.send_reply(line, "Fairy Stockfish 11.2")
         elif cmd == "howto":

@@ -30,7 +30,7 @@ try:
 except ImportError:
     from http.client import BadStatusLine as RemoteDisconnected
 
-__version__ = "0.2.0"
+__version__ = "0.4.1"
 
 terminated = False
 
@@ -206,7 +206,8 @@ def play_game(li, game_id, control_queue, engine_factory, user_profile, config, 
             elif u_type == "gameState":
                 game.state = upd
                 moves = upd["moves"].split()
-                board = update_board(board, moves[-1])
+                if len(moves) > 0 and len(moves) != len(board.move_stack):
+                    board = update_board(board, moves[-1])
                 if not is_game_over(game) and is_engine_move(game, moves):
                     if config.get("fake_think_time") and len(moves) > 9:
                         delay = min(game.clock_initial, game.my_remaining_seconds()) * 0.015
@@ -257,13 +258,7 @@ def play_game(li, game_id, control_queue, engine_factory, user_profile, config, 
                         li.abort(game.id)
                     break
         except (HTTPError, ReadTimeout, RemoteDisconnected, ChunkedEncodingError, ConnectionError, ProtocolError) as e:
-            ongoing_games = li.get_ongoing_games()
-            game_over = True
-            for ongoing_game in ongoing_games:
-                if ongoing_game["gameId"] == game.id:
-                    game_over = False
-                    break
-            if not game_over:
+            if game.id in (ongoing_game["gameId"] for ongoing_game in li.get_ongoing_games()):
                 continue
             else:
                 break
