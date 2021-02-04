@@ -15,6 +15,7 @@ To Install, either proceed to the below steps or view steps to install [lichess 
 
 ### Mac/Linux:
 - **NOTE:** Only Python 3 is supported!
+- Upgrade pip to prevent any flaws in further commands. To do so execute `pip install --upgrade pip`.
 - Download the repo into Lishogi-Bot directory.
 - Navigate to the directory in cmd/Terminal: `cd Lishogi-Bot`.
 - Install virtualenv: `pip install virtualenv`.
@@ -48,13 +49,14 @@ pip install -r requirements.txt
 - Create an account for your bot on [Lishogi.org](https://lishogi.org/signup).
 - **NOTE:** If you have previously played games on an existing account, you will not be able to use it as a bot account.
 - Once your account has been created and you are logged in, [create a personal OAuth2 token](https://lishogi.org/account/oauth/token/create) with the "Play as a bot" selected and add a description.
-- A `token` e.g. `Xb0ddNrLabc0lGK2` will be displayed. Store this in `config.yml` as the `token` field.
-- **NOTE:** You won't see this token again on Lishogi.
+- A `token` e.g. `xxxxxxxxxxxxxxxx` will be displayed. Store this in `config.yml` as the `token` field.
+- **NOTE:** You won't see this token again on Lishogi, so save it or store it somewhere.
 
 ## Setup Engine
 - Place your engine(s) in the `engine.dir` directory
 - In your `config.yml` file, enter the binary name as the `engine.name` field.
 - Using this process any engine can be added to the bot.
+- Currently Fairy Stockfish 11.2 is added by default, if you would like to change it follow this process otherwise this part in not necessary.
 
 
 ## Lishogi Upgrade to Bot Account
