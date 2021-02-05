@@ -30,7 +30,7 @@ try:
 except ImportError:
     from http.client import BadStatusLine as RemoteDisconnected
 
-__version__ = "0.4.1"
+__version__ = "0.6.0"
 
 terminated = False
 
@@ -120,6 +120,8 @@ def start(li, user_profile, engine_factory, config):
                         logger.info("    Skip missing {}".format(chlng))
                     queued_processes -= 1
 
+            control_queue.task_done()
+                    
     logger.info("Terminated")
     control_stream.terminate()
     control_stream.join()

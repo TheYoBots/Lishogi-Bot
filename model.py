@@ -10,7 +10,8 @@ class Challenge():
         self.perf_name = c_info["perf"]["name"]
         self.speed = c_info["speed"]
         self.increment = c_info.get("timeControl", {}).get("increment", -1)
-        self.byoyomi = c_info.get("timeControl", {}).get("byoyomi", 0)
+        self.byoyomi = c_info.get("timeControl", {}).get("byoyomi", -1)
+        self.base = c_info.get("timeControl", {}).get("limit", -1)
         self.challenger = c_info.get("challenger")
         self.challenger_title = self.challenger.get("title") if self.challenger else None
         self.challenger_is_bot = self.challenger_title == "BOT"
@@ -22,10 +23,10 @@ class Challenge():
     def is_supported_variant(self, supported):
         return self.variant in supported
 
-    def is_supported_time_control(self, supported_speed, supported_increment_max, supported_increment_min):
+    def is_supported_time_control(self, supported_speed, supported_increment_max, supported_increment_min, supported_byoyomi_max, supported_byoyomi_min, supported_base_max, supported_base_min):
         if self.increment < 0:
             return self.speed in supported_speed
-        return self.speed in supported_speed and self.increment <= supported_increment_max and self.increment >= supported_increment_min
+        return self.speed in supported_speed and supported_increment_max >= self.increment >= supported_increment_min and supported_byoyomi_max >= self.base >= supported_byoyomi_min and supported_base_max >= self.base >= supported_base_min
 
     def is_supported_mode(self, supported):
         return "rated" in supported if self.rated else "casual" in supported
@@ -39,8 +40,12 @@ class Challenge():
         tc = config["time_controls"]
         inc_max = config.get("max_increment", 180)
         inc_min = config.get("min_increment", 0)
+        byoyomi_max = config.get("max_byoyomi", 180)
+        byoyomi_min = config.get("min_byoyomi", 0)
+        base_max = config.get("max_base", 315360000)
+        base_min = config.get("min_base", 0)
         modes = config["modes"]
-        return self.is_supported_time_control(tc, inc_max, inc_min) and self.is_supported_variant(variants) and self.is_supported_mode(modes)
+        return self.is_supported_time_control(tc, inc_max, inc_min, byoyomi_max, byoyomi_min, base_max, base_min) and self.is_supported_variant(variants) and self.is_supported_mode(modes)
 
     def score(self):
         rated_bonus = 200 if self.rated else 0
