@@ -30,7 +30,7 @@ try:
 except ImportError:
     from http.client import BadStatusLine as RemoteDisconnected
 
-__version__ = "0.4.1"
+__version__ = "0.6.0"
 
 terminated = False
 
