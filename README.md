@@ -43,7 +43,7 @@ pip install -r requirements.txt
 `./.venv/Scripts/activate` (`.\.venv\Scripts\activate` should work in cmd in administator mode) (This may not work on Windows, and in this case you need to execute "Set-ExecutionPolicy RemoteSigned" first and choose "Y" there [you may need to run Powershell as administrator]. After you executed the script, change execution policy back with "Set-ExecutionPolicy Restricted" and pressing "Y")
 
 `pip install -r requirements.txt`
-- Edit the `config.yml` file to your liking, so that it plays shogi.
+- Edit the `config.yml` file to your liking by changing the supported [variants](https://github.com/TheYoBots/Lishogi-Bot/blob/c746023ce8bc95ab7c0f3810921675a8b96610e8/config.yml#L33), [timings](https://github.com/TheYoBots/Lishogi-Bot/blob/c746023ce8bc95ab7c0f3810921675a8b96610e8/config.yml#L36) [challenge modes](https://github.com/TheYoBots/Lishogi-Bot/blob/c746023ce8bc95ab7c0f3810921675a8b96610e8/config.yml#L43) and [incoming challenges](https://github.com/TheYoBots/Lishogi-Bot/blob/c746023ce8bc95ab7c0f3810921675a8b96610e8/config.yml#L26), so that it plays shogi.
 
 ## Lishogi OAuth
 - Create an account for your bot on [Lishogi.org](https://lishogi.org/signup).
@@ -65,4 +65,4 @@ pip install -r requirements.txt
 - for more verbrose logs run `python lishogi-bot.py -v`
 
 # Acknowledgements
-Thanks to the Lichess Team for creating a [repository](https://github.com/ShailChoksi/lichess-bot) that could be easily accessed and modified to help converting it to a format that supports Lishogi and for running an [API](https://lichess.org/api) which is used by lishogi. Thanks to the [Tasuku SUENAGA a.k.a. gunyarakun](https://github.com/gunyarakun) and his [python-shogi](https://github.com/gunyarakun) code which allows engine communication seamlessly. And lastly, Thanks to [WandererXII](https://github.com/WandererXII) for all his effort and [help](https://github.com/WandererXII/lishogi-bot).
+Thanks to the Lichess Team for creating a [repository](https://github.com/ShailChoksi/lichess-bot) that could be easily accessed and modified to help converting it to a format that supports Lishogi and for running an [API](https://lichess.org/api) which is used by lishogi. Thanks to the [Tasuku SUENAGA a.k.a. gunyarakun](https://github.com/gunyarakun) and his [python-shogi](https://github.com/gunyarakun) code which allows engine communication seamlessly. And lastly, Thanks to [WandererXII](https://github.com/WandererXII) for all his effort and help.

@@ -4,8 +4,8 @@ url: "https://lishogi.org/"  # lishogi base URL. Do not change this unless local
 engine:                      # engine settings
   dir: "./engines/"          # dir containing engines, relative to this project
   name: "fairy-stockfish-largeboard_x86-64-bmi2"   # binary name of the engine to use. Changing this is not necessary/required, unless you want to use a different engine. Incase you are using windows add '.exe' at the end of the engine binary name. The current name will only work in linux.
-  #name: "YaneuraOu-by-gcc"  # binary name of the engine to use. This will not be used and not work.
-  protocol: "usi"            # "usi"
+  #name: "YaneuraOu-by-gcc"  # binary name of the engine to use. This will not be used and not work. Do not edit this.
+  protocol: "usi"            # "usi" protocol. No other options will be accepted here.
   ponder: false              # not supported! Setting it to 'true' will not work.
 # engine_options:            # any custom command line params to pass to the engine
 #   cpuct: 3.1
@@ -19,27 +19,27 @@ engine:                      # engine settings
 #     movetime: 1000         # Integer. Search exactly movetime milliseconds.
   silence_stderr: false      # some engines are very noisy
 
-abort_time: 120              # time to abort a game in seconds when there is no activity
+abort_time: 30               # time to abort a game in seconds when there is no activity
 fake_think_time: false       # artificially slow down the bot to pretend like it's thinking
 move_overhead: 5000          # increase if your bot flags games too often. 5000 is the highest accepted value.
 
 challenge:                   # incoming challenges
   concurrency: 100           # number of games to play simultaneously
   sort_by: "best"            # possible values: "best", "first"
-  accept_bot: true           # accepts challenges coming from other bots
-  only_bot: false            # Enable this to accept challenges only from bots
+  accept_bot: true           # accepts challenges coming from other bots. Setting this to 'true' will allow games from both human and bot, but setting it to false will allow games only from human.
+  only_bot: false            # Enable this to accept challenges only from bots. This will disable accepting challenges from human.
   max_increment: 180         # maximum amount of increment to accaept a challenge. the max is 180. set to 0 for no increment
   min_increment: 0           # minimum amount of increment to accept a challenge
-  variants:                  # shogi variants to accept
+  variants:                  # shogi variants to accept. Currently only 'standard and 'from position' games are allowed in lishogi.
     - standard
-    - fromPosition
+#   - fromPosition
   time_controls:             # time controls to accept
     - ultraBullet
     - bullet
     - blitz
     - rapid
     - classical
-    - correspondence
+#   - correspondence
   modes:                     # game modes to accept
     - casual                 # unrated games
-    - rated                  # rated games
+#   - rated                  # rated games
