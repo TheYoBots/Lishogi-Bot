@@ -26,7 +26,7 @@ To Install, either proceed to the below steps or view steps to install [lichess 
 source .venv/bin/activate
 pip install -r requirements.txt
 ```
-- Edit the `config.yml` file to your liking, so that it plays shogi.
+- Edit the `config.yml` file to your liking by changing the supported [variants](https://github.com/TheYoBots/Lishogi-Bot/blob/c746023ce8bc95ab7c0f3810921675a8b96610e8/config.yml#L33), [timings](https://github.com/TheYoBots/Lishogi-Bot/blob/c746023ce8bc95ab7c0f3810921675a8b96610e8/config.yml#L36), [challenge modes](https://github.com/TheYoBots/Lishogi-Bot/blob/c746023ce8bc95ab7c0f3810921675a8b96610e8/config.yml#L43) and [incoming challenges](https://github.com/TheYoBots/Lishogi-Bot/blob/c746023ce8bc95ab7c0f3810921675a8b96610e8/config.yml#L26), so that it plays shogi.
 
 ### Windows:
 - **NOTE:** Only Python 3 is supported!
