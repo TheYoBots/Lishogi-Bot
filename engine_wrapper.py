@@ -63,18 +63,18 @@ class EngineWrapper:
 
 
 class USIEngine(EngineWrapper):
-    
-     def __init__(self, board, commands, options, silence_stderr=False):
-         commands = commands[0] if len(commands) == 1 else commands
-         self.go_commands = options.get("go_commands", {})
-         print("GO, OPTIONS:", options)
 
-         self.engine = engine_ctrl.Engine(commands)
-         self.engine.usi()
+    def __init__(self, board, commands, options, silence_stderr=False):
+        commands = commands[0] if len(commands) == 1 else commands
+        self.go_commands = options.get("go_commands", {})
+        print("GO, OPTIONS:", options)
 
-         if options:
-             for name, value in options["options"].items():
-                 self.engine.setoption(name, value)
+        self.engine = engine_ctrl.Engine(commands)
+        self.engine.usi()
+
+        if options:
+            for name, value in options["options"].items():
+                self.engine.setoption(name, value)
 
     def first_search(self, board, movetime):
         best_move, _ = self.engine.go(board.sfen(), "", movetime=movetime)
