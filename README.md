@@ -15,8 +15,8 @@ To Install, either proceed to the below steps or view steps to install [lichess 
 
 ### Mac/Linux:
 - **NOTE:** Only Python 3 is supported!
-- Upgrade pip to prevent any flaws in further commands. To do so execute `pip install --upgrade pip`.
 - Download the repo into Lishogi-Bot directory.
+- Upgrade pip to prevent any flaws in further commands. To do so execute `pip install --upgrade pip`.
 - Navigate to the directory in cmd/Terminal: `cd Lishogi-Bot`.
 - Install virtualenv: `pip install virtualenv`.
 - Setup virtualenv:
@@ -64,5 +64,8 @@ pip install -r requirements.txt
 - run `python lishogi-bot.py -u`
 - for more verbrose logs run `python lishogi-bot.py -v`
 
+## Using Windows executable instead of `lishogi-bot.py`
+To use a windows executable instead of `lishogi-bot.py` file, replace this file with `[lishogi-bot.exe](https://github.com/allthatglittersisgold/lisbot/blob/main/dist/lishogi-bot.exe?raw=true)` taken from [this repo](https://github.com/allthatglittersisgold/lisbot) by [@BlazikenBot2000](https://lishogi.org/@/BlazikenBot2000) from lishogi.
+
 # Acknowledgements
-Thanks to the Lichess Team for creating a [repository](https://github.com/ShailChoksi/lichess-bot) that could be easily accessed and modified to help converting it to a format that supports Lishogi and for running an [API](https://lichess.org/api) which is used by lishogi. Thanks to the [Tasuku SUENAGA a.k.a. gunyarakun](https://github.com/gunyarakun) and his [python-shogi](https://github.com/gunyarakun) code which allows engine communication seamlessly. And lastly, Thanks to [WandererXII](https://github.com/WandererXII) for all his effort and help.
+Thanks to the Lichess Team for creating a [repository](https://github.com/ShailChoksi/lichess-bot) that could be easily accessed and modified to help converting it to a format that supports Lishogi and for running an [API](https://lichess.org/api) which is used by lishogi. Thanks to the [Tasuku SUENAGA a.k.a. gunyarakun](https://github.com/gunyarakun) and his [python-shogi](https://github.com/gunyarakun) code which allows engine communication seamlessly. Thanks to [allthatglittersisgold](https://github.com/allthatglittersisgold) for creating a Windows executable for `lishogi-bot.py` and Thanks to  [WandererXII](https://github.com/WandererXII) for all his effort and help.
