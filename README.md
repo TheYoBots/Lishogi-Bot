@@ -28,17 +28,17 @@ pip install -r requirements.txt
 
 ### Windows:
 - **NOTE:** Only Python 3 is supported!
-- If you don't have Python, you may download it [here](https://www.python.org/downloads/). When installing it, enable "add Python to PATH", then go to custom installation (this may be not necessary, but on some computers it won't work otherwise) and enable all options (especially "install for all users"), except the last . It's better to install Python in a path without spaces, like "C:\Python\".
-- To type commands it's better to use PowerShell. Go to Start menu and type "PowerShell" (you may use cmd too, but sometimes it may not work).
+- If you don't have Python, you may download it [here](https://www.python.org/downloads/). When installing it, enable `add Python to PATH`, then go to custom installation (this may be not necessary, but on some computers it won't work otherwise) and enable all options (especially `install for all users`), except the last . It's better to install Python in a path without spaces, like `C:\Python\`.
+- To type commands it's better to use PowerShell. Go to Start menu and type `PowerShell`.
 - Then you may need to upgrade pip. Execute `python -m pip install --upgrade pip` in PowerShell.
 - Download the repo into lishogi-bot directory.
-- Navigate to the directory in PowerShell: `cd [folder's adress]` (like "cd C:\shogi\lishogi-bot").
+- Navigate to the directory in PowerShell: `cd [folder's adress]` (like `cd C:\shogi\lishogi-bot`).
 - Install virtualenv: `pip install virtualenv`.
 - Setup virtualenv:
 
 `virtualenv .venv -p python` (if this fails you probably need to add Python to your PATH)
 
-`./.venv/Scripts/activate` (`.\.venv\Scripts\activate` should work in cmd in administator mode) (This may not work on Windows, and in this case you need to execute "Set-ExecutionPolicy RemoteSigned" first and choose "Y" there [you may need to run Powershell as administrator]. After you executed the script, change execution policy back with "Set-ExecutionPolicy Restricted" and pressing "Y")
+`./.venv/Scripts/activate` (`.\.venv\Scripts\activate` should work in cmd in administator mode) (This may not work on Windows, and in this case you need to execute "Set-ExecutionPolicy RemoteSigned" first and choose "Y" there (you may need to run Powershell as administrator). After you executed the script, change execution policy back with "Set-ExecutionPolicy Restricted" and pressing "Y")
 
 `pip install -r requirements.txt`
 - Edit the `config.yml` file to your liking by changing the supported [variants](https://github.com/TheYoBots/Lishogi-Bot/blob/c746023ce8bc95ab7c0f3810921675a8b96610e8/config.yml#L33), [timings](https://github.com/TheYoBots/Lishogi-Bot/blob/c746023ce8bc95ab7c0f3810921675a8b96610e8/config.yml#L36), [challenge modes](https://github.com/TheYoBots/Lishogi-Bot/blob/c746023ce8bc95ab7c0f3810921675a8b96610e8/config.yml#L43) and [incoming challenges](https://github.com/TheYoBots/Lishogi-Bot/blob/c746023ce8bc95ab7c0f3810921675a8b96610e8/config.yml#L26), so that it plays shogi.
