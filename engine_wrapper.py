@@ -19,7 +19,7 @@ def create_engine(config, board):
 
     silence_stderr = cfg.get("silence_stderr", False)
 
-    return USIEngine(board, commands, cfg.get("usi_options", {}) or {}, silence_stderr)
+    return USIEngine(board, commands, cfg.get("usi_options", {}), cfg.get("go_commands", {}), silence_stderr)
 
 
 class EngineWrapper:
@@ -64,10 +64,9 @@ class EngineWrapper:
 
 class USIEngine(EngineWrapper):
 
-    def __init__(self, board, commands, options, silence_stderr=False):
-        commands = commands[0] if len(commands) == 1 else commands
-        self.go_commands = options.get("go_commands", {})
-        print("GO, OPTIONS:", options)
+   def __init__(self, board, commands, options, go_commands={}, silence_stderr=False):
+        commands = commands[0] if len(commands) == 1 else commands        
+        self.go_commands = go_commands
 
         self.engine = engine_ctrl.Engine(commands)
         self.engine.usi()
@@ -82,15 +81,26 @@ class USIEngine(EngineWrapper):
 
     def search_with_ponder(self, board, wtime, btime, winc, binc, ponder=False):
         moves = [m.usi() for m in list(board.move_stack)]
-        best_move, ponder_move = self.engine.go(
-            board.sfen(),
-            moves,
-            wtime=wtime,
-            btime=btime,
-            winc=winc,
-            binc=binc,
-            #ponder=ponder
-        )
+        cmds = self.go_commands        
+        if len(cmds) > 0:
+               best_move, ponder_move = self.engine.go(
+                   board.sfen(),
+                   moves,
+                   nodes=cmds.get("nodes"),
+                   depth=cmds.get("depth"),
+                   movetime=cmds.get("movetime"),
+                   #ponder=ponder
+               )
+        else:
+               best_move, ponder_move = self.engine.go(
+                   board.sfen(),
+                   moves,
+                   wtime=wtime,
+                   btime=btime,
+                   winc=winc,
+                   binc=binc,
+                   #ponder=ponder
+               )
         return (best_move, ponder_move)
 
     def search(self, board, wtime, btime, winc, binc):
