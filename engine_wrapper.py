@@ -64,7 +64,7 @@ class EngineWrapper:
 
 class USIEngine(EngineWrapper):
 
-   def __init__(self, board, commands, options, go_commands={}, silence_stderr=False):
+    def __init__(self, board, commands, options, go_commands={}, silence_stderr=False):
         commands = commands[0] if len(commands) == 1 else commands        
         self.go_commands = go_commands
 
