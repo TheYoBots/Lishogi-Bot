@@ -3,7 +3,7 @@ url: "https://lishogi.org/"  # lishogi base URL. Do not change this unless local
 
 engine:                      # engine settings
   dir: "./engines/"          # dir containing engines, relative to this project
-  name: "fairy-stockfish-largeboard_x86-64-bmi2"   # binary name of the engine to use. Changing this is not necessary/required, unless you want to use a different engine. Incase you are using windows add '.exe' at the end of the engine binary name. The current name will only work in linux.
+  name: "engine_name"        # binary name of the engine to use. Make sure the engine you use is running under the USI protocol.
   #name: "YaneuraOu-by-gcc"  # binary name of the engine to use. This will not be used and not work. Do not edit this.
   protocol: "usi"            # "usi" protocol. No other options will be accepted here.
   ponder: false              # not supported! Setting it to 'true' will not work.
