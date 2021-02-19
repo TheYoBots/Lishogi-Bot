@@ -30,7 +30,6 @@ ENDPOINTS = {
 
 # docs: https://lichess.org/api
 class Lishogi:
-
     def __init__(self, token, url, version):
         self.version = version
         self.header = {
