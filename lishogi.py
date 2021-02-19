@@ -27,6 +27,7 @@ ENDPOINTS = {
     "resign": "/api/bot/game/{}/resign"
 }
 
+
 # docs: https://lichess.org/api
 class Lishogi():
 
@@ -44,10 +45,10 @@ class Lishogi():
         return isinstance(exception, HTTPError) and exception.response.status_code < 500
 
     @backoff.on_exception(backoff.constant,
-        (RemoteDisconnected, ConnectionError, ProtocolError, HTTPError, ReadTimeout),
-        max_time=60,
-        interval=0.1,
-        giveup=is_final)
+                          (RemoteDisconnected, ConnectionError, ProtocolError, HTTPError, ReadTimeout),
+                          max_time=60,
+                          interval=0.1,
+                          giveup=is_final)
     def api_get(self, path):
         url = urljoin(self.baseUrl, path)
         response = self.session.get(url, timeout=2)
@@ -55,10 +56,10 @@ class Lishogi():
         return response.json()
 
     @backoff.on_exception(backoff.constant,
-        (RemoteDisconnected, ConnectionError, ProtocolError, HTTPError, ReadTimeout),
-        max_time=60,
-	interval=0.1,
-        giveup=is_final)
+                          (RemoteDisconnected, ConnectionError, ProtocolError, HTTPError, ReadTimeout),
+                          max_time=60,
+                          interval=0.1,
+                          giveup=is_final)
     def api_post(self, path, data=None):
         url = urljoin(self.baseUrl, path)
         response = self.session.post(url, data=data, timeout=2)
