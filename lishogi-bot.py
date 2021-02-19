@@ -117,7 +117,7 @@ def start(li, user_profile, engine_factory, config):
                 try:
                     logger.info("    Accept {}".format(chlng))
                     queued_processes += 1
-                    response = li.accept_challenge(chlng.id)
+                    li.accept_challenge(chlng.id)
                     logger.info("--- Process Queue. Total Queued: {}. Total Used: {}".format(queued_processes, busy_processes))
                 except (HTTPError, ReadTimeout) as exception:
                     if isinstance(exception, HTTPError) and exception.response.status_code == 404:  # ignore missing challenge
@@ -266,7 +266,7 @@ def play_game(li, game_id, control_queue, engine_factory, user_profile, config, 
                     if game.is_abortable():
                         li.abort(game.id)
                     break
-        except (HTTPError, ReadTimeout, RemoteDisconnected, ChunkedEncodingError, ConnectionError, ProtocolError) as e:
+        except (HTTPError, ReadTimeout, RemoteDisconnected, ChunkedEncodingError, ConnectionError, ProtocolError):
             if game.id in (ongoing_game["gameId"] for ongoing_game in li.get_ongoing_games()):
                 continue
             else:
