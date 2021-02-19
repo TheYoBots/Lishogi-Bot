@@ -6,6 +6,7 @@ from util import *
 
 import engine_ctrl
 
+
 @backoff.on_exception(backoff.expo, BaseException, max_time=120)
 def create_engine(config, board):
     cfg = config["engine"]
@@ -118,7 +119,6 @@ class USIEngine(EngineWrapper):
             movetime=cmds.get("movetime")
         )
         return best_move
-
 
     def stop(self):
         self.engine.kill_process()
