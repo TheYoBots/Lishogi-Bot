@@ -6,10 +6,8 @@ import json
 import lishogi
 import logging
 import multiprocessing
-import traceback
 import logging_pool
 import signal
-import sys
 import time
 import backoff
 import threading
