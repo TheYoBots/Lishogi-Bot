@@ -5,7 +5,7 @@
 [![Play Bot](https://img.shields.io/badge/Play_Bot-%40Lishogi-blue.svg)](https://lishogi.org/?user=YoBot_v2#friend)
 [![Lishogi Team](https://img.shields.io/badge/Lishogi_Team-%40Team-blue.svg)](https://lishogi.org/team/yobot_v2-shogi)
 
-A bridge between [Lichess API](https://lichess.org/api#tag/Chess-Bot) and Lishogi USI Bots. In case you don't know English, view the [Japanese Translation here (日本語翻訳)](https://github.com/TheYoBots/Lishogi-Bot/wiki/Japanese-Translation).
+A bridge between [Lichess API](https://lichess.org/api#tag/Bot) and Lishogi USI Bots. In case you don't know English, view the [Japanese Translation here (日本語翻訳)](https://github.com/TheYoBots/Lishogi-Bot/wiki/Japanese-Translation).
 
 Current lishogi bot run using this repository is [YoBot_v2](https://lishogi.org/@/YoBot_v2) and team is [YoBot_v2 Shogi](https://lishogi.org/team/yobot_v2-shogi).
 
