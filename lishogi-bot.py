@@ -186,10 +186,8 @@ def play_game(li, game_id, control_queue, engine_factory, user_profile, config, 
             btime = game.state["btime"]
             start_time = time.perf_counter_ns()
             
-            if board.turn == shogi.BLACK:
-                wtime = max(0, wtime - move_overhead - int((time.perf_counter_ns() - start_time) / 1000000))
-            else:
-                btime = max(0, btime - move_overhead - int((time.perf_counter_ns() - start_time) / 1000000))
+            wb = 'w' if board.turn == shogi.BLACK else 'b'
+            game.ping(config.get("abort_time", 30), (upd[f"{wb}time"] + upd[f"{wb}inc"]) / 1000 + 60)
             logger.info("Searching for wtime {} btime {}".format(wtime, btime))
             best_move, ponder_move = engine.search_with_ponder(board, wtime, btime, game.state["winc"], game.state["binc"])
             engine.print_stats()
@@ -199,10 +197,9 @@ def play_game(li, game_id, control_queue, engine_factory, user_profile, config, 
                 ponder_board.push(shogi.Move.from_usi(best_move))
                 ponder_board.push(shogi.Move.from_usi(ponder_move))
                 ponder_usi = ponder_move
-                if board.turn == shogi.BLACK:
-                    wtime = max(0, wtime - move_overhead - int((time.perf_counter_ns() - start_time) / 1000000) + game.state["winc"])
-                else:
-                    btime = max(0, btime - move_overhead - int((time.perf_counter_ns() - start_time) / 1000000) + game.state["binc"])
+                
+                wb = 'w' if board.turn == shogi.BLACK else 'b'
+                game.ping(config.get("abort_time", 30), (upd[f"{wb}time"] + upd[f"{wb}inc"]) / 1000 + 60)
                 logger.info("Pondering for wtime {} btime {}".format(wtime, btime))
                 ponder_thread = threading.Thread(target=ponder_thread_func, args=(game, engine, ponder_board, wtime, btime, game.state["winc"], game.state["binc"]))
                 ponder_thread.start()
@@ -211,9 +208,7 @@ def play_game(li, game_id, control_queue, engine_factory, user_profile, config, 
     while not terminated:
         try:
             binary_chunk = next(lines)
-        except(StopIteration):
-            break
-        try:
+        
             upd = json.loads(binary_chunk.decode('utf-8')) if binary_chunk else None
             u_type = upd["type"] if upd else "ping"
             if u_type == "chatLine":
@@ -224,11 +219,7 @@ def play_game(li, game_id, control_queue, engine_factory, user_profile, config, 
                 if len(moves) > 0 and len(moves) != len(board.move_stack):
                     board = update_board(board, moves[-1])
                 if not is_game_over(game) and is_engine_move(game, moves):
-                    if config.get("fake_think_time") and len(moves) > 9:
-                        delay = min(game.clock_initial, game.my_remaining_seconds()) * 0.015
-                        accel = 1 - max(0, min(100, len(moves) - 20)) / 150
-                        sleep = min(5, delay * accel)
-                        time.sleep(sleep)
+                    fake_thinking(config, board, game)
 
                     best_move = None
                     ponder_move = None
@@ -278,16 +269,15 @@ def play_game(li, game_id, control_queue, engine_factory, user_profile, config, 
                         li.abort(game.id)
                     break
         except (HTTPError, ReadTimeout, RemoteDisconnected, ChunkedEncodingError, ConnectionError, ProtocolError):
-            if game.id in (ongoing_game["gameId"] for ongoing_game in li.get_ongoing_games()):
-                continue
-            else:
+            if game.id not in (ongoing_game["gameId"] for ongoing_game in li.get_ongoing_games()):
                 break
+        except StopIteration:
+            break
 
     logger.info("--- {} Game over".format(game.url()))
     engine.stop()
     if not ( ponder_thread is None ):
         ponder_thread.join()
-        ponder_thread = None
 
     # This can raise queue.NoFull, but that should only happen if we're not processing
     # events fast enough and in this case I believe the exception should be raised
@@ -311,6 +301,14 @@ def play_first_book_move(game, engine, board, li, config):
 
 def get_book_move(board, config):
     pass
+
+
+def fake_thinking(config, board, game):
+    if config.get("fake_think_time") and len(board.move_stack) > 9:
+        delay = min(game.clock_initial, game.my_remaining_seconds()) * 0.015
+        accel = 1 - max(0, min(100, len(board.move_stack) - 20)) / 150
+        sleep = min(5, delay * accel)
+        time.sleep(sleep)
 
 
 def setup_board(game):
