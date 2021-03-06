@@ -41,8 +41,8 @@ challenge:                   # incoming challenges
     - bullet
     - blitz
     - rapid
-    - classical
+#   - classical
 #   - correspondence
   modes:                     # game modes to accept
-    - casual                 # unrated games
-#   - rated                  # rated games
+#   - casual                 # unrated games
+    - rated                  # rated games
