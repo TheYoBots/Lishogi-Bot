@@ -8,9 +8,9 @@ engine:                      # engine settings
   ponder: false              # not supported! Setting it to 'true' will not work.
 # engine_options:            # any custom command line params to pass to the engine
 #   cpuct: 3.1
-  uci_options:               # arbitrary USI options passed to the engine
+  usi_options:               # arbitrary USI options passed to the engine
     Move Overhead: 5000      # increase if your bot flags games too often. 5000 is the highest accepted value.
-    Threads: 2               # max CPU threads the engine can use
+    Threads: 1               # max CPU threads the engine can use
     USI_Hash: 256            # max memory (in megabytes) the engine can allocate
 #  go_commands:              # additional options to pass to the USI go command
 #    nodes: 1                # Search so many nodes only.
@@ -44,5 +44,5 @@ challenge:                   # incoming challenges
     - classical
 #   - correspondence         # not currently supported, suggested to disable this.
   modes:                     # game modes to accept
-#   - casual                 # unrated games
+    - casual                 # unrated games
     - rated                  # rated games
