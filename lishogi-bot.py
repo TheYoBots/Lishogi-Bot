@@ -22,11 +22,7 @@ import copy
 
 logger = logging.getLogger(__name__)
 
-try:
-    from http.client import RemoteDisconnected
-    # New in version 3.5: Previously, BadStatusLine('') was raised.
-except ImportError:
-    from http.client import BadStatusLine as RemoteDisconnected
+from http.client import RemoteDisconnected
 
 __version__ = "0.9.0"
 
@@ -219,7 +215,12 @@ def play_game(li, game_id, control_queue, engine_factory, user_profile, config, 
                 if len(moves) > 0 and len(moves) != len(board.move_stack):
                     board = update_board(board, moves[-1])
                 if not is_game_over(game) and is_engine_move(game, moves):
+                    start_time = time.perf_counter_ns()
                     fake_thinking(config, board, game)
+                    if board.turn == shogi.BLACK:
+                        print('move: {}'.format(int(len(board.move_stack) / 1 + 1)))
+                    else:
+                        print('move: {}'.format(int(len(board.move_stack) / 1 + 0.5)))
 
                     best_move = None
                     ponder_move = None

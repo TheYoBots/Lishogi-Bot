@@ -3,13 +3,7 @@ from urllib.parse import urljoin
 from requests.exceptions import ConnectionError, HTTPError, ReadTimeout
 from urllib3.exceptions import ProtocolError
 from util import makeuci
-
-try:
-    from http.client import RemoteDisconnected
-    # New in version 3.5: Previously, BadStatusLine('') was raised.
-except ImportError:
-    from http.client import BadStatusLine as RemoteDisconnected
-
+from http.client import RemoteDisconnected
 import backoff
 
 ENDPOINTS = {
