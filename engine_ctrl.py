@@ -116,9 +116,6 @@ class Engine:
         if movetime is not None:
             builder.append("movetime")
             builder.append(str(movetime))
-        else:
-            builder.append("movetime")
-            builder.append("1500")
         if depth is not None:
             builder.append("depth")
             builder.append(str(depth))
@@ -127,19 +124,19 @@ class Engine:
             builder.append(str(nodes))
         if wtime is not None:
             builder.append("wtime")
-            builder.append(str(wtime * 10))
+            builder.append(str(wtime))
         if btime is not None:
             builder.append("btime")
-            builder.append(str(btime * 10))
+            builder.append(str(btime))
         if byo is not None:
             builder.append("byoyomi")
-            builder.append(str(byo * 1000))
+            builder.append(str(byo))
         if winc is not None:
             builder.append("winc")
-            builder.append(str(winc * 1000))
+            builder.append(str(winc))
         if binc is not None:
             builder.append("binc")
-            builder.append(str(binc * 1000))
+            builder.append(str(binc))
 
         self.send(" ".join(builder))
         print(" ".join(builder))

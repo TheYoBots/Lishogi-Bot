@@ -157,12 +157,13 @@ def play_game(li, game_id, control_queue, engine_factory, user_profile, config, 
 
     ponder_usi = None
     
-    def ponder_thread_func(game, engine, board, wtime, btime, winc, binc):
+    def ponder_thread_func(game, engine, board, wtime, btime, winc, binc, byo):
         global ponder_results        
-        best_move, ponder_move = engine.search_with_ponder(board, wtime, btime, winc, binc, True)
+        best_move, ponder_move = engine.search_with_ponder(board, wtime, btime, winc, binc, byo, True)
         ponder_results[game.id] = ( best_move, ponder_move )
 
     engine.set_time_control(game)
+    logger.debug('Game state: {}'.format(game.state))
 
     if len(board.move_stack) < 2:
         while not terminated:
@@ -185,7 +186,7 @@ def play_game(li, game_id, control_queue, engine_factory, user_profile, config, 
             wb = 'w' if board.turn == shogi.BLACK else 'b'
             game.ping(config.get("abort_time", 30), (upd[f"{wb}time"] + upd[f"{wb}inc"]) / 1000 + 60)
             logger.info("Searching for wtime {} btime {}".format(wtime, btime))
-            best_move, ponder_move = engine.search_with_ponder(board, wtime, btime, game.state["winc"], game.state["binc"])
+            best_move, ponder_move = engine.search_with_ponder(board, wtime, btime, game.state["winc"], game.state["binc"], game.state["byo"])
             engine.print_stats()
 
             if is_usi_ponder and not ( ponder_move is None ):
@@ -197,7 +198,7 @@ def play_game(li, game_id, control_queue, engine_factory, user_profile, config, 
                 wb = 'w' if board.turn == shogi.BLACK else 'b'
                 game.ping(config.get("abort_time", 30), (upd[f"{wb}time"] + upd[f"{wb}inc"]) / 1000 + 60)
                 logger.info("Pondering for wtime {} btime {}".format(wtime, btime))
-                ponder_thread = threading.Thread(target=ponder_thread_func, args=(game, engine, ponder_board, wtime, btime, game.state["winc"], game.state["binc"]))
+                ponder_thread = threading.Thread(target=ponder_thread_func, args=(game, engine, ponder_board, wtime, btime, game.state["winc"], game.state["binc"], game.state["byo"]))
                 ponder_thread.start()
             li.make_move(game.id, best_move)
 
@@ -206,6 +207,7 @@ def play_game(li, game_id, control_queue, engine_factory, user_profile, config, 
             binary_chunk = next(lines)
         
             upd = json.loads(binary_chunk.decode('utf-8')) if binary_chunk else None
+            logger.debug('Update: {}'.format(upd))
             u_type = upd["type"] if upd else "ping"
             if u_type == "gameState":
                 game.state = upd
@@ -234,7 +236,7 @@ def play_game(li, game_id, control_queue, engine_factory, user_profile, config, 
                             else:
                                 btime = max(0, btime - move_overhead - int((time.perf_counter_ns() - start_time) / 1000000))
                             logger.info("Searching for wtime {} btime {}".format(wtime, btime))
-                            best_move, ponder_move = engine.search_with_ponder(board, wtime, btime, upd["winc"], upd["binc"])
+                            best_move, ponder_move = engine.search_with_ponder(board, wtime, btime, upd["winc"], upd["binc"], upd["byo"])
                             engine.print_stats()
 
                         if is_usi_ponder and not ( ponder_move is None ):
@@ -247,7 +249,7 @@ def play_game(li, game_id, control_queue, engine_factory, user_profile, config, 
                             else:
                                 btime = max(0, btime - move_overhead - int((time.perf_counter_ns() - start_time) / 1000000) + upd["binc"])
                             logger.info("Pondering for wtime {} btime {}".format(wtime, btime))
-                            ponder_thread = threading.Thread(target=ponder_thread_func, args=(game, engine, ponder_board, wtime, btime, upd["winc"], upd["binc"]))
+                            ponder_thread = threading.Thread(target=ponder_thread_func, args=(game, engine, ponder_board, wtime, btime, upd["winc"], upd["binc"], upd["byo"]))
                             ponder_thread.start()
                         li.make_move(game.id, best_move)
                     else:

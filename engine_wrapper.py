@@ -78,7 +78,7 @@ class USIEngine(EngineWrapper):
         best_move, _ = self.engine.go(board.sfen(), "", movetime=movetime)
         return best_move
 
-    def search_with_ponder(self, board, wtime, btime, winc, binc, ponder=False):
+    def search_with_ponder(self, board, wtime, btime, winc, binc, byo, ponder=False):
         moves = [m.usi() for m in list(board.move_stack)]
         cmds = self.go_commands        
         if len(cmds) > 0:
@@ -98,6 +98,7 @@ class USIEngine(EngineWrapper):
                    btime=btime,
                    winc=winc,
                    binc=binc,
+                   byo=byo,
                    #ponder=ponder
                )
         return (best_move, ponder_move)
