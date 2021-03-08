@@ -71,7 +71,7 @@ class USIEngine(EngineWrapper):
         self.engine.usi()
 
         if options:
-            for name, value in options["options"].items():
+            for name, value in options.items():
                 self.engine.setoption(name, value)
 
     def first_search(self, board, movetime):
