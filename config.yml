@@ -23,7 +23,7 @@ fake_think_time: false       # artificially slow down the bot to pretend like it
 move_overhead: 5000          # increase if your bot flags games too often. 5000 is the highest accepted value.
 
 challenge:                   # incoming challenges
-  concurrency: 100           # number of games to play simultaneously
+  concurrency: 1             # Number of games to play simultaneously. Set it at 1 for best performance and less errors.
   sort_by: "best"            # possible values: "best", "first"
   accept_bot: true           # accepts challenges coming from other bots. Setting this to 'true' will allow games from both human and bot, but setting it to false will allow games only from human.
   only_bot: false            # Enable this to accept challenges only from bots. This will disable accepting challenges from human.
