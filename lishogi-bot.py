@@ -207,9 +207,7 @@ def play_game(li, game_id, control_queue, engine_factory, user_profile, config, 
         
             upd = json.loads(binary_chunk.decode('utf-8')) if binary_chunk else None
             u_type = upd["type"] if upd else "ping"
-            if u_type == "chatLine":
-                conversation.react(ChatLine(upd), game)
-            elif u_type == "gameState":
+            if u_type == "gameState":
                 game.state = upd
                 moves = upd["moves"].split()
                 if len(moves) > 0 and len(moves) != len(board.move_stack):
