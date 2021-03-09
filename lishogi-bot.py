@@ -159,7 +159,7 @@ def play_game(li, game_id, control_queue, engine_factory, user_profile, config, 
     
     def ponder_thread_func(game, engine, board, wtime, btime, winc, binc, byo):
         global ponder_results        
-        best_move, ponder_move = engine.search_with_ponder(board, wtime, btime, winc, binc, byo, True)
+        best_move, ponder_move = engine.search_with_ponder(game, board, wtime, btime, winc, binc, byo, True)
         ponder_results[game.id] = ( best_move, ponder_move )
 
     engine.set_time_control(game)
@@ -186,7 +186,7 @@ def play_game(li, game_id, control_queue, engine_factory, user_profile, config, 
             wb = 'w' if board.turn == shogi.BLACK else 'b'
             game.ping(config.get("abort_time", 30), (upd[f"{wb}time"] + upd[f"{wb}inc"]) / 1000 + 60)
             logger.info("Searching for wtime {} btime {}".format(wtime, btime))
-            best_move, ponder_move = engine.search_with_ponder(board, wtime, btime, game.state["winc"], game.state["binc"], game.state["byo"])
+            best_move, ponder_move = engine.search_with_ponder(game, board, wtime, btime, game.state["winc"], game.state["binc"], game.state["byo"])
             engine.print_stats()
 
             if is_usi_ponder and not ( ponder_move is None ):
@@ -236,7 +236,7 @@ def play_game(li, game_id, control_queue, engine_factory, user_profile, config, 
                             else:
                                 btime = max(0, btime - move_overhead - int((time.perf_counter_ns() - start_time) / 1000000))
                             logger.info("Searching for wtime {} btime {}".format(wtime, btime))
-                            best_move, ponder_move = engine.search_with_ponder(board, wtime, btime, upd["winc"], upd["binc"], upd["byo"])
+                            best_move, ponder_move = engine.search_with_ponder(game, board, wtime, btime, upd["winc"], upd["binc"], upd["byo"])
                             engine.print_stats()
 
                         if is_usi_ponder and not ( ponder_move is None ):
