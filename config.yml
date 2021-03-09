@@ -41,8 +41,8 @@ challenge:                   # incoming challenges
     - bullet
     - blitz
     - rapid
-#   - classical
-#   - correspondence
+    - classical
+#   - correspondence         # not currently supported, suggested to disable this.
   modes:                     # game modes to accept
 #   - casual                 # unrated games
     - rated                  # rated games
