@@ -108,38 +108,38 @@ class Engine:
         self.send("setoption name %s value %s" % (name, value))
 
     def go(self, position, moves, movetime=None, wtime=None, btime=None, winc=None, binc=None, byo=None, depth=None, nodes=None):
-        self.send("position sfen %s moves %s" % (position, " ".join(moves)))
-        print("position sfen %s moves %s" % (position, " ".join(moves)))
+        if position != "startpos":
+            position = "sfen " + position
+        self.send("position %s moves %s" % (position, " ".join(moves)))
+        print("position %s moves %s" % (position, " ".join(moves)))
 
         builder = []
         builder.append("go")
         if movetime is not None:
             builder.append("movetime")
             builder.append(str(movetime))
-        else:
-            builder.append("movetime")
-            builder.append("1500")
         if depth is not None:
             builder.append("depth")
             builder.append(str(depth))
         if nodes is not None:
             builder.append("nodes")
             builder.append(str(nodes))
+        # In Shogi and USI, black is the player to move first
         if wtime is not None:
-            builder.append("wtime")
-            builder.append(str(wtime * 10))
-        if btime is not None:
             builder.append("btime")
-            builder.append(str(btime * 10))
+            builder.append(str(wtime))
+        if btime is not None:
+            builder.append("wtime")
+            builder.append(str(btime))
         if byo is not None:
             builder.append("byoyomi")
-            builder.append(str(byo * 1000))
+            builder.append(str(byo))
         if winc is not None:
-            builder.append("winc")
-            builder.append(str(winc * 1000))
-        if binc is not None:
             builder.append("binc")
-            builder.append(str(binc * 1000))
+            builder.append(str(winc))
+        if binc is not None:
+            builder.append("winc")
+            builder.append(str(binc))
 
         self.send(" ".join(builder))
         print(" ".join(builder))
