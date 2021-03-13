@@ -2,6 +2,9 @@ import threading
 import subprocess
 import os
 import signal
+import logging
+
+logger = logging.getLogger(__name__)
 
 from util import *
 
@@ -13,7 +16,7 @@ class Engine:
 
     def set_go_commands(self, go_comm):
         self.go_commands = go_comm
-        print(self.go_commands)
+        logger.info(self.go_commands)
      
     def open_process(self, command, shell=True, _popen_lock=threading.Lock()):
         kwargs = {
@@ -82,7 +85,7 @@ class Engine:
             elif command == "option" or command.startswith("Fairy-Stockfish"):
                 pass
             else:
-                print("Unexpected engine response to usi: %s %s" % (command, arg))
+                logger.error("Unexpected engine response to usi: %s %s" % (command, arg))
 
     def isready(self):
         self.send("isready")
@@ -91,11 +94,11 @@ class Engine:
             if command == "readyok":
                 break
             elif command == "info" and arg.startswith("string Error! "):
-                print("Unexpected engine response to isready: %s %s" % (command, arg))
+                logger.error("Unexpected engine response to isready: %s %s" % (command, arg))
             elif command == "info" and arg.startswith("string "):
                 pass
             else:
-                print("Unexpected engine response to isready: %s %s" % (command, arg))
+                logger.error("Unexpected engine response to isready: %s %s" % (command, arg))
 
     def setoption(self, name, value):
         if value is True:
@@ -111,7 +114,7 @@ class Engine:
         if position != "startpos":
             position = "sfen " + position
         self.send("position %s moves %s" % (position, " ".join(moves)))
-        print("position %s moves %s" % (position, " ".join(moves)))
+        logger.info("position %s moves %s" % (position, " ".join(moves)))
 
         builder = []
         builder.append("go")
@@ -142,7 +145,7 @@ class Engine:
             builder.append(str(binc))
 
         self.send(" ".join(builder))
-        print(" ".join(builder))
+        logger.info(" ".join(builder))
 
         info = {}
         info["bestmove"] = None
@@ -213,4 +216,4 @@ class Engine:
                     if upperbound:
                         info["score"]["upperbound"] = upperbound
             else:
-                print("Unexpected engine response to go: %s %s" % (command, arg))
+                logger.error("Unexpected engine response to go: %s %s" % (command, arg))

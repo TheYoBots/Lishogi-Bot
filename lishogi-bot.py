@@ -201,6 +201,8 @@ def play_game(li, game_id, control_queue, engine_factory, user_profile, config, 
                 ponder_thread = threading.Thread(target=ponder_thread_func, args=(game, engine, ponder_board, wtime, btime, game.state["winc"], game.state["binc"], game.state["byo"]))
                 ponder_thread.start()
             li.make_move(game.id, best_move)
+        elif is_game_over(game):
+            engine.report_game_result(game, board)
 
     while not terminated:
         try:
@@ -218,9 +220,9 @@ def play_game(li, game_id, control_queue, engine_factory, user_profile, config, 
                     start_time = time.perf_counter_ns()
                     fake_thinking(config, board, game)
                     if board.turn == shogi.BLACK:
-                        print('move: {}'.format(int(len(board.move_stack) / 1 + 1)))
+                        logger.info('move: {}'.format(int(len(board.move_stack) / 1 + 1)))
                     else:
-                        print('move: {}'.format(int(len(board.move_stack) / 1 + 0.5)))
+                        logger.info('move: {}'.format(int(len(board.move_stack) / 1 + 0.5)))
 
                     best_move = None
                     ponder_move = None

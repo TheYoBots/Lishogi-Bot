@@ -1,48 +1,48 @@
-token: "xxxxxxxxxxxxxxxx"    # lishogi OAuth Token with 'play as a bot' enabled.
-url: "https://lishogi.org/"  # lishogi base URL. Do not change this unless locally hosted.
+token: "xxxxxxxxxxxxxxxx"    # Lishogi OAuth Token with 'play as a bot' enabled.
+url: "https://lishogi.org/"  # Lishogi base URL. Do not change this unless locally hosted to an external URL.
 
-engine:                      # engine settings
-  dir: "./engines/"          # dir containing engines, relative to this project
-  name: "engine_name"        # binary name of the engine to use. Make sure the engine you use is running under the USI protocol.
+engine:                      # Engine Settings.
+  dir: "./engines/"          # dir containing engines, relative to this project.
+  name: "engine_name"        # Binary name of the engine to use. Make sure the engine you use is running under the USI protocol.
   protocol: "usi"            # "usi" protocol. No other options will be accepted here.
-  ponder: false              # not supported! Setting it to 'true' will not work.
-# engine_options:            # any custom command line params to pass to the engine
+  ponder: false              # Not supported. Setting it to 'true' will not work.
+# engine_options:            # Any custom command line params to pass to the engine.
 #   cpuct: 3.1
-  usi_options:               # arbitrary USI options passed to the engine
-    Move Overhead: 5000      # increase if your bot flags games too often. 5000 is the highest accepted value.
-    Threads: 1               # max CPU threads the engine can use
-    USI_Hash: 256            # max memory (in megabytes) the engine can allocate
-#  go_commands:              # additional options to pass to the USI go command
+  usi_options:               # Arbitrary USI options passed to the engine.
+    Move Overhead: 5000      # Increase if your bot flags games too often.
+    Threads: 1               # Max CPU threads the engine can use.
+    Hash: 256                # Max memory (in megabytes) the engine can allocate.
+#  go_commands:              # Additional options to pass to the USI go command.
 #    nodes: 1                # Search so many nodes only.
 #    depth: 5                # Search depth ply only.
 #    movetime: 1000          # Integer. Search exactly movetime milliseconds.
-  silence_stderr: false      # some engines are very noisy
+  silence_stderr: false      # Some engines are very noisy.
 
-abort_time: 30               # time to abort a game in seconds when there is no activity
-fake_think_time: false       # artificially slow down the bot to pretend like it's thinking
-move_overhead: 5000          # increase if your bot flags games too often. 5000 is the highest accepted value.
+abort_time: 30               # Time in seconds after which the engine will abort the game if there is no activity.
+fake_think_time: false       # Artificially slow down the bot to pretend like it's thinking.
+move_overhead: 5000          # Increase if your bot flags games too often.
 
-challenge:                   # incoming challenges
-  concurrency: 1             # Number of games to play simultaneously. Set it at 1 for best performance and less errors.
-  sort_by: "best"            # possible values: "best", "first"
-  accept_bot: true           # accepts challenges coming from other bots. Setting this to 'true' will allow games from both human and bot, but setting it to false will allow games only from human.
+challenge:                   # Incoming challenges
+  concurrency: 1             # Number of games to play simultaneously.
+  sort_by: "best"            # Possible values here are "best", "first"
+  accept_bot: true           # Accepts challenges coming from other bots. Setting this to 'true' will allow games from both human and bot, but setting it to false will allow games only from human.
   only_bot: false            # Enable this to accept challenges only from bots. This will disable accepting challenges from human.
-  max_increment: 180         # maximum amount of increment to accaept a challenge. the max is 180. set to 0 for no increment
-  min_increment: 0           # minimum amount of increment to accept a challenge.
-  max_byoyomi: 180           # maximum amount of increment to accept a challenge. the max is 180. set to 0 for no byoyomi
-  min_byoyomi: 0             # minimum amount of increment to accept a challenge.
-  max_base: 315360000        # maximum amount of base time to accept a challenge. the max is 315360000 (10 years)
-  min_base: 0                # minimum amount of base time to accept a challenge
-  variants:                  # shogi variants to accept. Currently only 'standard and 'from position' games are allowed in lishogi.
+  max_increment: 180         # Maximum amount of increment to accaept a challenge. The max is 180. Set to 0 for no increment.
+  min_increment: 0           # Minimum amount of increment to accept a challenge.
+  max_byoyomi: 180           # Maximum amount of increment to accept a challenge. The max is 180. Set to 0 for no byoyomi.
+  min_byoyomi: 0             # Minimum amount of increment to accept a challenge.
+  max_base: 315360000        # Maximum amount of base time to accept a challenge. The max is 315360000 (10 years).
+  min_base: 0                # Minimum amount of base time to accept a challenge.
+  variants:                  # Shogi variants to accept. Currently lishogi only supports 'standard and 'from position' games.
     - standard
 #   - fromPosition
-  time_controls:             # time controls to accept
+  time_controls:             # Time controls to accept.
     - ultraBullet
     - bullet
     - blitz
     - rapid
     - classical
-#   - correspondence         # not currently supported, suggested to disable this.
-  modes:                     # game modes to accept
-    - casual                 # unrated games
-    - rated                  # rated games
+#   - correspondence
+  modes:                     # Game modes to accept.
+    - casual                 # Unrated/Casual games.
+    - rated                  # Rated games.

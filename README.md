@@ -1,7 +1,7 @@
 # Lishogi Bot
 
 [![Python Build](https://github.com/TheYoBots/Lishogi-Bot/actions/workflows/python-build.yml/badge.svg)](https://github.com/TheYoBots/Lishogi-Bot/actions/workflows/python-build.yml)
-[![Lishogi Team](https://img.shields.io/badge/Lishogi_Team-%40Team-blue.svg)](https://lishogi.org/team/yobot_v2-shogi)
+[![Lishogi Bots](https://img.shields.io/badge/Lishogi_Bots-%40Bot-blue.svg)](https://lishogi.org/player/bots)
 
 A bridge between [Lichess API](https://lichess.org/api#tag/Bot) and Lishogi USI Bots. In case you don't know English, view the [Japanese Translation here (日本語翻訳)](https://github.com/TheYoBots/Lishogi-Bot/wiki/Japanese-Translation).
 
@@ -20,7 +20,8 @@ virtualenv .venv -p python3  (if this fails you probably need to add Python3 to 
 source ./venv/bin/activate
 python3 -m pip install -r requirements.txt
 ```
-- Edit the `config.yml` file to your liking by changing the supported [variants](https://github.com/TheYoBots/Lishogi-Bot/blob/c746023ce8bc95ab7c0f3810921675a8b96610e8/config.yml#L33), [timings](https://github.com/TheYoBots/Lishogi-Bot/blob/c746023ce8bc95ab7c0f3810921675a8b96610e8/config.yml#L36), [challenge modes](https://github.com/TheYoBots/Lishogi-Bot/blob/c746023ce8bc95ab7c0f3810921675a8b96610e8/config.yml#L43) and [incoming challenges](https://github.com/TheYoBots/Lishogi-Bot/blob/c746023ce8bc95ab7c0f3810921675a8b96610e8/config.yml#L26), so that it plays shogi.
+- Copy `config.yml.default` to `config.yml`.
+- Edit the `config.yml` file to your liking by changing the supported [variants](https://github.com/TheYoBots/Lishogi-Bot/blob/c746023ce8bc95ab7c0f3810921675a8b96610e8/config.yml#L36-L38), [timings](https://github.com/TheYoBots/Lishogi-Bot/blob/c746023ce8bc95ab7c0f3810921675a8b96610e8/config.yml#L39-L45), [challenge modes](https://github.com/TheYoBots/Lishogi-Bot/blob/c746023ce8bc95ab7c0f3810921675a8b96610e8/config.yml#L46-L48) and [incoming challenges](https://github.com/TheYoBots/Lishogi-Bot/blob/c746023ce8bc95ab7c0f3810921675a8b96610e8/config.yml#L25-L35), so that it plays shogi the way you want it to.
 
 ### Windows:
 - **NOTE:** Only Python 3.7 or later is supported!
@@ -37,7 +38,8 @@ python3 -m pip install -r requirements.txt
 `./.venv/Scripts/activate` (`.\.venv\Scripts\activate` should work in cmd in administator mode) (This may not work on Windows, and in this case you need to execute "Set-ExecutionPolicy RemoteSigned" first and choose "Y" there (you may need to run Powershell as administrator). After you executed the script, change execution policy back with "Set-ExecutionPolicy Restricted" and pressing "Y")
 
 `pip install -r requirements.txt`
-- Edit the `config.yml` file to your liking by changing the supported [variants](https://github.com/TheYoBots/Lishogi-Bot/blob/c746023ce8bc95ab7c0f3810921675a8b96610e8/config.yml#L33), [timings](https://github.com/TheYoBots/Lishogi-Bot/blob/c746023ce8bc95ab7c0f3810921675a8b96610e8/config.yml#L36), [challenge modes](https://github.com/TheYoBots/Lishogi-Bot/blob/c746023ce8bc95ab7c0f3810921675a8b96610e8/config.yml#L43) and [incoming challenges](https://github.com/TheYoBots/Lishogi-Bot/blob/c746023ce8bc95ab7c0f3810921675a8b96610e8/config.yml#L26), so that it plays shogi.
+- Copy `config.yml.default` to `config.yml`.
+- Edit the `config.yml` file to your liking by changing the supported [variants](https://github.com/TheYoBots/Lishogi-Bot/blob/c746023ce8bc95ab7c0f3810921675a8b96610e8/config.yml#L36-L38), [timings](https://github.com/TheYoBots/Lishogi-Bot/blob/c746023ce8bc95ab7c0f3810921675a8b96610e8/config.yml#L39-L45), [challenge modes](https://github.com/TheYoBots/Lishogi-Bot/blob/c746023ce8bc95ab7c0f3810921675a8b96610e8/config.yml#L46-L48) and [incoming challenges](https://github.com/TheYoBots/Lishogi-Bot/blob/c746023ce8bc95ab7c0f3810921675a8b96610e8/config.yml#L25-35), so that it plays shogi the way you want it to.
 
 ## Lishogi OAuth
 - Create an account for your bot on [Lishogi.org](https://lishogi.org/signup).

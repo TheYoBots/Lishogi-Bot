@@ -3,6 +3,9 @@ import shogi
 import backoff
 import subprocess
 from util import *
+import logging
+
+logger = logging.getLogger(__name__)
 
 import engine_ctrl
 
@@ -45,13 +48,16 @@ class EngineWrapper:
     def name(self):
         return self.engine.name
 
+    def report_game_result(self, game, board):
+        pass
+
     def quit(self):
         self.engine.kill_process()
 
     def print_handler_stats(self, info, stats):
         for stat in stats:
             if stat in info:
-                print("    {}: {}".format(stat, info[stat]))
+                logger.info("    {}: {}".format(stat, info[stat]))
 
     def get_handler_stats(self, info, stats):
         stats_str = []
@@ -134,3 +140,6 @@ class USIEngine(EngineWrapper):
             rating = game.opponent.rating if game.opponent.rating is not None else "none"
             title = game.opponent.title if game.opponent.title else "none"
             player_type = "computer" if title == "BOT" else "human"
+    def report_game_result(self, game, board):
+        self.engine.protocol._position(board)
+    
