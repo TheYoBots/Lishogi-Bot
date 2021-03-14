@@ -140,6 +140,6 @@ class USIEngine(EngineWrapper):
             rating = game.opponent.rating if game.opponent.rating is not None else "none"
             title = game.opponent.title if game.opponent.title else "none"
             player_type = "computer" if title == "BOT" else "human"
+    
     def report_game_result(self, game, board):
         self.engine.protocol._position(board)
-    
