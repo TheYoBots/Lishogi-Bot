@@ -1,4 +1,4 @@
-token: "xxxxxxxxxxxxxxxx"    # Lishogi OAuth Token (which can be taken from https://lishogi.org/account/oauth/token/create?scopes[]=bot:play) with 'Play games with the bot API' (bot:play scopes) enabled.
+token: "xxxxxxxxxxxxxxxx"    # Lishogi OAuth Token (which can be taken from https://lishogi.org/account/oauth/token/create?scopes[]=bot:play&description=Lishogi+Bot+Token) with 'Play games with the bot API' ('bot:play' scopes) enabled.
 url: "https://lishogi.org/"  # Lishogi base URL. Do not change this unless locally hosted to an external URL.
 
 engine:                      # Engine Settings.
