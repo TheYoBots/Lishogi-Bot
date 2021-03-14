@@ -58,7 +58,6 @@ python3 -m pip install -r requirements.txt
 - Using this process any engine can be added to the bot.
 - **Note: The engine you add has to be running under the USI protocol, then only it will work**
 
-
 ## Lishogi Upgrade to Bot Account
 
 **WARNING** This is irreversible. Read more about [upgrading to bot account](https://lichess.org/api#operation/botAccountUpgrade).
