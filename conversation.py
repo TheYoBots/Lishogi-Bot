@@ -20,12 +20,13 @@ class Conversation:
 
     def command(self, line, game, cmd):
         if cmd == "commands" or cmd == "help":
-            self.send_reply(line, "Supported commands: !name, !wait, !howto, !eval, !queue")
+            self.send_reply(line, "Supported commands: !name, !wait (only applicable at the start of the game), !howto, !queue")
         elif cmd == "wait" and game.is_abortable():
             game.ping(60, 120)
             self.send_reply(line, "Waiting 60 seconds...")
         elif cmd == "name":
-            self.send_reply(line, "lishogi-bot v1.0.0")
+            name = game.me.name
+            self.send_reply(line, "{} lishogi-bot v1.0.0".format.(name))
         elif cmd == "howto":
             self.send_reply(line, "How to run your own bot: https://github.com/TheYoBots/Lishogi-Bot")
         elif cmd == "eval" and line.room == "spectator":
