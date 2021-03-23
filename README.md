@@ -15,9 +15,9 @@ A bridge between [Lichess API](https://lichess.org/api#tag/Bot) and Lishogi USI 
 - Install pip: `apt install python3-pip`
 - Install virtualenv: `pip install virtualenv`.
 - Setup virtualenv: `apt install python3-venv`
-```
-python3 -m venv venv  (if this fails you probably need to add Python3 to your PATH)
-virtualenv .venv -p python3  (if this fails you probably need to add Python3 to your PATH)
+```bash
+python3 -m venv venv  # if this fails you probably need to add Python3 to your PATH
+virtualenv .venv -p python3  # if this fails you probably need to add Python3 to your PATH
 source ./venv/bin/activate
 python3 -m pip install -r requirements.txt
 ```
@@ -68,7 +68,7 @@ python3 -m pip install -r requirements.txt
 
 - You can specify a different config file with the `--config` argument.
 - Here's an example systemd service definition:
-```
+```bash
 [Unit]
 Description=Lishogi-Bot
 After=network-online.target
