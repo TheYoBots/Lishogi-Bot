@@ -77,7 +77,7 @@ Wants=network-online.target
 [Service]
 Environment="PYTHONUNBUFFERED=1"
 ExecStart=/usr/bin/python3/home/User/Lishogi-Bot/Lishogi-Bot.py
-WorkingDirectory=/home/thibault/lichess-bot/
+WorkingDirectory=/home/User/lishogi-bot/
 User=UserName
 Group=GroupName
 Restart=always
