@@ -158,7 +158,7 @@ def start(li, user_profile, engine_factory, config, logging_level, log_filename)
 
             control_queue.task_done()
                     
-    logger.info("Terminated")
+    logger.info("    Terminated")
     control_stream.terminate()
     control_stream.join()
     logging_listener.terminate()
