@@ -75,17 +75,17 @@ class Game:
         self.clock_increment = clock.get("increment", 0)
         self.perf_name = json.get("perf").get("name") if json.get("perf") else "{perf?}"
         self.variant_name = json.get("variant")["name"]
-        self.white = Player(json.get("white"))
-        self.black = Player(json.get("black"))
+        self.sente = Player(json.get("sente"))
+        self.gote = Player(json.get("gote"))
         self.initial_fen = json.get("initialFen")
         self.state = json.get("state")
-        self.is_white = bool(self.white.name and self.white.name.lower() == username.lower())
-        self.my_color = "white" if self.is_white else "black"
-        self.opponent_color = "black" if self.is_white else "white"
-        self.me = self.white if self.is_white else self.black
-        self.opponent = self.black if self.is_white else self.white
+        self.is_sente = bool(self.sente.name and self.sente.name.lower() == username.lower())
+        self.my_color = "sente" if self.is_sente else "gote"
+        self.opponent_color = "gote" if self.is_sente else "sente"
+        self.me = self.sente if self.is_sente else self.gote
+        self.opponent = self.gote if self.is_sente else self.sente
         self.base_url = base_url
-        self.white_starts = self.initial_fen == "startpos" or self.initial_fen.split()[1] == "w"
+        self.sente_starts = self.initial_fen == "startpos" or self.initial_fen.split()[1] == "b"
         self.abort_at = time.time() + abort_time
         self.terminate_at = time.time() + (self.clock_initial + self.clock_increment) / 1000 + abort_time + 60
 
@@ -107,7 +107,7 @@ class Game:
         return time.time() > self.terminate_at
 
     def my_remaining_seconds(self):
-        return (self.state["wtime"] if self.is_white else self.state["btime"]) / 1000
+        return (self.state["btime"] if self.is_sente else self.state["wtime"]) / 1000
 
     def __str__(self):
         return "{} {} vs {}".format(self.url(), self.perf_name, self.opponent.__str__())
