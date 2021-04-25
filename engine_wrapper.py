@@ -36,7 +36,7 @@ class EngineWrapper:
     def first_search(self, board, movetime):
         pass
 
-    def search(self, game, board, wtime, btime, winc, binc):
+    def search(self, game, board, btime, wtime, binc, winc):
         pass
 
     def print_stats(self):
@@ -84,7 +84,7 @@ class USIEngine(EngineWrapper):
         best_move, _ = self.engine.go(board.sfen(), "", movetime=movetime)
         return best_move
 
-    def search_with_ponder(self, game, board, wtime, btime, winc, binc, byo, ponder=False):
+    def search_with_ponder(self, game, board, btime, wtime, binc, winc, byo, ponder=False):
         moves = [m.usi() for m in list(board.move_stack)]
         cmds = self.go_commands        
         if len(cmds) > 0:
@@ -100,25 +100,25 @@ class USIEngine(EngineWrapper):
                best_move, ponder_move = self.engine.go(
                    game.initial_fen,
                    moves,
-                   wtime=wtime,
                    btime=btime,
-                   winc=winc,
+                   wtime=wtime,
                    binc=binc,
+                   winc=winc,
                    byo=byo,
                    #ponder=ponder
                )
         return (best_move, ponder_move)
 
-    def search(self, game, board, wtime, btime, winc, binc):
+    def search(self, game, board, btime, wtime, binc, winc):
         cmds = self.go_commands
         moves = [m.usi() for m in list(board.move_stack)]
         best_move, _ = self.engine.go(
             game.initial_fen,
             moves,
-            wtime=wtime,
             btime=btime,
-            winc=winc,
+            wtime=wtime,
             binc=binc,
+            winc=winc,
             depth=cmds.get("depth"),
             nodes=cmds.get("nodes"),
             movetime=cmds.get("movetime")

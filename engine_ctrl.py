@@ -110,7 +110,7 @@ class Engine:
 
         self.send("setoption name %s value %s" % (name, value))
 
-    def go(self, position, moves, movetime=None, wtime=None, btime=None, winc=None, binc=None, byo=None, depth=None, nodes=None):
+    def go(self, position, moves, movetime=None, btime=None, wtime=None, binc=None, winc=None, byo=None, depth=None, nodes=None):
         if position != "startpos":
             position = "sfen " + position
         self.send("position %s moves %s" % (position, " ".join(moves)))
