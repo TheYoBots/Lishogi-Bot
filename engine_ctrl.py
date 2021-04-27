@@ -128,21 +128,21 @@ class Engine:
             builder.append("nodes")
             builder.append(str(nodes))
         # In Shogi and USI, black is the player to move first
-        if wtime is not None:
-            builder.append("btime")
-            builder.append(str(wtime))
         if btime is not None:
-            builder.append("wtime")
+            builder.append("btime")
             builder.append(str(btime))
+        if wtime is not None:
+            builder.append("wtime")
+            builder.append(str(wtime))
         if byo is not None:
             builder.append("byoyomi")
             builder.append(str(byo))
-        if winc is not None:
-            builder.append("binc")
-            builder.append(str(winc))
         if binc is not None:
-            builder.append("winc")
+            builder.append("binc")
             builder.append(str(binc))
+        if winc is not None:
+            builder.append("winc")
+            builder.append(str(winc))
 
         self.send(" ".join(builder))
         logger.info(" ".join(builder))
