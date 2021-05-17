@@ -9,7 +9,7 @@ A bridge between [Lichess API](https://lichess.org/api#tag/Bot) and Lishogi USI 
 
 ### Mac/Linux:
 
-- **NOTE:** Only Python 3.7 or later is supported!
+- **NOTE: Only Python 3.7 or later is supported!**
 - Download the repo into Lishogi-Bot directory.
 - Navigate to the directory in cmd/Terminal: `cd Lishogi-Bot`.
 - Install pip: `apt install python3-pip`.
@@ -22,11 +22,11 @@ source ./venv/bin/activate
 python3 -m pip install -r requirements.txt
 ```
 - Copy `config.yml.default` to `config.yml`.
-- Edit the `config.yml` file to your liking by changing the supported [variants](https://github.com/TheYoBots/Lishogi-Bot/blob/master/config.yml.default#L36-L38), [timings](https://github.com/TheYoBots/Lishogi-Bot/blob/master/config.yml.default#L39-L45), [challenge modes](https://github.com/TheYoBots/Lishogi-Bot/blob/master/config.yml.default#L46-L48) and [incoming challenges](https://github.com/TheYoBots/Lishogi-Bot/blob/master/config.yml.default#L25-L35), so that it plays shogi the way you want it to.
+- Edit the `config.yml` file to your liking by changing the supported [variants](https://github.com/TheYoBots/Lishogi-Bot/blob/master/config.yml.default#L42-L44), [timings](https://github.com/TheYoBots/Lishogi-Bot/blob/master/config.yml.default#L45-L51), [challenge modes](https://github.com/TheYoBots/Lishogi-Bot/blob/master/config.yml.default#L52-L54) and [incoming challenges](https://github.com/TheYoBots/Lishogi-Bot/blob/master/config.yml.default#L31-L41), so that it plays shogi the way you want it to.
 
 ### Windows:
 
-- **NOTE:** Only Python 3.7 or later is supported!
+- **NOTE: Only Python 3.7 or later is supported!**
 - If you don't have Python, you may download it [here](https://www.python.org/downloads/). When installing it, enable `add Python to PATH`, then go to custom installation (this may be not necessary, but on some computers it won't work otherwise) and enable all options (especially `install for all users`), except the last . It's better to install Python in a path without spaces, like `C:\Python\`.
 - To type commands it's better to use PowerShell. Go to Start menu and type `PowerShell`.
 - Then you may need to upgrade pip. Execute `python -m pip install --upgrade pip` in PowerShell.
@@ -41,15 +41,15 @@ python -m venv .venv  # if this fails you probably need to add Python to your PA
 pip install -r requirements.txt
 ```
 - Copy `config.yml.default` to `config.yml`.
-- Edit the `config.yml` file to your liking by changing the supported [variants](https://github.com/TheYoBots/Lishogi-Bot/blob/master/config.yml.default#L36-L38), [timings](https://github.com/TheYoBots/Lishogi-Bot/blob/master/config.yml.default#L39-L45), [challenge modes](https://github.com/TheYoBots/Lishogi-Bot/blob/master/config.yml.default#L46-L48) and [incoming challenges](https://github.com/TheYoBots/Lishogi-Bot/blob/master/config.yml.default#L25-L35), so that it plays shogi the way you want it to.
+- Edit the `config.yml` file to your liking by changing the supported [variants](https://github.com/TheYoBots/Lishogi-Bot/blob/master/config.yml.default#L42-L44), [timings](https://github.com/TheYoBots/Lishogi-Bot/blob/master/config.yml.default#L45-L51), [challenge modes](https://github.com/TheYoBots/Lishogi-Bot/blob/master/config.yml.default#L52-L54) and [incoming challenges](https://github.com/TheYoBots/Lishogi-Bot/blob/master/config.yml.default#L31-L41), so that it plays shogi the way you want it to.
 
 ## Lishogi OAuth
 
 - Create an account for your bot on [Lishogi.org](https://lishogi.org/signup).
-- **NOTE:** If you have previously played games on an existing account, you will not be able to use it as a bot account.
-- Once your account has been created and you are logged in, [create a personal OAuth2 token](https://lishogi.org/account/oauth/token/create) with the ["Play games with the bot API" ('play:bot' scopes)](https://lishogi.org/account/oauth/token/create?scopes[]=bot:play&description=Lishogi+Bot+Token) selected and a description added.
+- **NOTE: If you have previously played games on an existing account, you will not be able to use it as a bot account.**
+- Once your account has been created and you are logged in, [create a personal OAuth2 token with the "Play games with the bot API" ('play:bot' scopes)](https://lishogi.org/account/oauth/token/create?scopes[]=bot:play&scopes[]=challenge:read&scopes[]=challenge:write&description=Lishogi+Bot+Token) selected and a description added.
 - A `token` e.g. `xxxxxxxxxxxxxxxx` will be displayed. Store this in `config.yml` as the `token` field.
-- **NOTE:** You won't see this token again on Lishogi, so save it or store it somewhere.
+- **NOTE: You won't see this token again on Lishogi, so save it or store it somewhere.**
 
 ## Setup Engine
 
@@ -60,7 +60,7 @@ pip install -r requirements.txt
 
 ## Lishogi Upgrade to Bot Account
 
-**WARNING** This is irreversible. Read more about [upgrading to bot account](https://lichess.org/api#operation/botAccountUpgrade).
+**WARNING: This is irreversible. Read more about [upgrading to bot account](https://lichess.org/api#operation/botAccountUpgrade).**
 - run `python lishogi-bot.py -u`
 - for more verbrose logs run `python lishogi-bot.py -v`
 
