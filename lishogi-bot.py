@@ -33,7 +33,7 @@ terminated = False
 
 def signal_handler(signal, frame):
     global terminated
-    logger.debug("    Recieved SIGINT. Terminating client.")
+    logger.debug("Recieved SIGINT. Terminating client.")
     terminated = True
 
     
@@ -48,7 +48,7 @@ def upgrade_account(li):
     if li.upgrade_to_bot_account() is None:
         return False
 
-    logger.info("    Succesfully upgraded to Bot Account!")
+    logger.info("Succesfully upgraded to Bot Account!")
     return True
 
 
@@ -66,6 +66,11 @@ def watch_control_stream(control_queue, li):
         except:
             pass
 
+
+def do_correspondence_ping(control_queue, period):
+    while not terminated:
+        time.sleep(period)
+        control_queue.put_nowait({"type": "correspondence_ping"})
         
 def listener_configurer(level, filename):
     logging.basicConfig(level=level, filename=filename,
@@ -95,12 +100,19 @@ def game_logging_configurer(queue, level):
 def start(li, user_profile, engine_factory, config, logging_level, log_filename):
     challenge_config = config["challenge"]
     max_games = challenge_config.get("concurrency", 1)
-    logger.info("    You're now connected to {} and awaiting challenges.".format(config["url"]))
+    logger.info("You're now connected to {} and awaiting challenges.".format(config["url"]))
     manager = multiprocessing.Manager()
     challenge_queue = manager.list()
     control_queue = manager.Queue()
     control_stream = multiprocessing.Process(target=watch_control_stream, args=[control_queue, li])
     control_stream.start()
+    correspondence_cfg = config.get("correspondence", {}) or {}
+    correspondence_checkin_period = correspondence_cfg.get("checkin_period", 600)
+    correspondence_pinger = multiprocessing.Process(target=do_correspondence_ping, args=[control_queue, correspondence_checkin_period])
+    correspondence_pinger.start()
+    correspondence_queue = manager.Queue()
+    correspondence_queue.put("")
+    wait_for_correspondence_ping = False
     busy_processes = 0
     queued_processes = 0
 
@@ -132,41 +144,60 @@ def start(li, user_profile, engine_factory, config, logging_level, log_filename)
                 else:
                     try:
                         li.decline_challenge(chlng.id)
-                        logger.info("    Decline {}".format(chlng))
+                        logger.info("Decline {}".format(chlng))
                     except:
                         pass
             elif event["type"] == "gameStart":
                 if queued_processes <= 0:
-                    logger.debug("    Something went wrong. Game is starting and we don't have a queued process")
+                    logger.debug("Something went wrong. Game is starting and we don't have a queued process")
                 else:
                     queued_processes -= 1
                 busy_processes += 1
                 logger.info("--- Process Used. Total Queued: {}. Total Used: {}".format(queued_processes, busy_processes))
                 game_id = event["game"]["id"]
-                pool.apply_async(play_game, [li, game_id, control_queue, engine_factory, user_profile, config, challenge_queue, logging_queue, game_logging_configurer, logging_level])
+                pool.apply_async(play_game, [li, game_id, control_queue, engine_factory, user_profile, config, challenge_queue, correspondence_queue, logging_queue, game_logging_configurer, logging_level])
+
+            if event["type"] == "correspondence_ping" or (event["type"] == "local_game_done" and not wait_for_correspondence_ping):
+                if event["type"] == "correspondence_ping" and wait_for_correspondence_ping:
+                    correspondence_queue.put("")
+
+                wait_for_correspondence_ping = False
+                while (busy_processes + queued_processes) < max_games:
+                    game_id = correspondence_queue.get()
+                    # stop checking in on games if we have checked in on all games since the last correspondence_ping
+                    if not game_id:
+                        wait_for_correspondence_ping = True
+                        break
+                    else:
+                        busy_processes += 1
+                        logger.info("--- Process Used. Total Queued: {}. Total Used: {}".format(queued_processes, busy_processes))
+                        pool.apply_async(play_game, [li, game_id, control_queue, engine_factory, user_profile, config, challenge_queue, correspondence_queue, logging_queue, game_logging_configurer, logging_level])
+
             while ((queued_processes + busy_processes) < max_games and challenge_queue):  # keep processing the queue until empty or max_games is reached
                 chlng = challenge_queue.pop(0)
                 try:
-                    logger.info("    Accept {}".format(chlng))
+                    logger.info("Accept {}".format(chlng))
                     queued_processes += 1
                     li.accept_challenge(chlng.id)
                     logger.info("--- Process Queue. Total Queued: {}. Total Used: {}".format(queued_processes, busy_processes))
                 except (HTTPError, ReadTimeout) as exception:
                     if isinstance(exception, HTTPError) and exception.response.status_code == 404:  # ignore missing challenge
-                        logger.info("    Skip missing {}".format(chlng))
+                        logger.info("Skip missing {}".format(chlng))
                     queued_processes -= 1
 
             control_queue.task_done()
                     
-    logger.info("    Terminated")
+    logger.info("Terminated")
     control_stream.terminate()
     control_stream.join()
+    correspondence_pinger.terminate()
+    correspondence_pinger.join()
     logging_listener.terminate()
     logging_listener.join()
 
 
 @backoff.on_exception(backoff.expo, BaseException, max_time=600, giveup=is_final)
-def play_game(li, game_id, control_queue, engine_factory, user_profile, config, challenge_queue, logging_queue, logging_configurer, logging_level):
+def play_game(li, game_id, control_queue, engine_factory, user_profile, config, challenge_queue, correspondence_queue, logging_queue, logging_configurer, logging_level):
     logging_configurer(logging_queue, logging_level)
     logger = logging.getLogger(__name__)
 
@@ -182,6 +213,10 @@ def play_game(li, game_id, control_queue, engine_factory, user_profile, config, 
     conversation = Conversation(game, engine, li, __version__, challenge_queue)
 
     logger.info("+++ {}".format(game))
+
+    is_correspondence = game.perf_name == "Correspondence"
+    correspondence_cfg = config.get("correspondence", {}) or {}
+    correspondence_move_time = correspondence_cfg.get("move_time", 60) * 1000
 
     engine_cfg = config["engine"]
     is_usi = engine_cfg["protocol"] == "usi"
@@ -201,8 +236,7 @@ def play_game(li, game_id, control_queue, engine_factory, user_profile, config, 
         best_move, ponder_move = engine.search_with_ponder(game, board, btime, wtime, binc, winc, byo, True)
         ponder_results[game.id] = ( best_move, ponder_move )
 
-    engine.set_time_control(game)
-    logger.debug('    Game state: {}'.format(game.state))
+    logger.debug("Game state: {}".format(game.state))
 
     if len(board.move_stack) < 2:
         while not terminated:
@@ -226,7 +260,7 @@ def play_game(li, game_id, control_queue, engine_factory, user_profile, config, 
                 btime = max(0, btime - move_overhead - int((time.perf_counter_ns() - start_time) / 1000000))
             else:
                 wtime = max(0, wtime - move_overhead - int((time.perf_counter_ns() - start_time) / 1000000))
-            logger.info("    Searching for btime {} wtime {}".format(btime, wtime))
+            logger.info("Searching for btime {} wtime {}".format(btime, wtime))
             best_move, ponder_move = engine.search_with_ponder(game, board, btime, wtime, game.state["binc"], game.state["winc"], game.state["byo"])
             engine.print_stats()
 
@@ -240,20 +274,23 @@ def play_game(li, game_id, control_queue, engine_factory, user_profile, config, 
                     btime = max(0, btime - move_overhead - int((time.perf_counter_ns() - start_time) / 1000000) + game.state["binc"])
                 else:
                     wtime = max(0, wtime - move_overhead - int((time.perf_counter_ns() - start_time) / 1000000) + game.state["winc"])
-                logger.info("    Pondering for btime {} wtime {}".format(btime, wtime))
+                logger.info("Pondering for btime {} wtime {}".format(btime, wtime))
                 ponder_thread = threading.Thread(target=ponder_thread_func, args=(game, engine, ponder_board, btime, wtime, game.state["binc"], game.state["winc"], game.state["byo"]))
                 ponder_thread.start()
             li.make_move(game.id, best_move)
             time.sleep(delay_seconds)
         elif is_game_over(game):
             engine.report_game_result(game, board)
+        elif len(board.move_stack) == 0:
+            correspondence_disconnect_time = correspondence_cfg.get("disconnect_time", 300)
 
+    correspondence_disconnect_time = 0
     while not terminated:
         try:
             binary_chunk = next(lines)
         
             upd = json.loads(binary_chunk.decode('utf-8')) if binary_chunk else None
-            logger.debug('    Update: {}'.format(upd))
+            logger.debug("Update: {}".format(upd))
             u_type = upd["type"] if upd else "ping"
             if u_type == "chatLine":
                 conversation.react(ChatLine(upd), game)
@@ -266,6 +303,7 @@ def play_game(li, game_id, control_queue, engine_factory, user_profile, config, 
                     start_time = time.perf_counter_ns()
                     fake_thinking(config, board, game)
                     print_move_number(board)
+                    correspondence_disconnect_time = correspondence_cfg.get("disconnect_time", 300)
 
                     best_move = None
                     ponder_move = None
@@ -280,7 +318,7 @@ def play_game(li, game_id, control_queue, engine_factory, user_profile, config, 
                                 btime = max(0, btime - move_overhead - int((time.perf_counter_ns() - start_time) / 1000000))
                             else:
                                 wtime = max(0, wtime - move_overhead - int((time.perf_counter_ns() - start_time) / 1000000))
-                            logger.info("    Searching for btime {} wtime {}".format(btime, wtime))
+                            logger.info("Searching for btime {} wtime {}".format(btime, wtime))
                             best_move, ponder_move = engine.search_with_ponder(game, board, btime, wtime, upd["binc"], upd["winc"], upd["byo"])
                             engine.print_stats()
 
@@ -293,7 +331,7 @@ def play_game(li, game_id, control_queue, engine_factory, user_profile, config, 
                                 btime = max(0, btime - move_overhead - int((time.perf_counter_ns() - start_time) / 1000000) + upd["binc"])
                             else:
                                 wtime = max(0, wtime - move_overhead - int((time.perf_counter_ns() - start_time) / 1000000) + upd["winc"])
-                            logger.info("    Pondering for btime {} wtime {}".format(btime, wtime))
+                            logger.info("Pondering for btime {} wtime {}".format(btime, wtime))
                             ponder_thread = threading.Thread(target=ponder_thread_func, args=(game, engine, ponder_board, btime, wtime, upd["binc"], upd["winc"], upd["byo"]))
                             ponder_thread.start()
                         li.make_move(game.id, best_move)
@@ -301,14 +339,16 @@ def play_game(li, game_id, control_queue, engine_factory, user_profile, config, 
                         play_first_move(game, engine, board, li)
                         deferredFirstMove = False
                 wb = 'w' if board.turn == shogi.BLACK else 'b'
-                game.ping(config.get("abort_time", 30), (upd[f"{wb}time"] + upd[f"{wb}inc"]) / 1000 + 60)
+                game.ping(config.get("abort_time", 30), (upd[f"{wb}time"] + upd[f"{wb}inc"]) / 1000 + 60, correspondence_disconnect_time)
             elif u_type == "ping":
-                if game.should_abort_now():
-                    logger.info("    Aborting {} by lack of activity".format(game.url()))
+                if is_correspondence and not is_engine_move(game, board) and game.should_disconnect_now():
+                    break
+                elif game.should_abort_now():
+                    logger.info("Aborting {} by lack of activity".format(game.url()))
                     li.abort(game.id)
                     break
                 elif game.should_terminate_now():
-                    logger.info("    Terminating {} by lack of activity".format(game.url()))
+                    logger.info("Terminating {} by lack of activity".format(game.url()))
                     if game.is_abortable():
                         li.abort(game.id)
                     break
@@ -318,15 +358,22 @@ def play_game(li, game_id, control_queue, engine_factory, user_profile, config, 
         except StopIteration:
             break
 
-    logger.info("--- {} Game over".format(game.url()))
     engine.stop()
     if not ( ponder_thread is None ):
         ponder_thread.join()
 
-    # This can raise queue.NoFull, but that should only happen if we're not processing
-    # events fast enough and in this case I believe the exception should be raised
+    if is_correspondence and not is_game_over(game):
+        logger.info("--- Disconnecting from {}".format(game.url()))
+        correspondence_queue.put(game_id)
+    else:
+        logger.info("--- {} Game over".format(game.url()))
+
     control_queue.put_nowait({"type": "local_game_done"})
 
+
+def choose_move_time(engine, board, search_time, ponder):
+    logger.info("Searching for time {}".format(search_time))
+    return engine.search_for(board, search_time, ponder)
 
 def play_first_move(game, engine, board, li):
     moves = game.state["moves"].split()
@@ -357,7 +404,7 @@ def fake_thinking(config, board, game):
 
 def print_move_number(board):
     logger.info("")
-    logger.info("    move: {}".format(len(board.move_stack) // 1 + 1))
+    logger.info("move: {}".format(len(board.move_stack) // 1 + 1))
 
 
 def setup_board(game):
@@ -389,7 +436,7 @@ def update_board(board, move):
     if board.is_legal(usi_move):
         board.push(usi_move)
     else:
-        logger.debug('    Ignoring illegal move {} on board {}'.format(makeusi(move), board.sfen()))
+        logger.debug("Ignoring illegal move {} on board {}".format(makeusi(move), board.sfen()))
     return board
 
 
@@ -422,7 +469,7 @@ if __name__ == "__main__":
     user_profile = li.get_profile()
     username = user_profile["username"]
     is_bot = user_profile.get("title") == "BOT"
-    logger.info("    Welcome {}!".format(username))
+    logger.info("Welcome {}!".format(username))
 
     if args.u and not is_bot:
         is_bot = upgrade_account(li)
@@ -431,4 +478,4 @@ if __name__ == "__main__":
         engine_factory = partial(engine_wrapper.create_engine, CONFIG)
         start(li, user_profile, engine_factory, CONFIG, logging_level, args.logfile)
     else:
-        logger.error("    {} is not a bot account. Please upgrade it to a bot account!".format(user_profile["username"]))
+        logger.error("{} is not a bot account. Please upgrade it to a bot account!".format(user_profile["username"]))

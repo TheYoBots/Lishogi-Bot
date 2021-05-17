@@ -30,7 +30,7 @@ class EngineWrapper:
     def __init__(self, board, commands, options=None, silence_stderr=False):
         pass
 
-    def set_time_control(self, game):
+    def search_for(self, board, movetime):
         pass
 
     def first_search(self, board, movetime):
@@ -57,7 +57,7 @@ class EngineWrapper:
     def print_handler_stats(self, info, stats):
         for stat in stats:
             if stat in info:
-                logger.info("    {}: {}".format(stat, info[stat]))
+                logger.info("{}: {}".format(stat, info[stat]))
 
     def get_handler_stats(self, info, stats):
         stats_str = []

@@ -85,7 +85,7 @@ class Engine:
             elif command == "option" or command.startswith("Fairy-Stockfish"):
                 pass
             else:
-                logger.error("    Unexpected engine response to usi: %s %s" % (command, arg))
+                logger.error("Unexpected engine response to usi: %s %s" % (command, arg))
 
     def isready(self):
         self.send("isready")
@@ -94,11 +94,11 @@ class Engine:
             if command == "readyok":
                 break
             elif command == "info" and arg.startswith("string Error! "):
-                logger.error("    Unexpected engine response to isready: %s %s" % (command, arg))
+                logger.error("Unexpected engine response to isready: %s %s" % (command, arg))
             elif command == "info" and arg.startswith("string "):
                 pass
             else:
-                logger.error("    Unexpected engine response to isready: %s %s" % (command, arg))
+                logger.error("Unexpected engine response to isready: %s %s" % (command, arg))
 
     def setoption(self, name, value):
         if value is True:
@@ -114,10 +114,10 @@ class Engine:
         if position != "startpos":
             position = "sfen " + position
         self.send("position %s moves %s" % (position, " ".join(moves)))
-        logger.info("    position %s moves %s" % (position, " ".join(moves)))
+        logger.info("position %s moves %s" % (position, " ".join(moves)))
 
         builder = []
-        builder.append("    go")
+        builder.append("go")
         if movetime is not None:
             builder.append("movetime")
             builder.append(str(movetime))
@@ -216,4 +216,4 @@ class Engine:
                     if upperbound:
                         info["score"]["upperbound"] = upperbound
             else:
-                logger.error("    Unexpected engine response to go: %s %s" % (command, arg))
+                logger.error("Unexpected engine response to go: %s %s" % (command, arg))

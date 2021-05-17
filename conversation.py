@@ -14,7 +14,7 @@ class Conversation:
     command_prefix = "!"
 
     def react(self, line, game):
-        logger.info("    *** {} [{}] {}: {}".format(self.game.url(), line.room, line.username, line.text.encode("utf-8")))
+        logger.info("*** {} [{}] {}: {}".format(self.game.url(), line.room, line.username, line.text.encode("utf-8")))
         if (line.text[0] == self.command_prefix):
             self.command(line, game, line.text[1:].lower())
 
