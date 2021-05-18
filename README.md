@@ -47,7 +47,7 @@ pip install -r requirements.txt
 
 - Create an account for your bot on [Lishogi.org](https://lishogi.org/signup).
 - **NOTE: If you have previously played games on an existing account, you will not be able to use it as a bot account.**
-- Once your account has been created and you are logged in, [create a personal OAuth2 token with the "Play games with the bot API" ('play:bot' scopes)](https://lishogi.org/account/oauth/token/create?scopes[]=bot:play&scopes[]=challenge:read&scopes[]=challenge:write&description=Lishogi+Bot+Token) selected and a description added.
+- Once your account has been created and you are logged in, [create a personal OAuth2 token with the "Play games with the bot API" ('play:bot' scopes), "Read incoming challenges" ('challenge:read' scopes) and "Create, accept, decline challenges" ('challenge:write' scopes)](https://lishogi.org/account/oauth/token/create?scopes[]=bot:play&scopes[]=challenge:read&scopes[]=challenge:write&description=Lishogi+Bot+Token) selected and a description added.
 - A `token` e.g. `xxxxxxxxxxxxxxxx` will be displayed. Store this in `config.yml` as the `token` field.
 - **NOTE: You won't see this token again on Lishogi, so save it or store it somewhere.**
 
