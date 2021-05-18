@@ -26,7 +26,7 @@ logger = logging.getLogger(__name__)
 
 from http.client import RemoteDisconnected
 
-__version__ = "1.0.0"
+__version__ = "1.1.0"
 
 terminated = False
 
