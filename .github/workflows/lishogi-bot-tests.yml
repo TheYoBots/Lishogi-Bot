@@ -1,7 +1,7 @@
-# This workflow will install Python dependencies, run tests and lint
+# This workflow will install Python dependencies, run lishogi-bot directly in the workflow
 # For more information see: https://help.github.com/actions/language-and-framework-guides/using-python-with-github-actions
 
-name: Lishogi Bot Tests
+name: Lishogi Bot Build
 
 on:
   push:
@@ -10,16 +10,20 @@ on:
     branches: [ master ]
 
 jobs:
-  build:
+  windows:
 
-    runs-on: windows-latest
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [windows-latest]
+        python: [3.7, 3.8, 3.9] 
 
     steps:
     - uses: actions/checkout@v2
-    - name: Set up Python 3.9
+    - name: Set up Python ${{ matrix.os }}
       uses: actions/setup-python@v2
       with:
-        python-version: 3.9
+        python-version: ${{ matrix.os }}
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
@@ -27,4 +31,27 @@ jobs:
         pip install -r requirements.txt
     - name: Test with pytest
       run: |
-        pytest tests.py -s --timeout=300
+        pytest tests/tests-windows.py -s --timeout=300
+
+  maclinux:
+
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+        python: [3.7, 3.8, 3.9]
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python ${{ matrix.os }}
+      uses: actions/setup-python@v2
+      with:
+        python-version: ${{ matrix.os }}
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install pytest pytest-timeout
+        pip install -r requirements.txt
+    - name: Test with pytest
+      run: |
+        pytest tests/tests-maclinux.py -s --timeout=300

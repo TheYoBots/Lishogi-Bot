@@ -12,8 +12,8 @@ def test_nothing():
 
 
 def download_sf():
-    response = requests.get('https://github.com/ianfab/Fairy-Stockfish/releases/download/fairy_sf_13_1/fairy-stockfish-largeboard_x86-64.exe', allow_redirects=True)
-    with open('sf.exe', 'wb') as file:
+    response = requests.get('https://github.com/ianfab/Fairy-Stockfish/releases/download/fairy_sf_13_1/fairy-stockfish-largeboard_x86-64', allow_redirects=True)
+    with open('fsf', 'wb') as file:
         file.write(response.content)
 
 
@@ -78,12 +78,12 @@ def test_bot():
     lishogi_bot.logging.basicConfig(level=logging_level, filename=None, format="%(asctime)-15s: %(message)s")
     lishogi_bot.enable_color_logging(debug_lvl=logging_level)
     download_sf()
-    lishogi_bot.logger.info("Downloaded SF")
+    lishogi_bot.logger.info("Downloaded Fairy Stockfish")
     with open("./config.yml.default") as file:
         CONFIG = yaml.safe_load(file)
-    CONFIG['token'] = 'INSERT TOKEN HERE'
+    CONFIG['token'] = 'Ao7zQxDqoBhE7tpG'
     CONFIG['engine']['dir'] = './'
-    CONFIG['engine']['name'] = 'sf.exe'
+    CONFIG['engine']['name'] = 'fsf'
     run_bot(CONFIG, logging_level)
 
 

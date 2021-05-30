@@ -1,7 +1,7 @@
 # Lishogi Bot
 
-[![Lishogi Bot Tests](https://github.com/TheYoBots/Lishogi-Bot/actions/workflows/lishogi-bot-tests.yml/badge.svg)](https://github.com/TheYoBots/Lishogi-Bot/actions/workflows/lishogi-bot-tests.yml)
-[![Python Tests](https://github.com/TheYoBots/Lishogi-Bot/actions/workflows/python-tests.yml/badge.svg)](https://github.com/TheYoBots/Lishogi-Bot/actions/workflows/python-tests.yml)
+[![Lishogi Bot Build](https://github.com/TheYoBots/Lishogi-Bot/actions/workflows/lishogi-bot-build.yml/badge.svg)](https://github.com/TheYoBots/Lishogi-Bot/actions/workflows/lishogi-bot-build.yml)
+[![Python Build](https://github.com/TheYoBots/Lishogi-Bot/actions/workflows/python-build.yml/badge.svg)](https://github.com/TheYoBots/Lishogi-Bot/actions/workflows/python-build.yml)
 [![Lishogi Bots](https://img.shields.io/badge/Lishogi_Bots-%40Bot-blue.svg)](https://lishogi.org/player/bots)
 
 A bridge between [Lichess API](https://lichess.org/api#tag/Bot) and Lishogi USI Bots. In case you don't know English, view the [Japanese Translation here (日本語翻訳)](https://github.com/TheYoBots/Lishogi-Bot/wiki/Japanese-Translation).
