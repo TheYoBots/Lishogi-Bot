@@ -19,7 +19,7 @@ def download_sf():
 
 def run_bot(CONFIG, logging_level):
     lishogi_bot.logger.info(lishogi_bot.intro())
-    li = lishogi_bot.lishogi.Lishogi(CONFIG["token"], CONFIG["url"], lichess_bot.__version__)
+    li = lishogi_bot.lishogi.Lishogi(CONFIG["token"], CONFIG["url"], lishogi_bot.__version__)
 
     user_profile = li.get_profile()
     username = user_profile["username"]
