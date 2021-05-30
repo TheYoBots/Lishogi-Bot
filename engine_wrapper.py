@@ -79,6 +79,7 @@ class USIEngine(EngineWrapper):
         if options:
             for name, value in options.items():
                 self.engine.setoption(name, value)
+        self.engine.isready()
 
     def first_search(self, board, movetime):
         best_move, _ = self.engine.go(board.sfen(), "", movetime=movetime)
