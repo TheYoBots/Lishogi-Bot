@@ -13,7 +13,8 @@ def test_nothing():
 
 def download_sf():
     response = requests.get('https://github.com/ianfab/Fairy-Stockfish/releases/download/fairy_sf_13_1/fairy-stockfish-largeboard_x86-64.exe', allow_redirects=True)
-    copyfile('fairy-stockfish-largeboard_x86-64.exe', 'sf.exe')
+    with open('sf.exe', 'wb') as file:
+        file.write(response.content)
 
 
 def run_bot(CONFIG, logging_level):
