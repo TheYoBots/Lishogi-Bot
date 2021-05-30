@@ -57,7 +57,7 @@ def run_bot(CONFIG, logging_level):
         response = response.split('\n')
         result = list(filter(lambda line: 'result' in line, response))
         result = result[0][9:-2]
-        color = list(filter(lambda line: 'white' in line, response))
+        color = list(filter(lambda line: 'sente' in line, response))
         color = 'w' if username.lower() in color[0] else 'b'
         win = result == '1-0' and color == 'w' or result == '0-1' and color == 'b'
         assert win
