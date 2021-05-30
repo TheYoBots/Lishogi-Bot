@@ -54,18 +54,11 @@ class EngineWrapper:
     def quit(self):
         self.engine.kill_process()
 
-    def print_handler_stats(self, info, stats):
-        for stat in stats:
-            if stat in info:
-                logger.info("{}: {}".format(stat, info[stat]))
+    def print_handler_stats(self):
+        pass
 
-    def get_handler_stats(self, info, stats):
-        stats_str = []
-        for stat in stats:
-            if stat in info:
-                stats_str.append("{}: {}".format(stat, info[stat]))
-
-        return stats_str
+    def get_handler_stats(self):
+        pass
 
 
 class USIEngine(EngineWrapper):
@@ -129,11 +122,23 @@ class USIEngine(EngineWrapper):
     def stop(self):
         self.engine.kill_process()
 
-    def print_stats(self):
-        pass
+    def print_stats(self, stats=None):
+        if stats is None:
+            stats = ['score', 'depth', 'nodes', 'nps']
+        info = self.engine.info
+        for stat in stats:
+            if stat in info:
+                logger.info("{}: {}".format(stat, info[stat]))
 
-    def get_stats(self):
-        pass
+    def get_stats(self, stats=None):
+        if stats is None:
+            stats = ['score', 'depth', 'nodes', 'nps']
+        info = self.engine.info
+        stats_str = []
+        for stat in stats:
+            if stat in info:
+                stats_str.append("{}: {}".format(stat, info[stat]))
+        return stats_str
 
     def get_opponent_info(self, game):
         name = game.opponent.name
