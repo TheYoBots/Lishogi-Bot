@@ -11,7 +11,7 @@ def test_nothing():
     assert True
 
 
-def download_sf():
+def download_fsf():
     response = requests.get('https://github.com/ianfab/Fairy-Stockfish/releases/download/fairy_sf_13_1/fairy-stockfish-largeboard_x86-64.exe', allow_redirects=True)
     with open('fsf.exe', 'wb') as file:
         file.write(response.content)
@@ -77,7 +77,7 @@ def test_bot():
     logging_level = lishogi_bot.logging.INFO  # lichess_bot.logging_level.DEBUG
     lishogi_bot.logging.basicConfig(level=logging_level, filename=None, format="%(asctime)-15s: %(message)s")
     lishogi_bot.enable_color_logging(debug_lvl=logging_level)
-    download_sf()
+    download_fsf()
     lishogi_bot.logger.info("Downloaded Fairy Stockfish")
     with open("./config.yml.default") as file:
         CONFIG = yaml.safe_load(file)
