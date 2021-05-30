@@ -26,7 +26,7 @@ class Challenge:
     def is_supported_time_control(self, supported_speed, supported_increment_max, supported_increment_min, supported_byoyomi_max, supported_byoyomi_min, supported_base_max, supported_base_min):
         if self.increment < 0:
             return self.speed in supported_speed
-        return self.speed in supported_speed and supported_increment_max >= self.increment >= supported_increment_min and supported_byoyomi_max >= self.base >= supported_byoyomi_min and supported_base_max >= self.base >= supported_base_min
+        return self.speed in supported_speed and supported_increment_max >= self.increment >= supported_increment_min and supported_byoyomi_max >= self.byoyomi >= supported_byoyomi_min and supported_base_max >= self.base >= supported_base_min
 
     def is_supported_mode(self, supported):
         return "rated" in supported if self.rated else "casual" in supported
