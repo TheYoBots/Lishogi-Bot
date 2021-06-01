@@ -97,7 +97,7 @@ def game_logging_configurer(queue, level):
         root.setLevel(level)
 
 
-def start(li, user_profile, engine_factory, config, logging_level, log_filename):
+def start(li, user_profile, engine_factory, config, logging_level, log_filename, one_game=False):
     challenge_config = config["challenge"]
     max_games = challenge_config.get("concurrency", 1)
     logger.info("You're now connected to {} and awaiting challenges.".format(config["url"]))
@@ -133,6 +133,8 @@ def start(li, user_profile, engine_factory, config, logging_level, log_filename)
             elif event["type"] == "local_game_done":
                 busy_processes -= 1
                 logger.info("+++ Process Free. Total Queued: {}. Total Used: {}".format(queued_processes, busy_processes))
+                if one_game:
+                    break
             elif event["type"] == "challenge":
                 chlng = model.Challenge(event["challenge"])
                 if chlng.is_supported(challenge_config):
@@ -194,6 +196,9 @@ def start(li, user_profile, engine_factory, config, logging_level, log_filename)
     correspondence_pinger.join()
     logging_listener.terminate()
     logging_listener.join()
+
+
+ponder_results = {}
 
 
 @backoff.on_exception(backoff.expo, BaseException, max_time=600, giveup=is_final)
@@ -307,6 +312,20 @@ def play_game(li, game_id, control_queue, engine_factory, user_profile, config, 
 
                     best_move = None
                     ponder_move = None
+
+                    if ponder_thread is not None:
+                        move_uci = makeusi(moves[-1])
+                        if ponder_usi == move_uci:
+                            engine.engine.ponderhit()
+                            ponder_thread.join()
+                            ponder_thread = None
+                            best_move, ponder_move = ponder_results[game.id]
+                            engine.print_stats()
+                        else:
+                            engine.engine.stop()
+                            ponder_thread.join()
+                            ponder_thread = None
+                        ponder_usi = None
 
                     btime = upd["btime"]
                     wtime = upd["wtime"]
