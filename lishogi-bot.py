@@ -198,6 +198,9 @@ def start(li, user_profile, engine_factory, config, logging_level, log_filename,
     logging_listener.join()
 
 
+ponder_results = {}
+
+
 @backoff.on_exception(backoff.expo, BaseException, max_time=600, giveup=is_final)
 def play_game(li, game_id, control_queue, engine_factory, user_profile, config, challenge_queue, correspondence_queue, logging_queue, logging_configurer, logging_level):
     logging_configurer(logging_queue, logging_level)
@@ -309,6 +312,20 @@ def play_game(li, game_id, control_queue, engine_factory, user_profile, config, 
 
                     best_move = None
                     ponder_move = None
+                    
+                    if ponder_thread is not None:
+                        move_uci = makeusi(moves[-1])
+                        if ponder_usi == move_uci:
+                            engine.engine.ponderhit()
+                            ponder_thread.join()
+                            ponder_thread = None
+                            best_move, ponder_move = ponder_results[game.id]
+                            engine.print_stats()
+                        else:
+                            engine.engine.stop()
+                            ponder_thread.join()
+                            ponder_thread = None
+                        ponder_usi = None
 
                     btime = upd["btime"]
                     wtime = upd["wtime"]
