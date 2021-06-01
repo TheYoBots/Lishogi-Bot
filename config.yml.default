@@ -5,7 +5,7 @@ engine:                      # Engine Settings.
   dir: "./engines/"          # Directory containing engines, relative to this project.
   name: "engine_name"        # Binary name of the engine to use. Make sure the engine you use is running under the USI protocol.
   protocol: "usi"            # Protocol that engine is run under. Only "usi" is supported currently.
-  ponder: false              # Not supported. Setting it to 'true' will not work.
+  ponder: false              # Think on opponent's time.
 # engine_options:            # Any custom command line params to pass to the engine.
 #   cpuct: 3.1
   usi_options:               # Arbitrary USI options passed to the engine.
