@@ -88,7 +88,7 @@ class USIEngine(EngineWrapper):
                    nodes=cmds.get("nodes"),
                    depth=cmds.get("depth"),
                    movetime=cmds.get("movetime"),
-                   #ponder=ponder
+                   ponder=ponder
                )
         else:
                best_move, ponder_move = self.engine.go(
@@ -99,7 +99,7 @@ class USIEngine(EngineWrapper):
                    binc=binc,
                    winc=winc,
                    byo=byo,
-                   #ponder=ponder
+                   ponder=ponder
                )
         return (best_move, ponder_move)
 
