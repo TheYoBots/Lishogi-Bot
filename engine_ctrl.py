@@ -110,7 +110,7 @@ class Engine:
 
         self.send("setoption name %s value %s" % (name, value))
 
-    def go(self, position, moves, movetime=None, btime=None, wtime=None, binc=None, winc=None, byo=None, depth=None, nodes=None):
+    def go(self, position, moves, movetime=None, btime=None, wtime=None, binc=None, winc=None, byo=None, depth=None, nodes=None, ponder=False):
         if position != "startpos":
             position = "sfen " + position
         self.send("position %s moves %s" % (position, " ".join(moves)))
@@ -118,6 +118,8 @@ class Engine:
 
         builder = []
         builder.append("go")
+        if ponder:
+            builder.append("ponder")
         if movetime is not None:
             builder.append("movetime")
             builder.append(str(movetime))
@@ -149,15 +151,21 @@ class Engine:
 
         info = {}
         info["bestmove"] = None
+        info["pondermove"] = None
 
         while True:
             command, arg = self.recv_usi()
-
             if command == "bestmove":
-                bestmove = arg.split()[0]
+                arg_split = arg.split()
+                bestmove = arg_split[0]
+
                 if bestmove and bestmove != "(none)":
                     info["bestmove"] = bestmove
-                return (info["bestmove"], None)
+                if arg_split[1] == 'ponder':
+                    ponder_move = arg_split[2]
+                    if ponder_move and ponder_move != "(none)":
+                        info["pondermove"] = ponder_move
+                return (info["bestmove"], info["pondermove"])
 
             elif command == "info":
                 arg = arg or ""
@@ -215,6 +223,12 @@ class Engine:
                         info["score"]["lowerbound"] = lowerbound
                     if upperbound:
                         info["score"]["upperbound"] = upperbound
-                self.info = info
             else:
                 logger.error("Unexpected engine response to go: %s %s" % (command, arg))
+
+    def stop(self):
+        self.send("stop")
+
+    def ponderhit(self):
+        self.send("ponderhit")
+        logger.info("ponderhit")
