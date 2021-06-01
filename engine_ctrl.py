@@ -224,6 +224,7 @@ class Engine:
                         info["score"]["lowerbound"] = lowerbound
                     if upperbound:
                         info["score"]["upperbound"] = upperbound
+                self.info = info
             else:
                 logger.error("Unexpected engine response to go: %s %s" % (command, arg))
 
