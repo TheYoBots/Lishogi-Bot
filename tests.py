@@ -49,9 +49,9 @@ def run_bot(CONFIG, logging_level):
             if game != game_id:
                 try:
                     li.abort(game)
-                    time.sleep(2)
                 except:
                     pass
+                time.sleep(2)
 
         @pytest.mark.timeout(300)
         def run_test():
