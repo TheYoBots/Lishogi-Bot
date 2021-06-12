@@ -27,6 +27,7 @@ correspondence:
     move_time: 60            # Time in seconds to search in correspondence games.
     checkin_period: 600      # How often to check for opponent moves in correspondence games after disconnecting.
     disconnect_time: 300     # Time before disconnecting from a correspondence game.
+    ponder: false            # ponder in correspondence games the bot is connected to
 
 challenge:                   # Incoming challenges.
   concurrency: 1             # Number of games to play simultaneously.
