@@ -225,7 +225,8 @@ def play_game(li, game_id, control_queue, engine_factory, user_profile, config, 
 
     engine_cfg = config["engine"]
     is_usi = engine_cfg["protocol"] == "usi"
-    is_usi_ponder = is_usi and engine_cfg.get("ponder", False)
+    ponder_cfg = correspondence_cfg if is_correspondence else engine_cfg
+    is_usi_ponder = is_usi and ponder_cfg.get("ponder", False)
     move_overhead = config.get("move_overhead", 1000)
     delay_seconds = config.get("rate_limiting_delay", 0)/1000
     polyglot_cfg = engine_cfg.get("polyglot", {})
