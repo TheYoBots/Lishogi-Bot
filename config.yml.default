@@ -5,7 +5,7 @@ engine:                      # Engine Settings.
   dir: "./engines/"          # Directory containing engines, relative to this project.
   name: "engine_name"        # Binary name of the engine to use. Make sure the engine you use is running under the USI protocol.
   protocol: "usi"            # Protocol that engine is run under. Only "usi" is supported currently.
-  ponder: false              # Not supported. Setting it to 'true' will not work.
+  ponder: false              # Think on opponent's time.
 # engine_options:            # Any custom command line params to pass to the engine.
 #   cpuct: 3.1
   usi_options:               # Arbitrary USI options passed to the engine.
@@ -21,12 +21,13 @@ engine:                      # Engine Settings.
 abort_time: 30               # Time in seconds after which the engine will abort the game if there is no activity.
 fake_think_time: false       # Artificially slow down the bot to pretend like it's thinking.
 rate_limiting_delay: 0       # Time (in ms) to delay after sending a move to prevent "Too Many Requests" errors.
-move_overhead: 2000          # Increase if your bot flags games too often.
+move_overhead: 1900          # Increase if your bot flags games too often.
 
 correspondence:
     move_time: 60            # Time in seconds to search in correspondence games.
     checkin_period: 600      # How often to check for opponent moves in correspondence games after disconnecting.
     disconnect_time: 300     # Time before disconnecting from a correspondence game.
+    ponder: false            # ponder in correspondence games the bot is connected to
 
 challenge:                   # Incoming challenges.
   concurrency: 1             # Number of games to play simultaneously.
