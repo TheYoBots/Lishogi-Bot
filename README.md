@@ -29,8 +29,8 @@ python3 -m pip install -r requirements.txt
 
 - **NOTE: Only Python 3.7 or later is supported!**
 - If you don't have Python, you may download it [here](https://www.python.org/downloads/). When installing it, enable `add Python to PATH`, then go to custom installation (this may be not necessary, but on some computers it won't work otherwise) and enable all options (especially `install for all users`), except the last . It's better to install Python in a path without spaces, like `C:\Python\`.
-- To type commands it's better to use PowerShell. Go to Start menu and type `PowerShell`.
-- Then you may need to upgrade pip. Execute `python -m pip install --upgrade pip` in PowerShell.
+- To type commands it's better to use Command Prompt. Go to Start menu and type `Command Prompt`.
+- Then you may need to upgrade pip. Execute `python -m pip install --upgrade pip` in Command Prompt.
 - Download the repo into lishogi-bot directory.
 - Navigate to the directory in PowerShell: `cd [folder's adress]` (like `cd C:\shogi\lishogi-bot`).
 - Install virtualenv: `pip install virtualenv`.
