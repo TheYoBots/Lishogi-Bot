@@ -28,8 +28,8 @@ python3 -m pip install -r requirements.txt
 ### Windows:
 
 - **NOTE: Only Python 3.7 or later is supported!**
-- If you don't have Python, you may download it [here](https://www.python.org/downloads/). When installing it, enable `add Python to PATH`, then go to custom installation (this may be not necessary, but on some computers it won't work otherwise) and enable all options (especially `install for all users`), except the last . It's better to install Python in a path without spaces, like `C:\Python\`.
-- To type commands it's better to use PowerShell. Go to Start menu and type `PowerShell`.
+If you don't have Python, you may download it here: (https://www.python.org/downloads/). When installing it, enable "add Python to PATH", then go to custom installation (this may be not necessary, but on some computers it won't work otherwise) and enable all options (especially "install for all users"), except the last . It's better to install Python in a path without spaces, like "C:\Python".
+- To type commands it's better to use PowerShell. Go to Start menu and type "PowerShell" (you may use cmd too, but sometimes it may not work).
 - Then you may need to upgrade pip. Execute `python -m pip install --upgrade pip` in PowerShell.
 - Download the repo into lishogi-bot directory.
 - Navigate to the directory in PowerShell: `cd [folder's adress]` (like `cd C:\shogi\lishogi-bot`).
@@ -55,7 +55,7 @@ pip install -r requirements.txt
 ## Setup Engine
 
 - Place your engine(s) in the `engine.dir` directory
-- In your `config.yml` file, enter the binary name as the `engine.name` field.
+- In your `config.yml` file, enter the binary name as the `engine.name` field.(In Windows you may need to type a name with ".exe", like "fairy-stockfish.exe")
 - Using this process any engine can be added to the bot.
 - **Note: The engine you add has to be running under the USI protocol, then only it will work**
 
