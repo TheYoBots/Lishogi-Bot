@@ -11,7 +11,7 @@ import engine_ctrl
 
 
 @backoff.on_exception(backoff.expo, BaseException, max_time=120)
-def create_engine(config, board):
+def create_engine(config):
     cfg = config["engine"]
     engine_path = os.path.realpath(os.path.join(cfg["dir"], cfg["name"]))
     engine_type = cfg.get("protocol")
@@ -23,11 +23,11 @@ def create_engine(config, board):
 
     silence_stderr = cfg.get("silence_stderr", False)
 
-    return USIEngine(board, commands, cfg.get("usi_options", {}), cfg.get("go_commands", {}), silence_stderr)
+    return USIEngine(commands, cfg.get("usi_options", {}), cfg.get("go_commands", {}), silence_stderr)
 
 
 class EngineWrapper:
-    def __init__(self, board, commands, options=None, silence_stderr=False):
+    def __init__(self, commands, options=None, silence_stderr=False):
         pass
 
     def search_for(self, board, movetime):
@@ -62,7 +62,7 @@ class EngineWrapper:
 
 
 class USIEngine(EngineWrapper):
-    def __init__(self, board, commands, options, go_commands={}, silence_stderr=False):
+    def __init__(self, commands, options, go_commands={}, silence_stderr=False):
         commands = commands[0] if len(commands) == 1 else commands        
         self.go_commands = go_commands
 
