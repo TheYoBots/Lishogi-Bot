@@ -13,6 +13,7 @@ class Engine:
     def __init__(self, command):
         self.proccess = self.open_process(command)
         self.go_commands = None
+        self.info = {}
 
     def set_go_commands(self, go_comm):
         self.go_commands = go_comm
