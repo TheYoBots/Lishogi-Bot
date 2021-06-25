@@ -279,9 +279,9 @@ def play_game(li, game_id, control_queue, engine_factory, user_profile, config, 
                             best_move, ponder_move = engine.search_with_ponder(game, board, btime, wtime, upd["binc"], upd["winc"], upd["byo"])
                             engine.print_stats()
 
+                        li.make_move(game.id, best_move)
                         if is_usi_ponder and ponder_move is not None:
                             ponder_thread, ponder_usi = start_pondering(engine, board, best_move, ponder_move, wtime, btime, game, logger, move_overhead, start_time)
-                        li.make_move(game.id, best_move)
                     time.sleep(delay_seconds)
                 elif is_game_over(game):
                     engine.report_game_result(game, board)
