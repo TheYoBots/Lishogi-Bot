@@ -314,15 +314,21 @@ def play_game(li, game_id, control_queue, engine_factory, user_profile, config, 
 
     control_queue.put_nowait({"type": "local_game_done"})
 
+
 def play_midgame_move(engine, board, wtime, btime, move_overhead, start_time, logger, game):
-    if board.turn == shogi.BLACK:
-        btime = max(0, btime - move_overhead - int((time.perf_counter_ns() - start_time) / 1000000))
-    else:
-        wtime = max(0, wtime - move_overhead - int((time.perf_counter_ns() - start_time) / 1000000))
+    wtime, btime = adjust_game_time(wtime, btime, board, move_overhead, start_time)
     logger.info("Searching for btime {} wtime {}".format(btime, wtime))
     best_move, ponder_move = engine.search_with_ponder(game, board, btime, wtime, game.state["binc"], game.state["winc"], game.state["byo"])
     engine.print_stats()
     return best_move, ponder_move
+
+
+def adjust_game_time(wtime, btime, board, move_overhead, start_time, winc=0, binc=0):
+    if board.turn == shogi.BLACK:
+        btime = max(0, btime - move_overhead - int((time.perf_counter_ns() - start_time) / 1000000)) + binc
+    else:
+        wtime = max(0, wtime - move_overhead - int((time.perf_counter_ns() - start_time) / 1000000)) + winc
+    return wtime, btime
 
 
 def start_pondering(engine, board, best_move, ponder_move, wtime, btime, game, logger, move_overhead, start_time):
@@ -331,10 +337,7 @@ def start_pondering(engine, board, best_move, ponder_move, wtime, btime, game, l
     ponder_board.push(shogi.Move.from_usi(ponder_move))
     ponder_usi = ponder_move
 
-    if board.turn == shogi.BLACK:
-        btime = max(0, btime - move_overhead - int((time.perf_counter_ns() - start_time) / 1000000) + game.state["binc"])
-    else:
-        wtime = max(0, wtime - move_overhead - int((time.perf_counter_ns() - start_time) / 1000000) + game.state["winc"])
+    wtime, btime = adjust_game_time(wtime, btime, board, move_overhead, start_time, game.state["winc"]. game.state["binc"])
     logger.info("Pondering for btime {} wtime {}".format(btime, wtime))
 
     def ponder_thread_func(game, engine, board, btime, wtime, binc, winc, byo):
