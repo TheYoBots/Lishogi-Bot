@@ -111,10 +111,7 @@ class Engine:
         self.send("setoption name %s value %s" % (name, value))
 
     def go(self, position, moves, movetime=None, btime=None, wtime=None, binc=None, winc=None, byo=None, depth=None, nodes=None, ponder=False):
-        if position != "startpos":
-            position = "sfen " + position
-        self.send("position %s moves %s" % (position, " ".join(moves)))
-        logger.info("position %s moves %s" % (position, " ".join(moves)))
+        self.position(position, moves)
 
         builder = []
         builder.append("go")
@@ -228,6 +225,12 @@ class Engine:
                 self.info = info
             else:
                 logger.error("Unexpected engine response to go: %s %s" % (command, arg))
+
+    def position(self, position, moves):
+        if position != "startpos":
+            position = "sfen " + position
+        self.send("position %s moves %s" % (position, " ".join(moves)))
+        logger.info("position %s moves %s" % (position, " ".join(moves)))
 
     def stop(self):
         self.send("stop")

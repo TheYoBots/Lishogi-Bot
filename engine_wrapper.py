@@ -148,4 +148,5 @@ class USIEngine(EngineWrapper):
             player_type = "computer" if title == "BOT" else "human"
 
     def report_game_result(self, game, board):
-        self.engine.protocol._position(board)
+        moves = [m.usi() for m in board.move_stack]
+        self.engine.position(game.initial_fen, moves)
