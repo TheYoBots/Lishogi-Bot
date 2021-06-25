@@ -149,6 +149,7 @@ class Engine:
         self.send(" ".join(builder))
         logger.info(" ".join(builder))
 
+        self.info = {}
         info = {}
         info["bestmove"] = None
         info["pondermove"] = None
