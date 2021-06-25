@@ -63,7 +63,7 @@ class EngineWrapper:
 
 class USIEngine(EngineWrapper):
     def __init__(self, commands, options, go_commands={}, silence_stderr=False):
-        commands = commands[0] if len(commands) == 1 else commands        
+        commands = commands[0] if len(commands) == 1 else commands
         self.go_commands = go_commands
 
         self.engine = engine_ctrl.Engine(commands)
@@ -80,7 +80,7 @@ class USIEngine(EngineWrapper):
 
     def search_with_ponder(self, game, board, btime, wtime, binc, winc, byo, ponder=False):
         moves = [m.usi() for m in list(board.move_stack)]
-        cmds = self.go_commands        
+        cmds = self.go_commands
         if len(cmds) > 0:
                best_move, ponder_move = self.engine.go(
                    game.initial_fen,
@@ -146,6 +146,6 @@ class USIEngine(EngineWrapper):
             rating = game.opponent.rating if game.opponent.rating is not None else "none"
             title = game.opponent.title if game.opponent.title else "none"
             player_type = "computer" if title == "BOT" else "human"
-    
+
     def report_game_result(self, game, board):
         self.engine.protocol._position(board)

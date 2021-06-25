@@ -36,7 +36,7 @@ def signal_handler(signal, frame):
     logger.debug("Recieved SIGINT. Terminating client.")
     terminated = True
 
-    
+
 signal.signal(signal.SIGINT, signal_handler)
 
 
@@ -71,7 +71,7 @@ def do_correspondence_ping(control_queue, period):
     while not terminated:
         time.sleep(period)
         control_queue.put_nowait({"type": "correspondence_ping"})
-        
+
 def listener_configurer(level, filename):
     logging.basicConfig(level=level, filename=filename,
                         format="%(asctime)-15s: %(message)s")
@@ -188,7 +188,7 @@ def start(li, user_profile, engine_factory, config, logging_level, log_filename,
                     queued_processes -= 1
 
             control_queue.task_done()
-                    
+
     logger.info("Terminated")
     control_stream.terminate()
     control_stream.join()
@@ -326,7 +326,7 @@ def start_pondering(engine, board, best_move, ponder_move, wtime, btime, game, l
     ponder_board.push(shogi.Move.from_usi(best_move))
     ponder_board.push(shogi.Move.from_usi(ponder_move))
     ponder_usi = ponder_move
-    
+
     if board.turn == shogi.BLACK:
         btime = max(0, btime - move_overhead - int((time.perf_counter_ns() - start_time) / 1000000) + game.state["binc"])
     else:
@@ -334,7 +334,7 @@ def start_pondering(engine, board, best_move, ponder_move, wtime, btime, game, l
     logger.info("Pondering for btime {} wtime {}".format(btime, wtime))
 
     def ponder_thread_func(game, engine, board, btime, wtime, binc, winc, byo):
-        global ponder_results        
+        global ponder_results
         best_move, ponder_move = engine.search_with_ponder(game, board, btime, wtime, binc, winc, byo, True)
         ponder_results[game.id] = (best_move, ponder_move)
 

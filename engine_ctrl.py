@@ -17,7 +17,7 @@ class Engine:
     def set_go_commands(self, go_comm):
         self.go_commands = go_comm
         logger.info(self.go_commands)
-     
+
     def open_process(self, command, shell=True, _popen_lock=threading.Lock()):
         kwargs = {
             "shell": shell,
@@ -227,7 +227,7 @@ class Engine:
                 self.info = info
             else:
                 logger.error("Unexpected engine response to go: %s %s" % (command, arg))
-    
+
     def stop(self):
         self.send("stop")
 
