@@ -261,7 +261,7 @@ def play_game(li, game_id, control_queue, engine_factory, user_profile, config, 
                     print_move_number(board)
                     correspondence_disconnect_time = correspondence_cfg.get("disconnect_time", 300)
 
-                    if board.move_stack < 2:
+                    if len(board.move_stack) < 2:
                         play_first_move(game, engine, board, li)
                     else:
                         best_move, ponder_move = get_pondering_result(engine, game, board.move_stack, ponder_thread, ponder_usi)
