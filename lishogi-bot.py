@@ -268,16 +268,10 @@ def play_game(li, game_id, control_queue, engine_factory, user_profile, config, 
                         ponder_thread = None
                         ponder_usi = None
 
+                        btime = upd["btime"]
+                        wtime = upd["wtime"]
                         if best_move is None:
-                            btime = upd["btime"]
-                            wtime = upd["wtime"]
-                            if board.turn == shogi.BLACK:
-                                btime = max(0, btime - move_overhead - int((time.perf_counter_ns() - start_time) / 1000000))
-                            else:
-                                wtime = max(0, wtime - move_overhead - int((time.perf_counter_ns() - start_time) / 1000000))
-                            logger.info("Searching for btime {} wtime {}".format(btime, wtime))
-                            best_move, ponder_move = engine.search_with_ponder(game, board, btime, wtime, upd["binc"], upd["winc"], upd["byo"])
-                            engine.print_stats()
+                            best_move, ponder_move = play_midgame_move(engine, board, wtime, btime, move_overhead, start_time, logger, game)
 
                         li.make_move(game.id, best_move)
                         if is_usi_ponder and ponder_move is not None:
@@ -319,6 +313,16 @@ def play_game(li, game_id, control_queue, engine_factory, user_profile, config, 
         logger.info("--- {} Game over".format(game.url()))
 
     control_queue.put_nowait({"type": "local_game_done"})
+
+def play_midgame_move(engine, board, wtime, btime, move_overhead, start_time, logger, game):
+    if board.turn == shogi.BLACK:
+        btime = max(0, btime - move_overhead - int((time.perf_counter_ns() - start_time) / 1000000))
+    else:
+        wtime = max(0, wtime - move_overhead - int((time.perf_counter_ns() - start_time) / 1000000))
+    logger.info("Searching for btime {} wtime {}".format(btime, wtime))
+    best_move, ponder_move = engine.search_with_ponder(game, board, btime, wtime, game.state["binc"], game.state["winc"], game.state["byo"])
+    engine.print_stats()
+    return best_move, ponder_move
 
 
 def start_pondering(engine, board, best_move, ponder_move, wtime, btime, game, logger, move_overhead, start_time):
