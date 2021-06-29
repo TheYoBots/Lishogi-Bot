@@ -94,7 +94,7 @@ uciok
 ```
 Any of the names following `option name` can be listed in `usi_options` in order to configure the Fairy Stockfish engine.
 ```yml
-  uci_options:
+  usi_options:
     Move Overhead: 100
     Skill Level: 10
 ```
@@ -111,7 +111,7 @@ will append `nodes 1 depth 5 movetime 1000` to the command to start thinking of 
 
 - `abort_time`: How many seconds to wait before aborting a game due to opponent inaction. This only applies during the first six moves of the game.
 - `fake_think_time`: Artificially slow down the engine to simulate a person thinking about a move. The amount of thinking time decreases as the game goes on.
-- `rate_limiting_delay`: For extremely fast games, the [lichess.org](https://lichess.org) servers may respond with an error if too many moves are played to quickly. This option avoids this problem by pausing for a specified number of milliseconds after submitting a move before making the next move.
+- `rate_limiting_delay`: For extremely fast games, the [lishogi.org](https://lishogi.org) servers may respond with an error if too many moves are played to quickly. This option avoids this problem by pausing for a specified number of milliseconds after submitting a move before making the next move.
 - `move_overhead`: To prevent losing on time due to network lag, subtract this many milliseconds from the time to think on each move.
 
 - `correspondence` These options control how the engine behaves during correspondence games.
@@ -161,13 +161,13 @@ will append `nodes 1 depth 5 movetime 1000` to the command to start thinking of 
 ## To Run
 After activating the virtual environment created in the installation steps (the `source` line for Linux and Macs or the `activate` script for Windows), run
 ```python
-python lichess-bot.py
+python lishogi-bot.py
 ```
 The working directory for the engine execution will be the lishogi-bot directory. If your engine requires files located elsewhere, make sure they are specified by absolute path or copy the files to an appropriate location inside the lishogi-bot directory.
 
 To output more information (including your engine's thinking output and debugging information), the `-v` option can be passed to lishogi-bot:
 ```python
-python lichess-bot.py -v
+python lishogi-bot.py -v
 ```
 
 ## Tips & Tricks
