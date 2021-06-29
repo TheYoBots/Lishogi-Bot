@@ -338,7 +338,7 @@ def start_pondering(engine, board, best_move, ponder_move, wtime, btime, game, l
     ponder_usi = ponder_move
 
     wtime, btime = adjust_game_time(wtime, btime, board, move_overhead, start_time, game.state["winc"], game.state["binc"])
-    logger.info("Pondering for btime {} wtime {}".format(btime, wtime))
+    logger.info("Pondering {} for btime {} wtime {}".format(ponder_move, btime, wtime))
 
     def ponder_thread_func(game, engine, board, btime, wtime, binc, winc, byo):
         global ponder_results
