@@ -278,6 +278,7 @@ def play_game(li, game_id, control_queue, engine_factory, user_profile, config, 
                             ponder_thread, ponder_usi = start_pondering(engine, board, best_move, ponder_move, wtime, btime, game, logger, move_overhead, start_time)
                     time.sleep(delay_seconds)
                 elif is_game_over(game):
+                    engine.stop()
                     engine.report_game_result(game, board)
                 elif len(board.move_stack) == 0:
                     correspondence_disconnect_time = correspondence_cfg.get("disconnect_time", 300)
