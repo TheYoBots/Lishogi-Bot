@@ -337,7 +337,7 @@ def start_pondering(engine, board, best_move, ponder_move, wtime, btime, game, l
     ponder_board.push(shogi.Move.from_usi(ponder_move))
     ponder_usi = ponder_move
 
-    wtime, btime = adjust_game_time(wtime, btime, board, move_overhead, start_time, game.state["winc"]. game.state["binc"])
+    wtime, btime = adjust_game_time(wtime, btime, board, move_overhead, start_time, game.state["winc"], game.state["binc"])
     logger.info("Pondering for btime {} wtime {}".format(btime, wtime))
 
     def ponder_thread_func(game, engine, board, btime, wtime, binc, winc, byo):
