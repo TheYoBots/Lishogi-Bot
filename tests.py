@@ -81,7 +81,7 @@ def run_bot(CONFIG, logging_level):
 
 
 def test_bot():
-    logging_level = lishogi_bot.logging.INFO  # lichess_bot.logging_level.DEBUG
+    logging_level = lishogi_bot.logging.INFO  # lishogi_bot.logging_level.DEBUG
     lishogi_bot.logging.basicConfig(level=logging_level, filename=None, format="%(asctime)-15s: %(message)s")
     lishogi_bot.enable_color_logging(debug_lvl=logging_level)
     download_fsf()
