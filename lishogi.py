@@ -23,7 +23,7 @@ ENDPOINTS = {
 }
 
 
-# docs: https://lichess.org/api
+# docs: https://lichess.org/api till lishogi API is made
 class Lishogi:
     def __init__(self, token, url, version):
         self.version = version
