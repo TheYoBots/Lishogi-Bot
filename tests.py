@@ -24,7 +24,7 @@ def run_bot(CONFIG, logging_level):
     user_profile = li.get_profile()
     username = user_profile["username"]
     is_bot = user_profile.get("title") == "BOT"
-    lishogi_bot.logger.info("Welcome {} {}!".format(title, username))
+    lishogi_bot.logger.info("Welcome BOT {}!".format(username))
 
     if not is_bot:
         is_bot = lishogi_bot.upgrade_account(li)
