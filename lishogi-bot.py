@@ -354,7 +354,7 @@ def get_pondering_result(engine, game, moves, ponder_thread, ponder_usi):
     if ponder_thread is None:
         return None, None
 
-    if ponder_usi == makeusi(moves[-1]):
+    if ponder_usi == moves[-1].usi():
         engine.engine.ponderhit()
         ponder_thread.join()
         engine.print_stats()
