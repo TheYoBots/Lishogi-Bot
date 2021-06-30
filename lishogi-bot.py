@@ -308,7 +308,7 @@ def play_game(li, game_id, control_queue, engine_factory, user_profile, config, 
     if ponder_thread is not None:
         ponder_thread.join()
 
-    engine.engine.kill_process()
+    engine.kill_process()
 
     if is_correspondence and not is_game_over(game):
         logger.info("--- Disconnecting from {}".format(game.url()))
@@ -359,12 +359,12 @@ def get_pondering_result(engine, game, moves, ponder_thread, ponder_usi):
         return None, None
 
     if ponder_usi == moves[-1].usi():
-        engine.engine.ponderhit()
+        engine.ponderhit()
         ponder_thread.join()
         engine.print_stats()
         return ponder_results[game.id]
     else:
-        engine.engine.stop()
+        engine.stop()
         ponder_thread.join()
         return None, None
 

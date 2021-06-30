@@ -97,11 +97,17 @@ class USIEngine(EngineWrapper):
                )
         return (best_move, ponder_move)
 
+    def ponderhit(self):
+        self.engine.ponderhit()
+
     def stop(self):
         self.engine.stop()
 
     def quit(self):
         self.engine.quit()
+
+    def kill_process(self):
+        self.engine.kill_process()
 
     def print_stats(self, stats=None):
         if stats is None:
