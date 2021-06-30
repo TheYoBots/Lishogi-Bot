@@ -48,9 +48,6 @@ class EngineWrapper:
     def report_game_result(self, game, board):
         pass
 
-    def quit(self):
-        self.engine.kill_process()
-
     def print_handler_stats(self):
         pass
 
@@ -101,7 +98,10 @@ class USIEngine(EngineWrapper):
         return (best_move, ponder_move)
 
     def stop(self):
-        self.engine.kill_process()
+        self.engine.stop()
+
+    def quit(self):
+        self.engine.quit()
 
     def print_stats(self, stats=None):
         if stats is None:

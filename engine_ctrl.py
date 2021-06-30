@@ -235,6 +235,9 @@ class Engine:
     def stop(self):
         self.send("stop")
 
+    def quit(self):
+        self.send("quit")
+
     def ponderhit(self):
         self.send("ponderhit")
         logger.info("ponderhit")
