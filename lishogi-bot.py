@@ -36,7 +36,7 @@ def signal_handler(signal, frame):
     logger.debug("Recieved SIGINT. Terminating client.")
     terminated = True
 
-    
+
 signal.signal(signal.SIGINT, signal_handler)
 
 
@@ -71,7 +71,7 @@ def do_correspondence_ping(control_queue, period):
     while not terminated:
         time.sleep(period)
         control_queue.put_nowait({"type": "correspondence_ping"})
-        
+
 def listener_configurer(level, filename):
     logging.basicConfig(level=level, filename=filename,
                         format="%(asctime)-15s: %(message)s")
@@ -188,7 +188,7 @@ def start(li, user_profile, engine_factory, config, logging_level, log_filename,
                     queued_processes -= 1
 
             control_queue.task_done()
-                    
+
     logger.info("Terminated")
     control_stream.terminate()
     control_stream.join()
@@ -212,8 +212,7 @@ def play_game(li, game_id, control_queue, engine_factory, user_profile, config, 
     # Initial response of stream will be the full game info. Store it
     initial_state = json.loads(next(lines).decode('utf-8'))
     game = model.Game(initial_state, user_profile["username"], li.baseUrl, config.get("abort_time", 20))
-    board = setup_board(game)
-    engine = engine_factory(board)
+    engine = engine_factory()
     engine.get_opponent_info(game)
     conversation = Conversation(game, engine, li, __version__, challenge_queue)
 
@@ -233,131 +232,56 @@ def play_game(li, game_id, control_queue, engine_factory, user_profile, config, 
     book_cfg = polyglot_cfg.get("book", {})
 
     ponder_thread = None
-    deferredFirstMove = False
-
     ponder_usi = None
-    
-    def ponder_thread_func(game, engine, board, btime, wtime, binc, winc, byo):
-        global ponder_results        
-        best_move, ponder_move = engine.search_with_ponder(game, board, btime, wtime, binc, winc, byo, True)
-        ponder_results[game.id] = ( best_move, ponder_move )
 
     logger.debug("Game state: {}".format(game.state))
 
-    if len(board.move_stack) < 2:
-        while not terminated:
-            try:
-                if not play_first_move(game, engine, board, li):
-                    deferredFirstMove = True
-                break
-            except (HTTPError) as exception:
-                if exception.response.status_code == 400:  # fallthrough
-                    break
-    else:
-        moves = game.state["moves"].split()
-        if not is_game_over(game) and is_engine_move(game, moves):
-            best_move = None
-            ponder_move = None
-            btime = game.state["btime"]
-            wtime = game.state["wtime"]
-            start_time = time.perf_counter_ns()
-            
-            if board.turn == shogi.BLACK:
-                btime = max(0, btime - move_overhead - int((time.perf_counter_ns() - start_time) / 1000000))
-            else:
-                wtime = max(0, wtime - move_overhead - int((time.perf_counter_ns() - start_time) / 1000000))
-            logger.info("Searching for btime {} wtime {}".format(btime, wtime))
-            best_move, ponder_move = engine.search_with_ponder(game, board, btime, wtime, game.state["binc"], game.state["winc"], game.state["byo"])
-            engine.print_stats()
-
-            if is_usi_ponder and not ( ponder_move is None ):
-                ponder_board = copy.deepcopy(board)
-                ponder_board.push(shogi.Move.from_usi(best_move))
-                ponder_board.push(shogi.Move.from_usi(ponder_move))
-                ponder_usi = ponder_move
-                
-                if board.turn == shogi.BLACK:
-                    btime = max(0, btime - move_overhead - int((time.perf_counter_ns() - start_time) / 1000000) + game.state["binc"])
-                else:
-                    wtime = max(0, wtime - move_overhead - int((time.perf_counter_ns() - start_time) / 1000000) + game.state["winc"])
-                logger.info("Pondering for btime {} wtime {}".format(btime, wtime))
-                ponder_thread = threading.Thread(target=ponder_thread_func, args=(game, engine, ponder_board, btime, wtime, game.state["binc"], game.state["winc"], game.state["byo"]))
-                ponder_thread.start()
-            li.make_move(game.id, best_move)
-            time.sleep(delay_seconds)
-        elif is_game_over(game):
-            engine.report_game_result(game, board)
-        elif len(board.move_stack) == 0:
-            correspondence_disconnect_time = correspondence_cfg.get("disconnect_time", 300)
-
     correspondence_disconnect_time = 0
+    first_move = True
+
     while not terminated:
         try:
-            binary_chunk = next(lines)
-        
-            upd = json.loads(binary_chunk.decode('utf-8')) if binary_chunk else None
+            if first_move:
+                upd = game.state
+                first_move = False
+            else:
+                binary_chunk = next(lines)
+                upd = json.loads(binary_chunk.decode('utf-8')) if binary_chunk else None
+
             logger.debug("Update: {}".format(upd))
             u_type = upd["type"] if upd else "ping"
             if u_type == "chatLine":
                 conversation.react(ChatLine(upd), game)
             elif u_type == "gameState":
                 game.state = upd
-                moves = upd["moves"].split()
-                if len(moves) > 0 and len(moves) != len(board.move_stack):
-                    board = update_board(board, moves[-1])
-                if not is_game_over(game) and is_engine_move(game, moves):
+                board = setup_board(game)
+                if not is_game_over(game) and is_engine_move(game, board):
                     start_time = time.perf_counter_ns()
                     fake_thinking(config, board, game)
                     print_move_number(board)
                     correspondence_disconnect_time = correspondence_cfg.get("disconnect_time", 300)
 
-                    best_move = None
-                    ponder_move = None
-                    
-                    if ponder_thread is not None:
-                        move_uci = makeusi(moves[-1])
-                        if ponder_usi == move_uci:
-                            engine.engine.ponderhit()
-                            ponder_thread.join()
-                            ponder_thread = None
-                            best_move, ponder_move = ponder_results[game.id]
-                            engine.print_stats()
-                        else:
-                            engine.engine.stop()
-                            ponder_thread.join()
-                            ponder_thread = None
+                    if len(board.move_stack) < 2:
+                        play_first_move(game, engine, board, li)
+                    else:
+                        best_move, ponder_move = get_pondering_result(engine, game, board.move_stack, ponder_thread, ponder_usi)
+                        ponder_thread = None
                         ponder_usi = None
 
-                    btime = upd["btime"]
-                    wtime = upd["wtime"]
-                    start_time = time.perf_counter_ns()
+                        btime = upd["btime"]
+                        wtime = upd["wtime"]
+                        if best_move is None:
+                            best_move, ponder_move = play_midgame_move(engine, board, wtime, btime, move_overhead, start_time, logger, game)
 
-                    if not deferredFirstMove:
-                        if best_move == None:
-                            if board.turn == shogi.BLACK:
-                                btime = max(0, btime - move_overhead - int((time.perf_counter_ns() - start_time) / 1000000))
-                            else:
-                                wtime = max(0, wtime - move_overhead - int((time.perf_counter_ns() - start_time) / 1000000))
-                            logger.info("Searching for btime {} wtime {}".format(btime, wtime))
-                            best_move, ponder_move = engine.search_with_ponder(game, board, btime, wtime, upd["binc"], upd["winc"], upd["byo"])
-                            engine.print_stats()
-
-                        if is_usi_ponder and not ( ponder_move is None ):
-                            ponder_board = copy.deepcopy(board)
-                            ponder_board.push(shogi.Move.from_usi(best_move))
-                            ponder_board.push(shogi.Move.from_usi(ponder_move))
-                            ponder_usi = ponder_move
-                            if board.turn == shogi.BLACK:
-                                btime = max(0, btime - move_overhead - int((time.perf_counter_ns() - start_time) / 1000000) + upd["binc"])
-                            else:
-                                wtime = max(0, wtime - move_overhead - int((time.perf_counter_ns() - start_time) / 1000000) + upd["winc"])
-                            logger.info("Pondering for btime {} wtime {}".format(btime, wtime))
-                            ponder_thread = threading.Thread(target=ponder_thread_func, args=(game, engine, ponder_board, btime, wtime, upd["binc"], upd["winc"], upd["byo"]))
-                            ponder_thread.start()
                         li.make_move(game.id, best_move)
-                    else:
-                        play_first_move(game, engine, board, li)
-                        deferredFirstMove = False
+                        if is_usi_ponder and ponder_move is not None:
+                            ponder_thread, ponder_usi = start_pondering(engine, board, best_move, ponder_move, wtime, btime, game, logger, move_overhead, start_time)
+                    time.sleep(delay_seconds)
+                elif is_game_over(game):
+                    engine.report_game_result(game, board)
+                elif len(board.move_stack) == 0:
+                    correspondence_disconnect_time = correspondence_cfg.get("disconnect_time", 300)
+
                 wb = 'w' if board.turn == shogi.BLACK else 'b'
                 game.ping(config.get("abort_time", 30), (upd[f"{wb}time"] + upd[f"{wb}inc"]) / 1000 + 60, correspondence_disconnect_time)
             elif u_type == "ping":
@@ -379,8 +303,12 @@ def play_game(li, game_id, control_queue, engine_factory, user_profile, config, 
             break
 
     engine.stop()
-    if not ( ponder_thread is None ):
+    engine.quit()
+
+    if ponder_thread is not None:
         ponder_thread.join()
+
+    engine.kill_process()
 
     if is_correspondence and not is_game_over(game):
         logger.info("--- Disconnecting from {}".format(game.url()))
@@ -391,19 +319,66 @@ def play_game(li, game_id, control_queue, engine_factory, user_profile, config, 
     control_queue.put_nowait({"type": "local_game_done"})
 
 
+def play_midgame_move(engine, board, wtime, btime, move_overhead, start_time, logger, game):
+    wtime, btime = adjust_game_time(wtime, btime, board, move_overhead, start_time)
+    logger.info("Searching for btime {} wtime {}".format(btime, wtime))
+    best_move, ponder_move = engine.search_with_ponder(game, board, btime, wtime, game.state["binc"], game.state["winc"], game.state["byo"])
+    engine.print_stats()
+    return best_move, ponder_move
+
+
+def adjust_game_time(wtime, btime, board, move_overhead, start_time, winc=0, binc=0):
+    if board.turn == shogi.BLACK:
+        btime = max(0, btime - move_overhead - int((time.perf_counter_ns() - start_time) / 1000000)) + binc
+    else:
+        wtime = max(0, wtime - move_overhead - int((time.perf_counter_ns() - start_time) / 1000000)) + winc
+    return wtime, btime
+
+
+def start_pondering(engine, board, best_move, ponder_move, wtime, btime, game, logger, move_overhead, start_time):
+    ponder_board = copy.deepcopy(board)
+    ponder_board.push(shogi.Move.from_usi(best_move))
+    ponder_board.push(shogi.Move.from_usi(ponder_move))
+    ponder_usi = ponder_move
+
+    wtime, btime = adjust_game_time(wtime, btime, board, move_overhead, start_time, game.state["winc"], game.state["binc"])
+    logger.info("Pondering {} for btime {} wtime {}".format(ponder_move, btime, wtime))
+
+    def ponder_thread_func(game, engine, board, btime, wtime, binc, winc, byo):
+        global ponder_results
+        best_move, ponder_move = engine.search_with_ponder(game, board, btime, wtime, binc, winc, byo, True)
+        ponder_results[game.id] = (best_move, ponder_move)
+
+    ponder_thread = threading.Thread(target=ponder_thread_func, args=(game, engine, ponder_board, btime, wtime, game.state["binc"], game.state["winc"], game.state["byo"]))
+    ponder_thread.start()
+    return ponder_thread, ponder_usi
+
+
+def get_pondering_result(engine, game, moves, ponder_thread, ponder_usi):
+    if ponder_thread is None:
+        return None, None
+
+    if ponder_usi == moves[-1].usi():
+        engine.ponderhit()
+        ponder_thread.join()
+        engine.print_stats()
+        return ponder_results[game.id]
+    else:
+        engine.stop()
+        ponder_thread.join()
+        return None, None
+
+
 def choose_move_time(engine, board, search_time, ponder):
     logger.info("Searching for time {}".format(search_time))
     return engine.search_for(board, search_time, ponder)
 
+
 def play_first_move(game, engine, board, li):
-    moves = game.state["moves"].split()
-    if is_engine_move(game, moves):
-        # need to hardcode first movetime since Lishogi has 30 sec limit.
-        best_move = engine.first_search(board, 1000)
-        engine.print_stats()
-        li.make_move(game.id, best_move)
-        return True
-    return False
+    # need to hardcode first movetime since Lishogi has 30 sec limit.
+    best_move = engine.first_search(board, 1000)
+    engine.print_stats()
+    li.make_move(game.id, best_move)
 
 
 def play_first_book_move(game, engine, board, li, config):
@@ -432,32 +407,23 @@ def setup_board(game):
         board = shogi.Board(game.initial_fen)
     else:
         board = shogi.Board() # Standard
-    moves = game.state["moves"].split()
-    for move in moves:
-        board = update_board(board, move)
+
+    for move in game.state["moves"].split():
+        usi_move = shogi.Move.from_usi(makeusi(move))
+        if board.is_legal(usi_move):
+            board.push(usi_move)
+        else:
+            logger.debug("Ignoring illegal move {} on board {}".format(makeusi(move), board.sfen()))
 
     return board
 
 
-def is_sente_to_move(game, moves):
-    return len(moves) % 2 == (0 if game.sente_starts else 1)
-
-
-def is_engine_move(game, moves):
-    return game.is_sente == is_sente_to_move(game, moves)
+def is_engine_move(game, board):
+    return game.is_sente == (board.turn == shogi.BLACK)
 
 
 def is_game_over(game):
     return game.state["status"] != "started"
-
-
-def update_board(board, move):
-    usi_move = shogi.Move.from_usi(makeusi(move))
-    if board.is_legal(usi_move):
-        board.push(usi_move)
-    else:
-        logger.debug("Ignoring illegal move {} on board {}".format(makeusi(move), board.sfen()))
-    return board
 
 
 def intro():

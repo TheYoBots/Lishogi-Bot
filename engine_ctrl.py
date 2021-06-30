@@ -17,7 +17,7 @@ class Engine:
     def set_go_commands(self, go_comm):
         self.go_commands = go_comm
         logger.info(self.go_commands)
-     
+
     def open_process(self, command, shell=True, _popen_lock=threading.Lock()):
         kwargs = {
             "shell": shell,
@@ -111,10 +111,7 @@ class Engine:
         self.send("setoption name %s value %s" % (name, value))
 
     def go(self, position, moves, movetime=None, btime=None, wtime=None, binc=None, winc=None, byo=None, depth=None, nodes=None, ponder=False):
-        if position != "startpos":
-            position = "sfen " + position
-        self.send("position %s moves %s" % (position, " ".join(moves)))
-        logger.info("position %s moves %s" % (position, " ".join(moves)))
+        self.position(position, moves)
 
         builder = []
         builder.append("go")
@@ -149,6 +146,7 @@ class Engine:
         self.send(" ".join(builder))
         logger.info(" ".join(builder))
 
+        self.info = {}
         info = {}
         info["bestmove"] = None
         info["pondermove"] = None
@@ -227,9 +225,18 @@ class Engine:
                 self.info = info
             else:
                 logger.error("Unexpected engine response to go: %s %s" % (command, arg))
-    
+
+    def position(self, position, moves):
+        if position != "startpos":
+            position = "sfen " + position
+        self.send("position %s moves %s" % (position, " ".join(moves)))
+        logger.info("position %s moves %s" % (position, " ".join(moves)))
+
     def stop(self):
         self.send("stop")
+
+    def quit(self):
+        self.send("quit")
 
     def ponderhit(self):
         self.send("ponderhit")

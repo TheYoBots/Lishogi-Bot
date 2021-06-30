@@ -104,8 +104,8 @@ class Lishogi:
 
     def set_user_agent(self, username):
         self.header.update({"User-Agent": "lishogi-bot/{} user:{}".format(self.version, username)})
-        self.session.headers.update(self.header)     
-    
+        self.session.headers.update(self.header)
+
     def challenge_ai(self):
         data = {"level": 1, "clock.limit": 60, "clock.increment": 0, "clock.byoyomi": 2, "clock.periods": 1}
         return self.api_post(ENDPOINTS["challenge_ai"], data=data)
