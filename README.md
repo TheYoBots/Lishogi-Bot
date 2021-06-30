@@ -48,7 +48,7 @@ pip install -r requirements.txt
 
 ## Setup Engine
 - Place your engine(s) in the `engine: dir` directory.
-- In the `config.yml` file, enter the binary name as the `engine: name` field (In Windows you may need to type a name with `.exe`, like `lczero.exe`).
+- In the `config.yml` file, enter the binary name as the `engine: name` field (In Windows you may need to type a name with `.exe`, like `fairystockfish.exe`).
 - Using this process any engine can be added to the bot.
 - **Note: The engine you add has to be running under the USI protocol, only then it will work.**
 
