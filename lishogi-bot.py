@@ -223,9 +223,8 @@ def play_game(li, game_id, control_queue, engine_factory, user_profile, config, 
     correspondence_move_time = correspondence_cfg.get("move_time", 60) * 1000
 
     engine_cfg = config["engine"]
-    is_usi = engine_cfg["protocol"] == "usi"
     ponder_cfg = correspondence_cfg if is_correspondence else engine_cfg
-    is_usi_ponder = is_usi and ponder_cfg.get("ponder", False)
+    can_ponder = ponder_cfg.get("ponder", False)
     move_overhead = config.get("move_overhead", 1000)
     delay_seconds = config.get("rate_limiting_delay", 0)/1000
     polyglot_cfg = engine_cfg.get("polyglot", {})
@@ -262,20 +261,15 @@ def play_game(li, game_id, control_queue, engine_factory, user_profile, config, 
                     correspondence_disconnect_time = correspondence_cfg.get("disconnect_time", 300)
 
                     if len(board.move_stack) < 2:
-                        play_first_move(game, engine, board, li)
+                        best_move, ponder_move = choose_first_move(engine, board)
+                    elif is_correspondence:
+                        best_move, ponder_move = choose_move_time(engine, board, correspondence_move_time)
                     else:
                         best_move, ponder_move = get_pondering_result(engine, game, board.move_stack, ponder_thread, ponder_usi)
-                        ponder_thread = None
-                        ponder_usi = None
-
-                        btime = upd["btime"]
-                        wtime = upd["wtime"]
                         if best_move is None:
-                            best_move, ponder_move = play_midgame_move(engine, board, wtime, btime, move_overhead, start_time, logger, game)
-
-                        li.make_move(game.id, best_move)
-                        if is_usi_ponder and ponder_move is not None:
-                            ponder_thread, ponder_usi = start_pondering(engine, board, best_move, ponder_move, wtime, btime, game, logger, move_overhead, start_time)
+                            best_move, ponder_move = play_midgame_move(engine, board, upd["wtime"], upd["btime"], move_overhead, start_time, logger, game)
+                    li.make_move(game.id, best_move)
+                    ponder_thread, ponder_usi = start_pondering(engine, board, best_move, ponder_move, upd["wtime"], upd["btime"], game, logger, move_overhead, start_time, can_ponder)
                     time.sleep(delay_seconds)
                 elif is_game_over(game):
                     engine.report_game_result(game, board)
@@ -323,7 +317,6 @@ def play_midgame_move(engine, board, wtime, btime, move_overhead, start_time, lo
     wtime, btime = adjust_game_time(wtime, btime, board, move_overhead, start_time)
     logger.info("Searching for btime {} wtime {}".format(btime, wtime))
     best_move, ponder_move = engine.search_with_ponder(game, board, btime, wtime, game.state["binc"], game.state["winc"], game.state["byo"])
-    engine.print_stats()
     return best_move, ponder_move
 
 
@@ -335,7 +328,9 @@ def adjust_game_time(wtime, btime, board, move_overhead, start_time, winc=0, bin
     return wtime, btime
 
 
-def start_pondering(engine, board, best_move, ponder_move, wtime, btime, game, logger, move_overhead, start_time):
+def start_pondering(engine, board, best_move, ponder_move, wtime, btime, game, logger, move_overhead, start_time, can_ponder):
+    if not can_ponder or ponder_move is None:
+        return None, None
     ponder_board = copy.deepcopy(board)
     ponder_board.push(shogi.Move.from_usi(best_move))
     ponder_board.push(shogi.Move.from_usi(ponder_move))
@@ -361,7 +356,6 @@ def get_pondering_result(engine, game, moves, ponder_thread, ponder_usi):
     if ponder_usi == moves[-1].usi():
         engine.ponderhit()
         ponder_thread.join()
-        engine.print_stats()
         return ponder_results[game.id]
     else:
         engine.stop()
@@ -369,16 +363,14 @@ def get_pondering_result(engine, game, moves, ponder_thread, ponder_usi):
         return None, None
 
 
-def choose_move_time(engine, board, search_time, ponder):
+def choose_move_time(engine, board, search_time):
     logger.info("Searching for time {}".format(search_time))
-    return engine.search_for(board, search_time, ponder)
+    return engine.search_for(board, search_time)
 
 
-def play_first_move(game, engine, board, li):
+def choose_first_move(engine, board):
     # need to hardcode first movetime since Lishogi has 30 sec limit.
-    best_move = engine.first_search(board, 1000)
-    engine.print_stats()
-    li.make_move(game.id, best_move)
+    return choose_move_time(engine, board, 1000)
 
 
 def play_first_book_move(game, engine, board, li, config):
