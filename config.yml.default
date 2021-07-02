@@ -8,6 +8,8 @@ engine:                      # Engine Settings.
   ponder: false              # Think on opponent's time.
 # engine_options:            # Any custom command line params to pass to the engine.
 #   cpuct: 3.1
+  homemade_options:
+#   Hash: 256
   usi_options:               # Arbitrary USI options passed to the engine.
     Move Overhead: 500      # Increase if your bot flags games too often.
     Threads: 1               # Max CPU threads the engine can use.

@@ -86,6 +86,7 @@ class Engine:
                 pass
             else:
                 logger.error("Unexpected engine response to usi: %s %s" % (command, arg))
+            self.id = engine_info
 
     def isready(self):
         self.send("isready")
@@ -127,19 +128,19 @@ class Engine:
             builder.append("nodes")
             builder.append(str(nodes))
         # In Shogi and USI, black is the player to move first
-        if btime is not None:
+        if btime is not None and nodes is None and depth is None and movetime is None:
             builder.append("btime")
             builder.append(str(btime))
-        if wtime is not None:
+        if wtime is not None and nodes is None and depth is None and movetime is None:
             builder.append("wtime")
             builder.append(str(wtime))
-        if byo is not None:
+        if byo is not None and nodes is None and depth is None and movetime is None:
             builder.append("byoyomi")
             builder.append(str(byo))
-        if binc is not None:
+        if binc is not None and nodes is None and depth is None and movetime is None:
             builder.append("binc")
             builder.append(str(binc))
-        if winc is not None:
+        if winc is not None and nodes is None and depth is None and movetime is None:
             builder.append("winc")
             builder.append(str(winc))
 
