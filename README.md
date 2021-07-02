@@ -54,7 +54,7 @@ pip install -r requirements.txt
 
 ## Creating a homemade bot
 
-As an alternative to creating an entire chess engine and implementing one of the communiciation protocols (UCI or XBoard), a bot can also be created by writing a single class with a single method. The `search()` method in this new class takes the current board and the game clock as arguments and should return a move based on whatever criteria the coder desires.
+As an alternative to creating an entire chess engine and implementing one of the communiciation protocols (USI), a bot can also be created by writing a single class with a single method. The `search()` method in this new class takes the current board and the game clock as arguments and should return a move based on whatever criteria the coder desires.
 
 Steps to create a homemade bot:
 
