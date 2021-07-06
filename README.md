@@ -211,3 +211,6 @@ WantedBy=multi-user.target
 
 ## Acknowledgements
 Thanks to the Lichess Team for creating a [repository](https://github.com/ShailChoksi/lichess-bot) that could be easily accessed and modified to help converting it to a format that supports Lishogi. Thanks to [Tasuku SUENAGA a.k.a. gunyarakun](https://github.com/gunyarakun) and his [python-shogi](https://pypi.org/pypi/python-shogi/) code which allows engine communication seamlessly. Thanks to  [WandererXII](https://github.com/WandererXII) for all his effort and help.
+
+## License
+lishogi-bot is licensed under the AGPLv3 (or any later version at your option). Check out the [LICENSE file](/LICENSE) for the full text.
