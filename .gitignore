@@ -3,4 +3,3 @@ __pycache__
 /engines/*
 !/engines/README.md
 .vscode
-goorm.manifest
