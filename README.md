@@ -3,7 +3,7 @@
 [![Python Build](https://github.com/TheYoBots/Lishogi-Bot/actions/workflows/python-build.yml/badge.svg)](https://github.com/TheYoBots/Lishogi-Bot/actions/workflows/python-build.yml)
 [![Lishogi Bots](https://img.shields.io/badge/Lishogi_Bots-%40Bot-blue.svg)](https://lishogi.org/player/bots)
 
-A bridge between [Lishogi's API](https://lichess.org/api#tag/Bot) and Lishogi USI Bots. In case you don't know English, view the [Japanese Translation here (日本語翻訳)](https://github.com/TheYoBots/Lishogi-Bot/wiki/Japanese-Translation).
+A bridge between [Lishogi's Bot API](https://lichess.org/api#tag/Bot) and Lishogi USI Bots. In case you don't know English, view the [Japanese Translation here (日本語翻訳)](https://github.com/TheYoBots/Lishogi-Bot/wiki/Japanese-Translation).
 
 ## How to Install
 ### Mac/Linux:
@@ -20,7 +20,7 @@ source ./venv/bin/activate
 python3 -m pip install -r requirements.txt
 ```
 - Copy `config.yml.default` to `config.yml`.
-- Edit the `config.yml` file to your liking by changing the supported [variants](/config.yml.default#L43-L45), [timings](/config.yml.default#L46-L52), [challenge modes](/config.yml.default#L53-L55) and [incoming challenges](/config.yml.default#L32-L42), so that it plays shogi the way you want it to.
+- Edit the `config.yml` file to your liking by changing the supported [variants](/config.yml.default#L45-L47), [timings](/config.yml.default#L48-L54), [challenge modes](/config.yml.default#L55-L57) and [incoming challenges](/config.yml.default#L34-L44), so that it plays shogi the way you want it to.
 
 ### Windows:
 - **NOTE: Only Python 3.7 or later is supported!**
@@ -37,12 +37,12 @@ python -m venv .venv  # if this fails you probably need to add Python to your PA
 pip install -r requirements.txt
 ```
 - Copy `config.yml.default` to `config.yml`.
-- Edit the `config.yml` file to your liking by changing the supported [variants](/config.yml.default#L43-L45), [timings](/config.yml.default#L46-L52), [challenge modes](/config.yml.default#L53-L55) and [incoming challenges](/config.yml.default#L32-L42), so that it plays shogi the way you want it to.
+- Edit the `config.yml` file to your liking by changing the supported [variants](/config.yml.default#L45-L47), [timings](/config.yml.default#L48-L54), [challenge modes](/config.yml.default#L55-L57) and [incoming challenges](/config.yml.default#L34-L44), so that it plays shogi the way you want it to.
 
 ## Lishogi OAuth
 - Create an account for your bot on [Lishogi.org](https://lishogi.org/signup).
 - **NOTE: If you have previously played games on an existing account, you will not be able to use it as a bot account.**
-- Once your account has been created and you are logged in, [create a personal OAuth2 token with the "Play games with the bot API" ('play:bot' scopes)](https://lishogi.org/account/oauth/token/create?scopes[]=bot:play&scopes[]=challenge:read&scopes[]=challenge:write&description=Lishogi+Bot+Token) selected and a description added.
+- Once your account has been created and you are logged in, [create a personal OAuth2 token with the "Play games with the bot API" ('play:bot' scopes)](https://lishogi.org/account/oauth/token/create?scopes[]=bot:play&description=Lishogi+Bot+Token) selected and a description added.
 - A `token` (e.g. `xxxxxxxxxxxxxxxx`) will be displayed. Store this in the `config.yml` file as the `token` field.
 - **NOTE: You won't see this token again on Lishogi, so save it or store it somewhere.**
 
@@ -53,11 +53,9 @@ pip install -r requirements.txt
 - **Note: The engine you add has to be running under the USI protocol, only then it will work.**
 
 ## Creating a homemade bot
-
 As an alternative to creating an entire chess engine and implementing one of the communiciation protocols (USI), a bot can also be created by writing a single class with a single method. The `search()` method in this new class takes the current board and the game clock as arguments and should return a move based on whatever criteria the coder desires.
 
 Steps to create a homemade bot:
-
 1. Do all the steps in the [How to Install](#how-to-install)
 2. In the `config.yml`, change the engine protocol to `homemade`
 3. Create a class in some file that extends `MinimalEngine` (in `strategies.py`).
@@ -187,6 +185,10 @@ To output more information (including your engine's thinking output and debuggin
 ```python
 python lishogi-bot.py -v
 ```
+
+## To Quit
+- Press `CTRL+C`.
+- It may take some time to quit.
 
 ## Tips & Tricks
 - You can specify a different config file with the `--config` argument.
