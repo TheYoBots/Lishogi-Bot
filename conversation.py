@@ -28,7 +28,7 @@ class Conversation:
             name = game.me.name
             self.send_reply(line, "{} running {} (Lishogi-Bot v{})".format(name, self.engine.name(), self.version))
         elif cmd == "howto":
-            self.send_reply(line, "How to run your own bot: https://github.com/TheYoBots/Lishogi-Bot")
+            self.send_reply(line, "How to run: https://github.com/TheYoBots/Lishogi-Bot")
         elif cmd == "eval" and line.room == "spectator":
             stats = self.engine.get_stats()
             self.send_reply(line, ", ".join(stats))
