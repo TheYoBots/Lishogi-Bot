@@ -13,6 +13,7 @@ class Engine:
     def __init__(self, command):
         self.proccess = self.open_process(command)
         self.go_commands = None
+        self.info = {}
 
     def set_go_commands(self, go_comm):
         self.go_commands = go_comm
@@ -147,7 +148,6 @@ class Engine:
         self.send(" ".join(builder))
         logger.info(" ".join(builder))
 
-        self.info = {}
         info = {}
         info["bestmove"] = None
         info["pondermove"] = None
