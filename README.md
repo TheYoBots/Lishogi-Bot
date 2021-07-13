@@ -78,35 +78,39 @@ Besides the above, there are many possible options within `config.yml` for confi
     cpuct: 3.1
 ```
 This would create the command-line option `--cpuct=3.1` to be used when starting the engine. Any number of options can be listed here, each getting their own command-line option.
-- `usi_options`: A list of options to pass to a USI engine after startup. Different engines have different options, so treat the options in `config.yml.default` as templates and not suggestions. When USI engines start, they print a list of configurations that can modify their behavior. For example, Fairy Stockfish 13 prints the following when run at the command line:
+- `usi_options`: A list of options to pass to a USI engine after startup. Different engines have different options, so treat the options in `config.yml.default` as templates and not suggestions. When USI engines start, they print a list of configurations that can modify their behavior. For example, Fairy Stockfish 13 Largeboards prints the following when run at the command line (`./stockfish usi`):
 ```
-id name Fairy Stockfish 13
+Fairy-Stockfish 13 LB by Fabian Fichter
+id name Fairy-Stockfish 13 LB
 id author Fabian Fichter
-
-option name Debug Log File type string default 
+option name Protocol type combo default usi var uci var usi var ucci var ucicyclone var xboard
+option name Debug_Log_File type string default 
 option name Contempt type spin default 24 min -100 max 100
-option name Analysis Contempt type combo default Both var Off var White var Black var Both
+option name Analysis_Contempt type combo default Both var Both var Off var White var Black
 option name Threads type spin default 1 min 1 max 512
-option name Hash type spin default 16 min 1 max 33554432
-option name Clear Hash type button
+option name Hash type spin default 16 min 1 max 2048
+option name Clear_Hash type button
 option name Ponder type check default false
 option name MultiPV type spin default 1 min 1 max 500
-option name Skill Level type spin default 20 min 0 max 20
-option name Move Overhead type spin default 10 min 0 max 5000
-option name Slow Mover type spin default 100 min 10 max 1000
+option name Skill_Level type spin default 20 min -20 max 20
+option name Move_Overhead type spin default 10 min 0 max 5000
+option name Slow_Mover type spin default 100 min 10 max 1000
 option name nodestime type spin default 0 min 0 max 10000
 option name UCI_Chess960 type check default false
+option name UCI_Variant type combo default shogi var 3check var 5check var ai-wok var almost var amazon var antichess var armageddon var asean var ataxx var atomic var breakthrough var bughouse var cambodian var capablanca var capahouse var caparandom var centaur var chancellor var chaturanga var chess var chessgi var chigorin var clobber var clobber10 var codrus var coregal var courier var crazyhouse var dobutsu var embassy var euroshogi var extinction var fairy var fischerandom var gardner var giveaway var gorogoro var gothic var grand var grasshopper var hoppelpoppel var horde var janggi var janggicasual var janggimodern var janggitraditional var janus var jesonmor var judkins var karouk var kinglet var kingofthehill var knightmate var koedem var kyotoshogi var loop var losalamos var losers var makpong var makruk var manchu var micro var mini var minishogi var minixiangqi var modern var newzealand var nightrider var nocastle var nocheckatomic var normal var okisakishogi var opulent var placement var pocketknight var racingkings var seirawan var shako var shatar var shatranj var shogi var shoshogi var shouse var sittuyin var suicide var supply var tencubed var threekings var torishogi var xiangqi var yarishogi
 option name UCI_AnalyseMode type check default false
 option name UCI_LimitStrength type check default false
-option name UCI_Elo type spin default 1350 min 1350 max 2850
+option name UCI_Elo type spin default 1350 min 500 max 2850
 option name UCI_ShowWDL type check default false
 option name SyzygyPath type string default <empty>
 option name SyzygyProbeDepth type spin default 1 min 1 max 100
 option name Syzygy50MoveRule type check default true
 option name SyzygyProbeLimit type spin default 7 min 0 max 7
-option name Use NNUE type check default true
-option name EvalFile type string default nn-62ef826d1a6d.nnue
-uciok
+option name Use_NNUE type check default true
+option name EvalFile type string default <empty>
+option name TsumeMode type check default false
+option name VariantPath type string default <empty>
+usiok
 ```
 Any of the names following `option name` can be listed in `usi_options` in order to configure the Fairy Stockfish engine.
 ```yml
@@ -114,7 +118,7 @@ Any of the names following `option name` can be listed in `usi_options` in order
     Move Overhead: 100
     Skill Level: 10
 ```
-The exception to this are the options `uci_chess960`, `uci_variant`, `multipv`, and `ponder`. These will be handled by lishogi-bot after a game starts and should not be listed in the `config.yml` file. Also, if an option is listed under `usi_options` that is not in the list printed by the engine, it will cause an error when the engine starts because the engine won't understand the option. The word after `type` indicates the expected type of the options: `string` for a text string, `spin` for a numeric value, `check` for a boolean True/False value.
+The exception to this are the options `UCI_Chess960`, `UCI_Variant`, `MultiPv`, and `Ponder`. These will be handled by lishogi-bot after a game starts and should not be listed in the `config.yml` file. Also, if an option is listed under `usi_options` that is not in the list printed by the engine, it will cause an error when the engine starts because the engine won't understand the option. The word after `type` indicates the expected type of the options: `string` for a text string, `spin` for a numeric value, `check` for a boolean True/False value.
 
 One last option is `go_commands`. Beneath this option, arguments to the USI `go` command can be passed. For example,
 ```yml
