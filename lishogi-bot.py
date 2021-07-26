@@ -243,6 +243,11 @@ def play_game(li, game_id, control_queue, engine_factory, user_profile, config, 
 
     logger.debug("Game state: {}".format(game.state))
 
+    greeting_cfg = config.get("greeting", {}) or {}
+    hello = str(greeting_cfg.get("hello", "") or "")
+    goodbye = str(greeting_cfg.get("goodbye", "") or "")
+
+    first_move = True
     correspondence_disconnect_time = 0
     first_move = True
 
@@ -269,6 +274,7 @@ def play_game(li, game_id, control_queue, engine_factory, user_profile, config, 
                     correspondence_disconnect_time = correspondence_cfg.get("disconnect_time", 300)
 
                     if len(board.move_stack) < 2:
+                        conversation.send_message("player", hello)
                         best_move, ponder_move = choose_first_move(engine, board)
                     elif is_correspondence:
                         best_move, ponder_move = choose_move_time(engine, board, correspondence_move_time)
@@ -281,6 +287,7 @@ def play_game(li, game_id, control_queue, engine_factory, user_profile, config, 
                     time.sleep(delay_seconds)
                 elif is_game_over(game):
                     engine.report_game_result(game, board)
+                    conversation.send_message("player", goodbye)
                 elif len(board.move_stack) == 0:
                     correspondence_disconnect_time = correspondence_cfg.get("disconnect_time", 300)
 
