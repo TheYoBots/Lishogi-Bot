@@ -21,6 +21,7 @@ from urllib3.exceptions import ProtocolError
 from ColorLogger import enable_color_logging
 from util import *
 import copy
+from collections import defaultdict
 
 logger = logging.getLogger(__name__)
 
@@ -244,9 +245,10 @@ def play_game(li, game_id, control_queue, engine_factory, user_profile, config, 
     logger.debug("Game state: {}".format(game.state))
 
     greeting_cfg = config.get("greeting", {}) or {}
-    hello = str(greeting_cfg.get("hello", "") or "")
-    goodbye = str(greeting_cfg.get("goodbye", "") or "")
-
+    keyword_map = defaultdict(str, me=game.me.name, opponent=game.opponent.name)
+    hello = str(greeting_cfg.get("hello", "") or "").format_map(keyword_map)
+    goodbye = str(greeting_cfg.get("goodbye", "") or "").format_map(keyword_map)
+    
     first_move = True
     correspondence_disconnect_time = 0
     first_move = True
