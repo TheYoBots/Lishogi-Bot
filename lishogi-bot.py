@@ -175,7 +175,7 @@ def start(li, user_profile, engine_factory, config, logging_level, log_filename,
 
             is_correspondence_ping = event["type"] == "correspondence_ping" 
             is_local_game_done = event["type"] == "local_game_done" 
-            if is_correspondence_ping or (is_local_game_done and not wait_for_correspondence_ping):
+            if (is_correspondence_ping or (is_local_game_done and not wait_for_correspondence_ping)) and not challenge_queue:
                 if is_correspondence_ping and wait_for_correspondence_ping:
                     correspondence_queue.put("")
 
