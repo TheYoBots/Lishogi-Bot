@@ -40,8 +40,9 @@ class MinimalEngine(EngineWrapper):
     however you can also change other methods like
     `notify`, `first_search`, `get_time_control`, etc.
     """
-    def __init__(self, *args, name=None):
-        super().__init__(*args)
+    def __init__(self, commands, options, stderr, name=None):
+        super().__init__(commands, options, stderr)
+        self.go_commands = options.pop("go_commands", {}) or {}
 
         self.engine_name = self.__class__.__name__ if name is None else name
 
