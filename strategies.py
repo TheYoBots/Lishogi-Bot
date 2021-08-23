@@ -1,3 +1,4 @@
+"""
 Some example strategies for people who want to create a custom, homemade bot.
 And some handy classes to extend
 """
