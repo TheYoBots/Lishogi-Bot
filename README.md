@@ -42,7 +42,7 @@ pip install -r requirements.txt
 ## Lishogi OAuth
 - Create an account for your bot on [Lishogi.org](https://lishogi.org/signup).
 - **NOTE: If you have previously played games on an existing account, you will not be able to use it as a bot account.**
-- Once your account has been created and you are logged in, [create a personal OAuth2 token with the "Play games with the bot API" ('play:bot' scopes)](https://lishogi.org/account/oauth/token/create?scopes[]=bot:play&description=Lishogi+Bot+Token) selected and a description added.
+- Once your account has been created and you are logged in, [create a personal OAuth2 token with the "Play games with the bot API" ('bot:play' scopes)](https://lishogi.org/account/oauth/token/create?scopes[]=bot:play&description=Lishogi+Bot+Token) selected and a description added.
 - A `token` (e.g. `xxxxxxxxxxxxxxxx`) will be displayed. Store this in the `config.yml` file as the `token` field.
 - **NOTE: You won't see this token again on Lishogi, so save it or store it somewhere.**
 
@@ -53,20 +53,19 @@ pip install -r requirements.txt
 - **Note: The engine you add has to be running under the USI protocol, only then it will work.**
 
 ## Creating a homemade bot
-As an alternative to creating an entire chess engine and implementing one of the communiciation protocols (USI), a bot can also be created by writing a single class with a single method. The `search()` method in this new class takes the current board and the game clock as arguments and should return a move based on whatever criteria the coder desires.
+As an alternative to creating an entire chess engine and implementing one of the communiciation protocols (USI), a bot can also be created by writing a single class with a single method. The `search()` method in this new class takes the current board and the game clock as arguments and should return a move based on whatever criteria you desires.
 
 Steps to create a homemade bot:
-1. Do all the steps in the [How to Install](#how-to-install)
-2. In the `config.yml`, change the engine protocol to `homemade`
-3. Create a class in some file that extends `MinimalEngine` (in `strategies.py`).
+1. Do all the steps mentioned in [How to Install](#how-to-install).
+2. In the `config.yml`, change the engine protocol to `homemade`.
+3. Create a class in some file that extends the `MinimalEngine` class (in the `strategies.py` file).
     - Look at the `strategies.py` file to see some examples.
     - If you don't know what to implement, look at the `EngineWrapper` or `USIEngine` class.
-        - You don't have to create your own engine, even though it's an "EngineWrapper" class.<br>
-          The examples just implement `search`.
-4. In the `config.yml`, change the name from engine_name to the name of your class
-    - In this case, you could change it to:
-      
-      `name: "RandomMove"`
+        - You don't have to create your own engine, even though it's an `EngineWrapper` class. <br/>
+The examples just implement `search`.
+4. In the `config.yml`, change the name from `engine_name` to the name of your class.
+    - In this case, you could change it to: <br/>
+`name: "RandomMove"`
 
 ### Engine Configuration
 Besides the above, there are many possible options within `config.yml` for configuring the engine for use with lishogi-bot.
