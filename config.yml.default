@@ -1,4 +1,4 @@
-token: "xxxxxxxxxxxxxxxx"    # Lishogi OAuth Token (which can be taken from https://lishogi.org/account/oauth/token/create?scopes[]=bot:play&scopes[]=challenge:read&scopes[]=challenge:write&description=Lishogi+Bot+Token) with 'Play games with the bot API' ('bot:play' scopes), 'Read incoming challenges' ('challenge:read' scopes) and 'Create, accept, decline challenges' ('challenge:write' scopes) enabled.
+token: "your token"    # Lishogi OAuth Token (which can be taken from https://lishogi.org/account/oauth/token/create?scopes[]=bot:play&scopes[]=challenge:read&scopes[]=challenge:write&description=Lishogi+Bot+Token) with 'Play games with the bot API' ('bot:play' scopes), 'Read incoming challenges' ('challenge:read' scopes) and 'Create, accept, decline challenges' ('challenge:write' scopes) enabled.
 url: "https://lishogi.org/"  # Lishogi base URL. Do not change this unless locally hosted to an external URL.
 
 engine:                      # Engine Settings.
@@ -62,4 +62,4 @@ greeting:
     #   {me} to insert bot's name
     # Any other words in curly braces will be removed.
     hello: "Hi! I'm {me}. Good luck! Type !help for a list of commands I can respond to." # Message to send to chat at the start of a game
-    goodbye: "Good game!" # Message to send to chat at the end of a game
+    goodbye: "Good game!. Freindship won :D." # Message to send to chat at the end of a game
