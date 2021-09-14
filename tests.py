@@ -12,7 +12,7 @@ def test_nothing():
 
 
 def download_fsf():
-    response = requests.get('https://github.com/ianfab/Fairy-Stockfish/releases/download/fairy_sf_13_1/fairy-stockfish-largeboard_x86-64.exe', allow_redirects=True)
+    response = requests.get('https://github.com/ianfab/Fairy-Stockfish/releases/download/fairy_sf_14/fairy-stockfish-largeboard_x86-64.exe', allow_redirects=True)
     with open('fsf.exe', 'wb') as file:
         file.write(response.content)
 
