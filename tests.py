@@ -18,7 +18,7 @@ def download_fsf():
 
 
 def download_suisho():
-    response = requests.get('https://github.com/gbtami/Fairy-Stockfish/releases/download/fishnet-090321/shogi.nnue', allow_redirects=True)
+    response = requests.get('https://www.patreon.com/file?h=56028998&i=8859602', allow_redirects=True)
     with open('shogi.nnue', 'wb') as file:
         file.write(response.content)
 
