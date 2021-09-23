@@ -4,5 +4,5 @@ idna==3.2
 python-shogi==1.0.14
 PyYAML>=5.4.1
 requests>=2.25.1
-urllib3==1.26.6
+urllib3==1.26.7
 backoff==1.11.1
