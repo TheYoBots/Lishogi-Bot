@@ -13,6 +13,7 @@ import time
 import backoff
 import sys
 import threading
+import random
 from config import load_config
 from conversation import Conversation, ChatLine
 from functools import partial
@@ -247,6 +248,7 @@ def play_game(li, game_id, control_queue, engine_factory, user_profile, config, 
     can_ponder = ponder_cfg.get("ponder", False)
     move_overhead = config.get("move_overhead", 1000)
     delay_seconds = config.get("rate_limiting_delay", 0)/1000
+    online_moves_cfg = engine_cfg.get("online_moves", {})
 
     ponder_thread = None
     ponder_usi = None
@@ -296,6 +298,8 @@ def play_game(li, game_id, control_queue, engine_factory, user_profile, config, 
                         move_attempted = True
                         if best_move is None:
                             best_move, ponder_move = play_midgame_move(engine, board, upd["btime"], upd["wtime"], move_overhead, start_time, logger, game)
+                        if best_move is None:
+                            best_move, ponder_move = get_online_move(li, board, game, online_moves_cfg)
                     li.make_move(game.id, best_move)
                     ponder_thread, ponder_usi = start_pondering(engine, board, best_move, ponder_move, upd["btime"], upd["wtime"], game, logger, move_overhead, start_time, can_ponder)
                     time.sleep(delay_seconds)
@@ -397,6 +401,58 @@ def get_pondering_result(engine, game, moves, ponder_thread, ponder_usi):
         engine.stop()
         ponder_thread.join()
         return None, None
+
+
+def get_lishogi_cloud_move(li, board, game, lishogi_cloud_cfg):
+    bw = 'b' if board.turn == shogi.BLACK else 'w'
+    if not lishogi_cloud_cfg.get("enabled", False) or game.state[f"{bw}time"] < lishogi_cloud_cfg.get("min_time", 20) * 1000:
+        return None
+
+    move = None
+
+    quality = lishogi_cloud_cfg.get("move_quality", "best")
+    multipv = 1 if quality == "best" else 5
+    variant = "standard" if game.variant_name == "From Position" else game.variant_name.lower()
+
+    try:
+        data = li.api_get(f"https://lishogi.org/api/cloud-eval?fen={board.sfen()}&multiPv={multipv}&variant={variant}", raise_for_status=False)
+        if "error" not in data:
+            if quality == "best":
+                depth = data["depth"]
+                knodes = data["knodes"]
+                if depth >= lishogi_cloud_cfg.get("min_depth", 20) and knodes >= lishogi_cloud_cfg.get("min_knodes", 0):
+                    pv = data["pvs"][0]
+                    move = pv["moves"].split()[0]
+                    score = pv["cp"]
+                    logger.info("Got move {} from lishogi cloud analysis (depth: {}, score: {}, knodes: {})".format(move, depth, score, knodes))
+            else:
+                depth = data["depth"]
+                knodes = data["knodes"]
+                if depth >= lishogi_cloud_cfg.get("min_depth", 20) and knodes >= lishogi_cloud_cfg.get("min_knodes", 0):
+                    best_eval = data["pvs"][0]["cp"]
+                    pvs = data["pvs"]
+                    max_difference = lishogi_cloud_cfg.get("max_score_difference", 50)
+                    if bw == "b":
+                        pvs = list(filter(lambda pv: pv["cp"] >= best_eval - max_difference, pvs))
+                    else:
+                        pvs = list(filter(lambda pv: pv["cp"] <= best_eval + max_difference, pvs))
+                    pv = random.choice(pvs)
+                    move = pv["moves"].split()[0]
+                    score = pv["cp"]
+                    logger.info("Got move {} from lishogi cloud analysis (depth: {}, score: {}, knodes: {})".format(move, depth, score, knodes))
+    except Exception:
+        pass
+
+    return move
+
+
+def get_online_move(li, board, game, online_moves_cfg):
+    lishogi_cloud_cfg = online_moves_cfg.get("lishogi_cloud_analysis", {})
+    if best_move is None:
+        best_move, ponder_move = get_lichess_cloud_move(li, board, game, lishogi_cloud_cfg)
+    if best_move:
+        return shogi.Move.from_uci(best_move, ponder_move)
+    return shogi.Move.from_uci(best_move, ponder_move)
 
 
 def choose_move_time(engine, board, game, search_time):
