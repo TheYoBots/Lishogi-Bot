@@ -20,13 +20,10 @@ def create_engine(config):
 
     silence_stderr = cfg.get("silence_stderr", False)
 
-    if engine_type == "homemade":
+    if engine_type == 'homemade':
         Engine = getHomemadeEngine(cfg["name"])
-    elif engine_type == "usi":
-        Engine = USIEngine
     else:
-        raise ValueError(
-            f"Invalid engine type: {engine_type}. Expected usi or homemade.")
+        Engine = USIEngine
 
     return Engine(commands, cfg.get("usi_options", {}), silence_stderr)
 
