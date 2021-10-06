@@ -12,8 +12,8 @@ def test_nothing():
 
 
 def download_fsf():
-    response = requests.get('https://github.com/ianfab/Fairy-Stockfish/releases/download/fairy_sf_13_1/fairy-stockfish-largeboard_x86-64.exe', allow_redirects=True)
-    with open('fsf.exe', 'wb') as file:
+    response = requests.get('https://github.com/ianfab/Fairy-Stockfish/releases/download/fairy_sf_13_1/fairy-stockfish-largeboard_x86-64', allow_redirects=True)
+    with open('fsf', 'wb') as file:
         file.write(response.content)
 
 
@@ -98,7 +98,7 @@ def test_bot():
         CONFIG = yaml.safe_load(file)
     CONFIG['token'] = 'Ao7zQxDqoBhE7tpG'
     CONFIG['engine']['dir'] = './'
-    CONFIG['engine']['name'] = 'fsf.exe'
+    CONFIG['engine']['name'] = 'fsf'
     CONFIG['engine']['usi_options']['EvalFile'] = 'shogi.nnue'
     run_bot(CONFIG, logging_level)
 
