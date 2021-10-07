@@ -21,7 +21,7 @@ def download_fsf():
         file.write(response.content)
 
 
-def download_suisho():
+def download_nnue():
     response = requests.get('https://github.com/Tama4649/Kristallweizen/blob/master/Kristallweizen_kaiV0.4.zip?raw=true', allow_redirects=True)
     with open('shogi.zip', 'wb') as file:
         file.write(response.content)
@@ -97,7 +97,7 @@ def test_bot():
     logging_level = lishogi_bot.logging.INFO  # lishogi_bot.logging_level.DEBUG
     lishogi_bot.logging.basicConfig(level=logging_level, filename=None, format="%(asctime)-15s: %(message)s")
     lishogi_bot.enable_color_logging(debug_lvl=logging_level)
-    download_suisho()
+    download_nnue()
     lishogi_bot.logger.info("Downloaded Suisho")
     download_fsf()
     lishogi_bot.logger.info("Downloaded Fairy Stockfish")
