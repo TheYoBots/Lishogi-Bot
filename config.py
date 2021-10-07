@@ -13,7 +13,7 @@ def load_config(config_file):
         except Exception as e:
             logger.error("There appears to be a syntax problem with your config.yml")
             raise e
-            
+        
         if "LISHOGI_BOT_TOKEN" in os.environ:
             CONFIG["token"] = os.environ["LISHOGI_BOT_TOKEN"]
 
