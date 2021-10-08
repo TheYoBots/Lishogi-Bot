@@ -4,6 +4,8 @@ import requests
 import time
 import zipfile
 import yaml
+import shogi
+import shogi.KIF as kif
 from shutil import copyfile
 import importlib
 lishogi_bot = importlib.import_module("lishogi-bot")
@@ -70,14 +72,14 @@ def run_bot(CONFIG, logging_level):
         def run_test():
             lishogi_bot.start(li, user_profile, engine_factory, CONFIG, logging_level, None, one_game=True)
             response = requests.get('https://lishogi.org/game/export/{}'.format(game_id))
-            response = response.text
-            response = response.lower()
-            response = response.split('\n')
-            result = list(filter(lambda line: 'result' in line, response))
-            result = result[0][9:-2]
-            color = list(filter(lambda line: 'sente' in line, response))
-            color = 'w' if username.lower() in color[0] else 'b'
-            win = result == '1-0' and color == 'w' or result == '0-1' and color == 'b'
+            response = response.content.decode()
+            parser = kif.Parser()
+            summary = parser.parse_str(response)[0]
+            starting = 'lishogi' in summary['names'][1]
+            board = shogi.Board()
+            for move in summary['moves']:
+                board.push_usi(move)
+            win = board.turn == (shogi.WHITE if starting else shogi.BLACK) and board.is_game_over()
             assert win
 
         run_test()
