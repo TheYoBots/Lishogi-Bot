@@ -1,4 +1,5 @@
 # Lishogi Bot
+[![Lishogi Bot Build](https://github.com/TheYoBots/Lishogi-Bot/actions/workflows/lishogi-bot-build.yml/badge.svg)](https://github.com/TheYoBots/Lishogi-Bot/actions/workflows/lishogi-bot-build.yml)
 [![Python Build](https://github.com/TheYoBots/Lishogi-Bot/actions/workflows/python-build.yml/badge.svg)](https://github.com/TheYoBots/Lishogi-Bot/actions/workflows/python-build.yml)
 [![Lishogi Bots](https://img.shields.io/badge/Lishogi_Bots-%40Bot-blue.svg)](https://lishogi.org/player/bots)
 
