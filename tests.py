@@ -100,7 +100,7 @@ def test_bot():
     lishogi_bot.logging.basicConfig(level=logging_level, filename=None, format="%(asctime)-15s: %(message)s")
     lishogi_bot.enable_color_logging(debug_lvl=logging_level)
     download_nnue()
-    lishogi_bot.logger.info("Downloaded Suisho")
+    lishogi_bot.logger.info("Downloaded NNUE")
     download_fsf()
     lishogi_bot.logger.info("Downloaded Fairy Stockfish")
     with open("./config.yml.default") as file:
