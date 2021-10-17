@@ -148,7 +148,7 @@ will append `nodes 1 depth 5 movetime 1000` to the command to start thinking of 
   - `max_base`: The maximum base time for a game.
   - `min_base`: The minimum base time for a game.
 
-- `variants`: An indented list of chess variants that the bot can handle.
+- `variants`: An indented list of shogi variants that the bot can handle.
 ```yml
   variants:
     - standard
