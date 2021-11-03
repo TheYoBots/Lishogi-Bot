@@ -47,7 +47,7 @@ pip install -r requirements.txt
 
 ## Setup Engine
 - Place your engine(s) in the `engine: dir` directory.
-- In the `config.yml` file, enter the binary name as the `engine: name` field (In Windows you may need to type a name with `.exe`, like `fairy-stockfish.exe`).
+- In the `config.yml` file, enter the binary name as the `engine: name` field (In Windows you may need to type a name with `.exe`, like `YaneuraOu.exe`).
 - Using this process any engine can be added to the bot.
 - **Note: The engine you add has to be running under the USI protocol, only then it will work.**
 
@@ -76,47 +76,58 @@ Besides the above, there are many possible options within `config.yml` for confi
     cpuct: 3.1
 ```
 This would create the command-line option `--cpuct=3.1` to be used when starting the engine. Any number of options can be listed here, each getting their own command-line option.
-- `usi_options`: A list of options to pass to a USI engine after startup. Different engines have different options, so treat the options in `config.yml.default` as templates and not suggestions. When USI engines start, they print a list of configurations that can modify their behavior. For example, Fairy Stockfish 13 Largeboards prints the following when run at the command line (`./stockfish usi`):
+- `usi_options`: A list of options to pass to a USI engine after startup. Different engines have different options, so treat the options in `config.yml.default` as templates and not suggestions. When USI engines start, they print a list of configurations that can modify their behavior. For example, YaneuraOu v6.50 prints the following when run at the command line:
 ```
-Fairy-Stockfish 13 LB by Fabian Fichter
-id name Fairy-Stockfish 13 LB
-id author Fabian Fichter
-option name Protocol type combo default usi var uci var usi var ucci var ucicyclone var xboard
-option name Debug_Log_File type string default 
-option name Contempt type spin default 24 min -100 max 100
-option name Analysis_Contempt type combo default Both var Both var Off var White var Black
-option name Threads type spin default 1 min 1 max 512
-option name Hash type spin default 16 min 1 max 2048
-option name Clear_Hash type button
-option name Ponder type check default false
-option name MultiPV type spin default 1 min 1 max 500
-option name Skill_Level type spin default 20 min -20 max 20
-option name Move_Overhead type spin default 10 min 0 max 5000
-option name Slow_Mover type spin default 100 min 10 max 1000
-option name nodestime type spin default 0 min 0 max 10000
-option name UCI_Chess960 type check default false
-option name UCI_Variant type combo default shogi var 3check var 5check var ai-wok var almost var amazon var antichess var armageddon var asean var ataxx var atomic var breakthrough var bughouse var cambodian var capablanca var capahouse var caparandom var centaur var chancellor var chaturanga var chess var chessgi var chigorin var clobber var clobber10 var codrus var coregal var courier var crazyhouse var dobutsu var embassy var euroshogi var extinction var fairy var fischerandom var gardner var giveaway var gorogoro var gothic var grand var grasshopper var hoppelpoppel var horde var janggi var janggicasual var janggimodern var janggitraditional var janus var jesonmor var judkins var karouk var kinglet var kingofthehill var knightmate var koedem var kyotoshogi var loop var losalamos var losers var makpong var makruk var manchu var micro var mini var minishogi var minixiangqi var modern var newzealand var nightrider var nocastle var nocheckatomic var normal var okisakishogi var opulent var placement var pocketknight var racingkings var seirawan var shako var shatar var shatranj var shogi var shoshogi var shouse var sittuyin var suicide var supply var tencubed var threekings var torishogi var xiangqi var yarishogi
-option name UCI_AnalyseMode type check default false
-option name UCI_LimitStrength type check default false
-option name UCI_Elo type spin default 1350 min 500 max 2850
-option name UCI_ShowWDL type check default false
-option name SyzygyPath type string default <empty>
-option name SyzygyProbeDepth type spin default 1 min 1 max 100
-option name Syzygy50MoveRule type check default true
-option name SyzygyProbeLimit type spin default 7 min 0 max 7
-option name Use_NNUE type check default true
-option name EvalFile type string default <empty>
-option name TsumeMode type check default false
-option name VariantPath type string default <empty>
+id name YaneuraOu NNUE 6.50
+id author by yaneurao
+option name Threads type spin default 4 min 1 max 512
+option name USI_Hash type spin default 16 min 1 max 33554432
+option name USI_Ponder type check default false
+option name Stochastic_Ponder type check default false
+option name MultiPV type spin default 1 min 1 max 800
+option name NetworkDelay type spin default 120 min 0 max 10000
+option name NetworkDelay2 type spin default 1120 min 0 max 10000
+option name MinimumThinkingTime type spin default 2000 min 1000 max 100000
+option name SlowMover type spin default 100 min 1 max 1000
+option name MaxMovesToDraw type spin default 0 min 0 max 100000
+option name DepthLimit type spin default 0 min 0 max 2147483647
+option name NodesLimit type spin default 0 min 0 max 9223372036854775807
+option name EvalDir type string default eval
+option name WriteDebugLog type check default false
+option name GenerateAllLegalMoves type check default false
+option name EnteringKingRule type combo default CSARule27 var NoEnteringKing var CSARule24 var CSARule24H var CSARule27 var CSARule27H var TryRule
+option name ThreadIdOffset type spin default 0 min 0 max 7
+option name LargePageEnable type check default true
+option name USI_OwnBook type check default true
+option name NarrowBook type check default false
+option name BookMoves type spin default 16 min 0 max 10000
+option name BookIgnoreRate type spin default 0 min 0 max 100
+option name BookFile type combo default standard_book.db var no_book var standard_book.db var yaneura_book1.db var yaneura_book2.db var yaneura_book3.db var yaneura_book4.db var user_book1.db var user_book2.db var user_book3.db var book.bin
+option name BookDir type string default book
+option name BookEvalDiff type spin default 30 min 0 max 99999
+option name BookEvalBlackLimit type spin default 0 min -99999 max 99999
+option name BookEvalWhiteLimit type spin default -140 min -99999 max 99999
+option name BookDepthLimit type spin default 16 min 0 max 99999
+option name BookOnTheFly type check default false
+option name ConsiderBookMoveCount type check default false
+option name BookPvMoves type spin default 8 min 1 max 246
+option name IgnoreBookPly type check default false
+option name SkillLevel type spin default 20 min 0 max 20
+option name DrawValueBlack type spin default -2 min -30000 max 30000
+option name DrawValueWhite type spin default -2 min -30000 max 30000
+option name PvInterval type spin default 300 min 0 max 100000
+option name ResignValue type spin default 99999 min 0 max 99999
+option name ConsiderationMode type check default false
+option name OutputFailLHPV type check default true
 usiok
 ```
-Any of the names following `option name` can be listed in `usi_options` in order to configure the Fairy Stockfish engine.
+Any of the names following `option name` can be listed in `usi_options` in order to configure the YaneuraOu engine.
 ```yml
   usi_options:
-    Move Overhead: 100
+    NetworkDelay: 100
     Skill Level: 10
 ```
-The exception to this are the options `UCI_Chess960`, `UCI_Variant`, `MultiPv`, and `Ponder`. These will be handled by lishogi-bot after a game starts and should not be listed in the `config.yml` file. Also, if an option is listed under `usi_options` that is not in the list printed by the engine, it will cause an error when the engine starts because the engine won't understand the option. The word after `type` indicates the expected type of the options: `string` for a text string, `spin` for a numeric value, `check` for a boolean True/False value.
+The exception to this are the options `Threads`, `USI_Ponder` and `MultiPv`. These will be handled by lishogi-bot after a game starts and should not be listed in the `config.yml` file. Also, if an option is listed under `usi_options` that is not in the list printed by the engine, it will cause an error when the engine starts because the engine won't understand the option. The word after `type` indicates the expected type of the options: `string` for a text string, `spin` for a numeric value, `check` for a boolean True/False value.
 
 One last option is `go_commands`. Beneath this option, arguments to the USI `go` command can be passed. For example,
 ```yml

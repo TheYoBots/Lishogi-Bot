@@ -83,7 +83,7 @@ class Engine:
                 name_and_value = arg.split(None, 1)
                 if len(name_and_value) == 2:
                     engine_info[name_and_value[0]] = name_and_value[1]
-            elif command == "option" or command.startswith("Fairy-Stockfish"):
+            elif command == "option" or command.startswith("YaneuraOu"):
                 pass
             else:
                 logger.error("Unexpected engine response to usi: %s %s" % (command, arg))
