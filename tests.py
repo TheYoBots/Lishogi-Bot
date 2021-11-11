@@ -105,7 +105,7 @@ def test_bot():
     CONFIG['token'] = TOKEN
     CONFIG['engine']['dir'] = './'
     CONFIG['engine']['name'] = 'yaneuraou.exe'
-    CONFIG['engine']['usi_options']['EvalDir'] = '/home/runner/work/Lishogi-Bot-1/Lishogi-Bot-1'
+    CONFIG['engine']['usi_options']['EvalDir'] = '/home/runner/work/Lishogi-Bot/Lishogi-Bot'
     run_bot(CONFIG, logging_level)
 
 
