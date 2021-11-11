@@ -17,19 +17,19 @@ def test_nothing():
     assert True
 
 
-def download_fsf():
-    response = requests.get('https://github.com/ianfab/Fairy-Stockfish/releases/download/fairy_sf_13_1/fairy-stockfish-largeboard_x86-64.exe', allow_redirects=True)
-    with open('fsf.exe', 'wb') as file:
+def download_yaneuraou():
+    response = requests.get('https://github.com/WandererXII/shoginet/raw/main/YaneuraOu-by-gcc', allow_redirects=True)
+    with open('yaneuraou.exe', 'wb') as file:
         file.write(response.content)
 
 
 def download_nnue():
-    response = requests.get('https://github.com/Tama4649/Kristallweizen/blob/master/Kristallweizen_kaiV0.4.zip?raw=true', allow_redirects=True)
+    response = requests.get('https://github.com/WandererXII/shoginet/raw/main/eval/nn.bin', allow_redirects=True)
     with open('shogi.zip', 'wb') as file:
         file.write(response.content)
     with zipfile.ZipFile('shogi.zip', 'r') as zip_ref:
         zip_ref.extractall('.')
-    copyfile('./eval/nn.bin', 'shogi.bin')
+    copyfile('./eval/nn.bin', 'nn.bin')
 
 
 def run_bot(CONFIG, logging_level):
@@ -101,14 +101,14 @@ def test_bot():
     lishogi_bot.enable_color_logging(debug_lvl=logging_level)
     download_nnue()
     lishogi_bot.logger.info("Downloaded NNUE")
-    download_fsf()
-    lishogi_bot.logger.info("Downloaded Fairy Stockfish")
+    download_yaneuraou()
+    lishogi_bot.logger.info("Downloaded yaneuraou")
     with open("./config.yml.default") as file:
         CONFIG = yaml.safe_load(file)
     CONFIG['token'] = TOKEN
     CONFIG['engine']['dir'] = './'
-    CONFIG['engine']['name'] = 'fsf.exe'
-    CONFIG['engine']['usi_options']['EvalFile'] = 'shogi.bin'
+    CONFIG['engine']['name'] = 'yaneuraou.exe'
+    CONFIG['engine']['usi_options']['EvalDir'] = 'D:\a\Lishogi-Bot\Lishogi-Bot\Eval'
     run_bot(CONFIG, logging_level)
 
 
