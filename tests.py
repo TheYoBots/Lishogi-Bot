@@ -18,19 +18,16 @@ def test_nothing():
 
 
 def download_yaneuraou():
-    response = requests.get('https://github.com/WandererXII/shoginet/raw/main/YaneuraOu-by-gcc', allow_redirects=True)
+    response = requests.get('https://github.com/WandererXII/shoginet/raw/main/YaneuraOu-by-gcc', allow_redirects=True) 
     with open('yaneuraou.exe', 'wb') as file:
         file.write(response.content)
 
 
 def download_nnue():
-    response = requests.get('https://github.com/WandererXII/shoginet/raw/main/eval/nn.bin', allow_redirects=True)
-    with open('shogi.zip', 'wb') as file:
+    response = requests.get('https://github.com/WandererXII/shoginet/blob/main/eval/nn.bin?raw=true', allow_redirects=True)
+    with open('nn.bin', 'wb') as file:
         file.write(response.content)
-    with zipfile.ZipFile('shogi.zip', 'r') as zip_ref:
-        zip_ref.extractall('.')
-    copyfile('./eval/nn.bin', 'nn.bin')
-
+        
 
 def run_bot(CONFIG, logging_level):
     lishogi_bot.logger.info(lishogi_bot.intro())
@@ -108,7 +105,7 @@ def test_bot():
     CONFIG['token'] = TOKEN
     CONFIG['engine']['dir'] = './'
     CONFIG['engine']['name'] = 'yaneuraou.exe'
-    CONFIG['engine']['usi_options']['EvalDir'] = 'D:\a\Lishogi-Bot\Lishogi-Bot\Eval'
+    CONFIG['engine']['usi_options']['EvalDir'] = '/home/runner/work/Lishogi-Bot-1/Lishogi-Bot-1'
     run_bot(CONFIG, logging_level)
 
 
