@@ -17,10 +17,13 @@ def test_nothing():
     assert True
 
 
-def download_fsf():
-    response = requests.get('https://github.com/ianfab/Fairy-Stockfish/releases/download/fairy_sf_13_1/fairy-stockfish-largeboard_x86-64.exe', allow_redirects=True)
-    with open('fsf.exe', 'wb') as file:
+def download_yo():
+    response = requests.get('https://github.com/mizar/YaneuraOu/releases/download/v6.5.0/YaneuraOu-v6.5.0-windows.zip', allow_redirects=True)
+    with open('yo.zip', 'wb') as file:
         file.write(response.content)
+    with zipfile.ZipFile('yo.zip', 'r') as zip_ref:
+        zip_ref.extractall('.')
+    copyfile('./windows/NNUE/YaneuraOu_NNUE-normal-clang++-avx2.exe', 'yo.exe')
 
 
 def download_suisho():
@@ -101,13 +104,13 @@ def test_bot():
     lishogi_bot.enable_color_logging(debug_lvl=logging_level)
     download_suisho()
     lishogi_bot.logger.info("Downloaded Suisho")
-    download_fsf()
-    lishogi_bot.logger.info("Downloaded Fairy Stockfish")
+    download_yo()
+    lishogi_bot.logger.info("Downloaded YaneuraOu")
     with open("./config.yml.default") as file:
         CONFIG = yaml.safe_load(file)
     CONFIG['token'] = TOKEN
     CONFIG['engine']['dir'] = './'
-    CONFIG['engine']['name'] = 'fsf.exe'
+    CONFIG['engine']['name'] = 'yo.exe'
     CONFIG['engine']['usi_options']['EvalFile'] = 'shogi.bin'
     run_bot(CONFIG, logging_level)
 
