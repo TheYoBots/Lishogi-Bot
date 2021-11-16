@@ -263,7 +263,6 @@ def play_game(li, game_id, control_queue, engine_factory, user_profile, config, 
     
     first_move = True
     correspondence_disconnect_time = 0
-    first_move = True
 
     while not terminated:
         try:
