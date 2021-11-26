@@ -24,7 +24,7 @@ def download_yo():
 
 
 def download_suisho():
-    response = request.get('https://github.com/WandererXII/shoginet/blob/main/eval/nn.bin?raw=true', allow_redirects=True)
+    response = requests.get('https://github.com/WandererXII/shoginet/blob/main/eval/nn.bin?raw=true', allow_redirects=True)
     with open('shogi.bin', 'wb') as file:
         file.write(response.content)
 
