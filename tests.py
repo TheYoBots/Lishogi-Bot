@@ -18,21 +18,15 @@ def test_nothing():
 
 
 def download_yo():
-    response = requests.get('https://github.com/mizar/YaneuraOu/releases/download/v6.5.0/YaneuraOu-v6.5.0-windows.zip', allow_redirects=True)
-    with open('yo.zip', 'wb') as file:
+    response = requests.get('https://github.com/WandererXII/shoginet/blob/main/YaneuraOu-by-gcc?raw=true', allow_redirects=True)
+    with open('yo.exe', 'wb') as file:
         file.write(response.content)
-    with zipfile.ZipFile('yo.zip', 'r') as zip_ref:
-        zip_ref.extractall('.')
-    copyfile('./windows/NNUE/YaneuraOu_NNUE-normal-clang++-avx2.exe', 'yo.exe')
 
 
 def download_suisho():
-    response = requests.get('https://github.com/Tama4649/Kristallweizen/blob/master/Kristallweizen_kaiV0.4.zip?raw=true', allow_redirects=True)
-    with open('shogi.zip', 'wb') as file:
+    response = request.get('https://github.com/WandererXII/shoginet/blob/main/eval/nn.bin?raw=true', allow_redirects=True)
+    with open('shogi.bin', 'wb') as file:
         file.write(response.content)
-    with zipfile.ZipFile('shogi.zip', 'r') as zip_ref:
-        zip_ref.extractall('.')
-    copyfile('./eval/nn.bin', 'shogi.bin')
 
 
 def run_bot(CONFIG, logging_level):
