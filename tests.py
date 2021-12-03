@@ -106,7 +106,6 @@ def test_bot():
     CONFIG['engine']['dir'] = './'
     CONFIG['engine']['name'] = 'yo.exe'
     CONFIG['engine']['usi_options']['EvalFile'] = 'shogi.bin'
-    CONFIG['engine']['usi_options']['BookFile'] = 'no_book'
     run_bot(CONFIG, logging_level)
 
 
