@@ -19,7 +19,7 @@ def test_nothing():
 
 def download_yo():
     response = requests.get('https://github.com/WandererXII/shoginet/blob/main/YaneuraOu-by-gcc?raw=true', allow_redirects=True)
-    with open('yo.exe', 'wb') as file:
+    with open('yo', 'wb') as file:
         file.write(response.content)
 
 
@@ -104,8 +104,9 @@ def test_bot():
         CONFIG = yaml.safe_load(file)
     CONFIG['token'] = TOKEN
     CONFIG['engine']['dir'] = './'
-    CONFIG['engine']['name'] = 'yo.exe'
+    CONFIG['engine']['name'] = 'yo'
     CONFIG['engine']['usi_options']['EvalFile'] = 'shogi.bin'
+    CONFIG['engine']['usi_options']['BookFile'] = 'no_book'
     run_bot(CONFIG, logging_level)
 
 
