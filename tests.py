@@ -111,7 +111,6 @@ def test_bot():
     CONFIG['token'] = TOKEN
     CONFIG['engine']['dir'] = './'
     CONFIG['engine']['name'] = 'yo.exe'
-    CONFIG['engine']['usi_options']['EvalFile'] = 'shogi.bin'
     run_bot(CONFIG, logging_level)
 
 
