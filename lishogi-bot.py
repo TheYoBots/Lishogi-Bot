@@ -415,7 +415,7 @@ def print_move_number(board):
 
 def setup_board(game):
     if game.variant_name == "From Position":
-        board = shogi.Board(game.initial_fen)
+        board = shogi.Board(game.initial_sfen)
     else:
         board = shogi.Board() # Standard
 
