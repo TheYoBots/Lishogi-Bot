@@ -77,7 +77,7 @@ class Game:
         self.variant_name = json.get("variant")["name"]
         self.sente = Player(json.get("sente"))
         self.gote = Player(json.get("gote"))
-        self.initial_fen = json.get("initialFen")
+        self.initial_sfen = json.get("initialFen")
         self.state = json.get("state")
         self.is_sente = bool(self.sente.name and self.sente.name.lower() == username.lower())
         self.my_color = "sente" if self.is_sente else "gote"
@@ -85,7 +85,7 @@ class Game:
         self.me = self.sente if self.is_sente else self.gote
         self.opponent = self.gote if self.is_sente else self.sente
         self.base_url = base_url
-        self.sente_starts = self.initial_fen == "startpos" or self.initial_fen.split()[1] == "b"
+        self.sente_starts = self.initial_sfen == "startpos" or self.initial_sfen.split()[1] == "b"
         self.abort_at = time.time() + abort_time
         self.terminate_at = time.time() + (self.clock_initial + self.clock_increment) / 1000 + abort_time + 60
         self.disconnect_at = time.time()

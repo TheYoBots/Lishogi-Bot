@@ -44,7 +44,7 @@ class EngineWrapper:
         movetime = cmds.get("movetime")
         if movetime is not None:
             movetime = float(movetime) / 1000
-        best_move, ponder_move = self.search(game.initial_fen,
+        best_move, ponder_move = self.search(game.initial_sfen,
                                              moves,
                                              btime=btime,
                                              wtime=wtime,
@@ -57,8 +57,8 @@ class EngineWrapper:
                                              ponder=ponder)
         return best_move, ponder_move
     
-    def search(self, fen, moves, btime=None, wtime=None, binc=None, winc=None, byo=None, nodes=None, depth=None, movetime=None, ponder=False):
-        best_move, ponder_move = self.engine.go(fen,
+    def search(self, sfen, moves, btime=None, wtime=None, binc=None, winc=None, byo=None, nodes=None, depth=None, movetime=None, ponder=False):
+        best_move, ponder_move = self.engine.go(sfen,
                                                 moves,
                                                 btime=btime,
                                                 wtime=wtime,
@@ -138,7 +138,7 @@ class USIEngine(EngineWrapper):
 
     def report_game_result(self, game, board):
         moves = [m.usi() for m in board.move_stack]
-        self.engine.position(game.initial_fen, moves)
+        self.engine.position(game.initial_sfen, moves)
 
 
 def getHomemadeEngine(name):
