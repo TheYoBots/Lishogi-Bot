@@ -103,7 +103,7 @@ def test_bot():
     lishogi_bot.logging.basicConfig(level=logging_level, filename=None, format="%(asctime)-15s: %(message)s")
     lishogi_bot.enable_color_logging(debug_lvl=logging_level)
     download_suisho()
-    lishogi_bot.logger.info("Download Suisho NNUE")
+    lishogi_bot.logger.info("Downloaded Suisho NNUE")
     download_yo()
     lishogi_bot.logger.info("Downloaded YaneuraOu for NNUE")
     with open("./config.yml.default") as file:
