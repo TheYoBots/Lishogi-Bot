@@ -103,15 +103,15 @@ def test_bot():
     lishogi_bot.logging.basicConfig(level=logging_level, filename=None, format="%(asctime)-15s: %(message)s")
     lishogi_bot.enable_color_logging(debug_lvl=logging_level)
     download_suisho()
-    lishogi_bot.logger.info("Downloaded Suisho")
+    lishogi_bot.logger.info("Download Suisho NNUE")
     download_yo()
-    lishogi_bot.logger.info("Downloaded YaneuraOu")
+    lishogi_bot.logger.info("Downloaded YaneuraOu for NNUE")
     with open("./config.yml.default") as file:
         CONFIG = yaml.safe_load(file)
     CONFIG['token'] = TOKEN
     CONFIG['engine']['dir'] = './'
     CONFIG['engine']['name'] = 'yo.exe'
-    CONFIG['engine']['usi_options']['EvalFile'] = 'shogi.bin'
+    CONFIG['engine']['usi_options']['BookFile'] = 'no_book'
     run_bot(CONFIG, logging_level)
 
 
