@@ -43,7 +43,7 @@ class Lishogi:
                           max_time=60,
                           interval=0.1,
                           giveup=is_final)
-    def api_get(self, path, , raise_for_status=True):
+    def api_get(self, path, raise_for_status=True):
         url = urljoin(self.baseUrl, path)
         response = self.session.get(url, timeout=2)
         if raise_for_status:
