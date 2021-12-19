@@ -1,7 +1,6 @@
 import time
 from urllib.parse import urljoin
 
-
 class Challenge:
     def __init__(self, c_info):
         self.id = c_info["id"]
@@ -34,7 +33,7 @@ class Challenge:
     def is_supported(self, config):
         if not config.get("accept_bot", True) and self.challenger_is_bot:
             return False
-        if config.get("only_bot", False) and ( not self.challenger_is_bot ):
+        if config.get("only_bot", False) and not self.challenger_is_bot:
             return False
         variants = config["variants"]
         tc = config["time_controls"]
