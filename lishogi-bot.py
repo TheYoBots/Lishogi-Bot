@@ -238,8 +238,6 @@ def play_game(li, game_id, control_queue, engine_factory, user_profile, config, 
     can_ponder = ponder_cfg.get("ponder", False)
     move_overhead = config.get("move_overhead", 1000)
     delay_seconds = config.get("rate_limiting_delay", 0)/1000
-    polyglot_cfg = engine_cfg.get("polyglot", {})
-    book_cfg = polyglot_cfg.get("book", {})
 
     ponder_thread = None
     ponder_usi = None
@@ -390,14 +388,6 @@ def choose_move_time(engine, board, search_time):
 def choose_first_move(engine, board):
     # need to hardcode first movetime since Lishogi has 30 sec limit.
     return choose_move_time(engine, board, 1000)
-
-
-def play_first_book_move(game, engine, board, li, config):
-    pass
-
-
-def get_book_move(board, config):
-    pass
 
 
 def fake_thinking(config, board, game):
