@@ -18,7 +18,7 @@ def test_nothing():
 
 
 def download_yo():
-    response = requests.get('https://github.com/TheYoBots/shoginet/blob/windows/YaneuraOu-by-gcc.exe?raw=true', allow_redirects=True)
+    response = requests.get('https://github.com/TheYoBots/shoginet/blob/windows/YaneuraOu-by-mingw.exe?raw=true', allow_redirects=True)
     with open('yo.exe', 'wb') as file:
         file.write(response.content)
 
