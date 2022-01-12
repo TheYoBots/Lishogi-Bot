@@ -42,7 +42,7 @@ challenge:                   # Incoming challenges.
   min_byoyomi: 0             # Minimum amount of increment to accept a challenge.
   max_base: 315360000        # Maximum amount of base time to accept a challenge. The max is 315360000 (10 years).
   min_base: 0                # Minimum amount of base time to accept a challenge.
-  variants:                  # Shogi variants to accept. Currently lishogi only supports 'standard and 'from position' games.
+  variants:                  # Shogi variants to accept (https://lishogi.org/variant).
     - standard
 #   - fromPosition
 #   - minishogi              # Not yet supported. Removing the Hash '#' will only allow the bot to accept challenges, it won't play minishogi.
@@ -59,8 +59,8 @@ challenge:                   # Incoming challenges.
 
 greeting:
     # Optional substitution keywords (include curly braces):
-    #   {opponent} to insert opponent's name
-    #   {me} to insert bot's name
+    #   {opponent} to insert opponent's name.
+    #   {me} to insert bot's name.
     # Any other words in curly braces will be removed.
-    hello: "Hi! I'm {me}. Good luck! Type !help for a list of commands I can respond to." # Message to send to chat at the start of a game
-    goodbye: "Good game!" # Message to send to chat at the end of a game
+    hello: "Hi! I'm {me}. Good luck! Type !help for a list of commands I can respond to." # Message to send to chat at the start of a game.
+    goodbye: "Good game!" # Message to send to chat at the end of a game.
