@@ -165,6 +165,7 @@ will append `nodes 1 depth 5 movetime 1000` to the command to start thinking of 
   variants:
     - standard
     - fromPosition
+    - minishogi
 ```
 
 - `time_controls`: An indented list of acceptable time control types from `ultraBullet` to `correspondence`.
