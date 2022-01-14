@@ -20,7 +20,7 @@ source ./venv/bin/activate
 python3 -m pip install -r requirements.txt
 ```
 - Copy `config.yml.default` to `config.yml`.
-- Edit the `config.yml` file to your liking by changing the supported [variants](/config.yml.default#L45-L47), [timings](/config.yml.default#L48-L54), [challenge modes](/config.yml.default#L55-L57) and [incoming challenges](/config.yml.default#L34-L44), so that it plays shogi the way you want it to.
+- Edit the `config.yml` file to your liking by changing the supported [variants](/config.yml.default#L45-L48), [timings](/config.yml.default#L49-L55), [challenge modes](/config.yml.default#L56-L58) and [incoming challenges](/config.yml.default#L34-L44), so that it plays shogi the way you want it to.
 
 ### Windows:
 - **NOTE: Only Python 3.7 or later is supported!**
@@ -37,7 +37,7 @@ python -m venv .venv  # if this fails you probably need to add Python to your PA
 pip install -r requirements.txt
 ```
 - Copy `config.yml.default` to `config.yml`.
-- Edit the `config.yml` file to your liking by changing the supported [variants](/config.yml.default#L45-L47), [timings](/config.yml.default#L48-L54), [challenge modes](/config.yml.default#L55-L57) and [incoming challenges](/config.yml.default#L34-L44), so that it plays shogi the way you want it to.
+- Edit the `config.yml` file to your liking by changing the supported [variants](/config.yml.default#L45-L48), [timings](/config.yml.default#L49-L55), [challenge modes](/config.yml.default#L56-L58) and [incoming challenges](/config.yml.default#L34-L44), so that it plays shogi the way you want it to.
 
 ## Lishogi OAuth
 - Create an account for your bot on [Lishogi.org](https://lishogi.org/signup).
