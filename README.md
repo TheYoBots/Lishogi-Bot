@@ -208,7 +208,7 @@ python lishogi-bot.py -v
 ## Tips & Tricks
 - You can specify a different config file with the `--config` argument.
 - Here's an example systemd service definition:
-```python
+```ini
 [Unit]
 Description=Lishogi-Bot
 After=network-online.target
