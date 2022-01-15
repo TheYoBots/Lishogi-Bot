@@ -1,5 +1,5 @@
-token: "xxxxxxxxxxxxxxxx"    # Lishogi OAuth Token (which can be taken from https://lishogi.org/account/oauth/token/create?scopes[]=bot:play&scopes[]=challenge:read&scopes[]=challenge:write&description=Lishogi+Bot+Token) with 'Play games with the bot API' ('bot:play' scopes), 'Read incoming challenges' ('challenge:read' scopes) and 'Create, accept, decline challenges' ('challenge:write' scopes) enabled.
-url: "https://lishogi.org/"  # Lishogi base URL. Do not change this unless locally hosted to an external URL.
+token: "xxxxxxxxxxxxxxxx"    # Lishogi OAuth Token.
+url: "https://lishogi.org/"  # Lishogi base URL.
 
 engine:                      # Engine Settings.
   dir: "./engines/"          # Directory containing engines, relative to this project.

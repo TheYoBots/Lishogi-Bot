@@ -20,12 +20,12 @@ source ./venv/bin/activate
 python3 -m pip install -r requirements.txt
 ```
 - Copy `config.yml.default` to `config.yml`.
-- Edit the `config.yml` file to your liking by changing the supported [variants](/config.yml.default#L45-L48), [timings](/config.yml.default#L49-L55), [challenge modes](/config.yml.default#L56-L58) and [incoming challenges](/config.yml.default#L34-L44), so that it plays shogi the way you want it to.
+- Edit the `config.yml` file to your liking by changing the supported [variants](/config.yml.default#L45-L48), [timings](/config.yml.default#L49-L55), [challenge modes](/config.yml.default#L56-L58) and [incoming challenges](/config.yml.default#L34-L44), so that it plays shogi the way you want it to (use "#" to disable certain ones).
 
 ### Windows:
 - **NOTE: Only Python 3.7 or later is supported!**
 - If you don't have Python, you may download it [here](https://www.python.org/downloads/). When installing it, enable `add Python to PATH`, then go to custom installation (this may be not necessary, but on some computers it won't work otherwise) and enable all options (especially `install for all users`), except the last . It's better to install Python in a path without spaces, like `C:\Python\`.
-- To type commands it's better to use PowerShell. Go to Start menu and type `PowerShell` (you may use "cmd" too, but sometimes it may not work).
+- To type commands it's better to use PowerShell. Go to Start menu and type `PowerShell` (you may use `cmd` too, but sometimes it may not work).
 - Then you may need to upgrade pip. Execute `python -m pip install --upgrade pip` in PowerShell.
 - Download the repo into lishogi-bot directory.
 - Navigate to the directory in PowerShell: `cd [folder's adress]` (example, `cd C:\shogi\lishogi-bot`).
@@ -37,12 +37,12 @@ python -m venv .venv  # if this fails you probably need to add Python to your PA
 pip install -r requirements.txt
 ```
 - Copy `config.yml.default` to `config.yml`.
-- Edit the `config.yml` file to your liking by changing the supported [variants](/config.yml.default#L45-L48), [timings](/config.yml.default#L49-L55), [challenge modes](/config.yml.default#L56-L58) and [incoming challenges](/config.yml.default#L34-L44), so that it plays shogi the way you want it to.
+- Edit the `config.yml` file to your liking by changing the supported [variants](/config.yml.default#L45-L48), [timings](/config.yml.default#L49-L55), [challenge modes](/config.yml.default#L56-L58) and [incoming challenges](/config.yml.default#L34-L44), so that it plays shogi the way you want it to (use "#" to disable certain ones).
 
 ## Lishogi OAuth
 - Create an account for your bot on [Lishogi.org](https://lishogi.org/signup).
 - **NOTE: If you have previously played games on an existing account, you will not be able to use it as a bot account.**
-- Once your account has been created and you are logged in, [create a personal OAuth2 token with the "Play games with the bot API" ('bot:play' scopes)](https://lishogi.org/account/oauth/token/create?scopes[]=bot:play&description=Lishogi+Bot+Token) selected and a description added.
+- Once your account has been created and you are logged in, [create a personal OAuth2 token with the "Play games with the bot API" ('bot:play') scope](https://lishogi.org/account/oauth/token/create?scopes[]=bot:play&description=Lishogi+Bot+Token) selected and a description added.
 - A `token` (e.g. `xxxxxxxxxxxxxxxx`) will be displayed. Store this in the `config.yml` file as the `token` field. You can also set the token in the environment variable `$LISHOGI_BOT_TOKEN`.
 - **NOTE: You won't see this token again on Lishogi, so save it or store it somewhere.**
 
@@ -52,24 +52,11 @@ pip install -r requirements.txt
 - Using this process any engine can be added to the bot.
 - **Note: The engine you add has to be running under the USI protocol, only then it will work.**
 
-## Creating a homemade bot
-As an alternative to creating an entire chess engine and implementing one of the communiciation protocols (USI), a bot can also be created by writing a single class with a single method. The `search()` method in this new class takes the current board and the game clock as arguments and should return a move based on whatever criteria you desires.
-
-Steps to create a homemade bot:
-1. Do all the steps mentioned in [How to Install](#how-to-install).
-2. In the `config.yml`, change the engine protocol to `homemade`.
-3. Create a class in some file that extends the `MinimalEngine` class (in the `strategies.py` file).
-    - Look at the `strategies.py` file to see some examples.
-    - If you don't know what to implement, look at the `EngineWrapper` or `USIEngine` class.
-        - You don't have to create your own engine, even though it's an `EngineWrapper` class. <br/>
-The examples just implement `search`.
-4. In the `config.yml`, change the name from `engine_name` to the name of your class.
-    - In this case, you could change it to: <br/>
-`name: "RandomMove"`
-
 ### Engine Configuration
 Besides the above, there are many possible options within `config.yml` for configuring the engine for use with lishogi-bot.
-- `protocol`: Specify which protocol your engine uses. `"usi"` for the [Universal Shogi Interface](http://hgm.nubati.net/usi.html) is the only supported protocol.
+- `protocol`: Specify which protocol your engine uses. 
+  1. `"usi"` for the [Universal Shogi Interface](http://hgm.nubati.net/usi.html).
+  2. `"homemade"` if you want to write your own engine in Python within lichess-bot. See [**Creating a homemade bot**](#creating-a-homemade-bot) below.
 - `ponder`: Specify whether your bot will ponder, i.e., think while the bot's opponent is choosing a move.
 - `engine_options`: Command line options to pass to the engine on startup. For example, the `config.yml.default` has the configuration
 ```yml
@@ -181,29 +168,52 @@ will append `nodes 1 depth 5 movetime 1000` to the command to start thinking of 
 - `modes`: An indented list of acceptable game modes (`rated` and/or `casual`).
 ```yml
   modes:
-    -rated
-    -casual
+    - rated
+    - casual
+```
+- `greeting`: Send messages via chat to the bot's opponent. The string `{me}` will be replaced by the bot's lichess account name. The string `{opponent}` will be replaced by the opponent's lichess account name. Any other word between curly brackets will be removed. If you want to put a curly bracket in the message, use two: `{{` or `}}`.
+  - `hello`: Message to send to opponent before the bot makes its first move.
+  - `goodbye`: Message to send to opponent once the game is over.
+```yml
+  greeting:
+    hello: Hi, {opponent}! I'm {me}. Good luck!
+    goodbye: Good game!
 ```
 
 ## Lishogi Upgrade to Bot Account
 **WARNING: This is irreversible. Read more about [upgrading to bot account](https://lichess.org/api#operation/botAccountUpgrade).**
-- Run `python lishogi-bot.py -u`.
+- Run `python3 lishogi-bot.py -u`.
 
 ## To Run
 After activating the virtual environment created in the installation steps (the `source` line for Linux and Macs or the `activate` script for Windows), run
 ```python
-python lishogi-bot.py
+python3 lishogi-bot.py
 ```
 The working directory for the engine execution will be the lishogi-bot directory. If your engine requires files located elsewhere, make sure they are specified by absolute path or copy the files to an appropriate location inside the lishogi-bot directory.
 
 To output more information (including your engine's thinking output and debugging information), the `-v` option can be passed to lishogi-bot:
 ```python
-python lishogi-bot.py -v
+python3 lishogi-bot.py -v
 ```
 
 ## To Quit
 - Press `CTRL+C`.
 - It may take some time to quit.
+
+## Creating a homemade bot
+As an alternative to creating an entire chess engine and implementing one of the communiciation protocols (USI), a bot can also be created by writing a single class with a single method. The `search()` method in this new class takes the current board and the game clock as arguments and should return a move based on whatever criteria you desires.
+
+Steps to create a homemade bot:
+1. Do all the steps mentioned in [How to Install](#how-to-install).
+2. In the `config.yml`, change the engine protocol to `homemade`.
+3. Create a class in some file that extends the `MinimalEngine` class (in the `strategies.py` file).
+    - Look at the `strategies.py` file to see some examples.
+    - If you don't know what to implement, look at the `EngineWrapper` or `USIEngine` class.
+        - You don't have to create your own engine, even though it's an `EngineWrapper` class. <br/>
+The examples just implement `search`.
+4. In the `config.yml`, change the name from `engine_name` to the name of your class.
+    - In this case, you could change it to: <br/>
+`name: "RandomMove"`
 
 ## Tips & Tricks
 - You can specify a different config file with the `--config` argument.
