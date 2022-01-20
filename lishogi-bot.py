@@ -283,9 +283,9 @@ def play_game(li, game_id, control_queue, engine_factory, user_profile, config, 
                     else:
                         best_move, ponder_move = get_pondering_result(engine, game, board.move_stack, ponder_thread, ponder_usi)
                         if best_move is None:
-                            best_move, ponder_move = play_midgame_move(engine, board, upd["wtime"], upd["btime"], move_overhead, start_time, logger, game)
+                            best_move, ponder_move = play_midgame_move(engine, board, upd["btime"], upd["wtime"], move_overhead, start_time, logger, game)
                     li.make_move(game.id, best_move)
-                    ponder_thread, ponder_usi = start_pondering(engine, board, best_move, ponder_move, upd["wtime"], upd["btime"], game, logger, move_overhead, start_time, can_ponder)
+                    ponder_thread, ponder_usi = start_pondering(engine, board, best_move, ponder_move, upd["btime"], upd["wtime"], game, logger, move_overhead, start_time, can_ponder)
                     time.sleep(delay_seconds)
                 elif is_game_over(game):
                     engine.report_game_result(game, board)
@@ -293,8 +293,8 @@ def play_game(li, game_id, control_queue, engine_factory, user_profile, config, 
                 elif len(board.move_stack) == 0:
                     correspondence_disconnect_time = correspondence_cfg.get("disconnect_time", 300)
 
-                wb = 'w' if board.turn == shogi.BLACK else 'b'
-                game.ping(config.get("abort_time", 30), (upd[f"{wb}time"] + upd[f"{wb}inc"]) / 1000 + 60, correspondence_disconnect_time)
+                bw = 'b' if board.turn == shogi.BLACK else 'w'
+                game.ping(config.get("abort_time", 30), (upd[f"{bw}time"] + upd[f"{bw}inc"] + upd["byo"]) / 1000 + 60, correspondence_disconnect_time)
             elif u_type == "ping":
                 if is_correspondence and not is_engine_move(game, board) and game.should_disconnect_now():
                     break
@@ -330,22 +330,22 @@ def play_game(li, game_id, control_queue, engine_factory, user_profile, config, 
     control_queue.put_nowait({"type": "local_game_done"})
 
 
-def play_midgame_move(engine, board, wtime, btime, move_overhead, start_time, logger, game):
-    wtime, btime = adjust_game_time(wtime, btime, board, move_overhead, start_time)
+def play_midgame_move(engine, board, btime, wtime, move_overhead, start_time, logger, game):
+    btime, wtime = adjust_game_time(btime, wtime, board, move_overhead, start_time)
     logger.info("Searching for btime {} wtime {}".format(btime, wtime))
     best_move, ponder_move = engine.search_with_ponder(game, board, btime, wtime, game.state["binc"], game.state["winc"], game.state["byo"])
     return best_move, ponder_move
 
 
-def adjust_game_time(wtime, btime, board, move_overhead, start_time, winc=0, binc=0):
+def adjust_game_time(btime, wtime, board, move_overhead, start_time, binc=0, winc=0, byo=0):
     if board.turn == shogi.BLACK:
-        btime = max(0, btime - move_overhead - int((time.perf_counter_ns() - start_time) / 1000000)) + binc
+        btime = max(0, btime - move_overhead - int((time.perf_counter_ns() - start_time) / 1000000)) + binc + byo
     else:
-        wtime = max(0, wtime - move_overhead - int((time.perf_counter_ns() - start_time) / 1000000)) + winc
-    return wtime, btime
+        wtime = max(0, wtime - move_overhead - int((time.perf_counter_ns() - start_time) / 1000000)) + winc + byo
+    return btime, wtime
 
 
-def start_pondering(engine, board, best_move, ponder_move, wtime, btime, game, logger, move_overhead, start_time, can_ponder):
+def start_pondering(engine, board, best_move, ponder_move, btime, wtime, game, logger, move_overhead, start_time, can_ponder):
     if not can_ponder or ponder_move is None:
         return None, None
     ponder_board = copy.deepcopy(board)
@@ -353,7 +353,7 @@ def start_pondering(engine, board, best_move, ponder_move, wtime, btime, game, l
     ponder_board.push(shogi.Move.from_usi(ponder_move))
     ponder_usi = ponder_move
 
-    wtime, btime = adjust_game_time(wtime, btime, board, move_overhead, start_time, game.state["winc"], game.state["binc"])
+    btime, wtime = adjust_game_time(btime, wtime, board, move_overhead, start_time, game.state["winc"], game.state["binc"], game.state["byo"])
     logger.info("Pondering {} for btime {} wtime {}".format(ponder_move, btime, wtime))
 
     def ponder_thread_func(game, engine, board, btime, wtime, binc, winc, byo):
@@ -431,7 +431,7 @@ def intro():
     return r"""
     .   _/\_
     .  //o o\\
-    .  ||    ||  lishogi-bot %s
+    .  ||    ||  Lishogi-Bot %s
     .  ||    ||
     .  ||____||  Play on Lishogi with a bot
     """ % __version__

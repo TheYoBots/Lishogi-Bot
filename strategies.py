@@ -55,12 +55,12 @@ class MinimalEngine(EngineWrapper):
     def search_for(self, board, movetime):
         return self.search(board, movetime, False)
 
-    def search_with_ponder(self, game, board, wtime, btime, winc, binc, byo, ponder=False):
+    def search_with_ponder(self, game, board, btime, wtime, binc, winc, byo, ponder=False):
         timeleft = 0
         if board.turn:
-            timeleft = wtime
-        else:
             timeleft = btime
+        else:
+            timeleft = wtime
         return self.search(board, timeleft, ponder)
 
     def search(self, board, timeleft, ponder):

@@ -135,15 +135,15 @@ class Engine:
         if wtime is not None and nodes is None and depth is None and movetime is None:
             builder.append("wtime")
             builder.append(str(wtime))
-        if byo is not None and nodes is None and depth is None and movetime is None:
-            builder.append("byoyomi")
-            builder.append(str(byo))
         if binc is not None and nodes is None and depth is None and movetime is None:
             builder.append("binc")
             builder.append(str(binc))
         if winc is not None and nodes is None and depth is None and movetime is None:
             builder.append("winc")
             builder.append(str(winc))
+        if byo is not None and nodes is None and depth is None and movetime is None:
+            builder.append("byoyomi")
+            builder.append(str(byo))
 
         self.send(" ".join(builder))
         logger.info(" ".join(builder))

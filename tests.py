@@ -78,7 +78,7 @@ def run_bot(CONFIG, logging_level):
             board = shogi.Board()
             for move in summary['moves']:
                 board.push_usi(move)
-            win = board.turn == (shogi.WHITE if starting else shogi.BLACK) and board.is_game_over()
+            win = board.turn == (shogi.BLACK if starting else shogi.WHITE) and board.is_game_over()
             assert win
 
         run_test()
