@@ -12,6 +12,7 @@ import engine_ctrl
 def create_engine(config, variant):
     cfg = config["engine"]
     engine_path = os.path.realpath(os.path.join(cfg["dir"], cfg["name"]))
+    engine_working_dir = cfg.get("working_dir") or os.getcwd()
     engine_type = cfg.get("protocol")
     engine_options = cfg.get("engine_options")
     usi_options = cfg.get("usi_options", {}) or {}
@@ -32,11 +33,11 @@ def create_engine(config, variant):
         raise ValueError(
             f"Invalid engine type: {engine_type}. Expected usi or homemade.")
 
-    return Engine(commands, usi_options, silence_stderr)
+    return Engine(commands, usi_options, silence_stderr, cwd=engine_working_dir)
 
 
 class EngineWrapper:
-    def __init__(self, commands, options=None, silence_stderr=False):
+    def __init__(self, options=None):
         pass
 
     def search_for(self, board, game, movetime):
@@ -112,11 +113,11 @@ class EngineWrapper:
 
 
 class USIEngine(EngineWrapper):
-    def __init__(self, commands, options, silence_stderr=False):
+    def __init__(self, commands, options, silence_stderr=False, cwd=None):
         commands = commands[0] if len(commands) == 1 else commands
         self.go_commands = options.pop("go_commands", {}) or {}
 
-        self.engine = engine_ctrl.Engine(commands)
+        self.engine = engine_ctrl.Engine(commands, cwd=cwd)
         self.engine.usi()
 
         if options:

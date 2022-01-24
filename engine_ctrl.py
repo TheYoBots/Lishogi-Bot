@@ -10,10 +10,11 @@ from util import *
 
 
 class Engine:
-    def __init__(self, command):
+    def __init__(self, command, cwd=None):
         self.proccess = self.open_process(command)
         self.go_commands = None
         self.info = {}
+        cwd = cwd or os.path.realpath(os.path.expanduser("."))
 
     def set_go_commands(self, go_comm):
         self.go_commands = go_comm

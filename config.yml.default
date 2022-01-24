@@ -2,8 +2,9 @@ token: "xxxxxxxxxxxxxxxx"    # Lishogi OAuth Token.
 url: "https://lishogi.org/"  # Lishogi base URL.
 
 engine:                      # Engine Settings.
-  dir: "./engines/"          # Directory containing engines, relative to this project.
+  dir: "./engines/"          # Directory containing the engine. This can be an absolute path or one relative to Lishogi-Bot/.
   name: "engine_name"        # Binary name of the engine to use. Make sure the engine you use is running under the USI protocol.
+  working_dir: ""            # Directory where the chess engine will read and write files. If blank or missing, the current directory is used.
   protocol: "usi"            # Protocol that engine is run under. Only "usi" is supported currently.
   ponder: false              # Think on opponent's time.
 # engine_options:            # Any custom command line params to pass to the engine.
