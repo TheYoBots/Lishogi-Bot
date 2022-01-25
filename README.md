@@ -26,13 +26,13 @@ python3 -m pip install -r requirements.txt
 - **NOTE: Only Python 3.7 or later is supported!**
 - If you don't have Python, you may download it [here](https://www.python.org/downloads/). When installing it, enable `add Python to PATH`, then go to custom installation (this may be not necessary, but on some computers it won't work otherwise) and enable all options (especially `install for all users`), except the last . It's better to install Python in a path without spaces, like `C:\Python\`.
 - To type commands it's better to use PowerShell. Go to Start menu and type `PowerShell` (you may use `cmd` too, but sometimes it may not work).
-- Then you may need to upgrade pip. Execute `python -m pip install --upgrade pip` in PowerShell.
+- Then you may need to upgrade pip. Execute `python3 -m pip install --upgrade pip` in PowerShell.
 - Download the repo into lishogi-bot directory.
 - Navigate to the directory in PowerShell: `cd [folder's adress]` (example, `cd C:\shogi\lishogi-bot`).
 - Install virtualenv: `pip install virtualenv`.
 - Setup virtualenv:
 ```python
-python -m venv .venv  # if this fails you probably need to add Python to your PATH.
+python3 -m venv .venv  # if this fails you probably need to add Python3 to your PATH.
 ./.venv/Scripts/Activate.ps1  # `.\.venv\Scripts\activate.bat` should work in cmd in administator mode. This may not work on Windows, and in this case you need to execute "Set-ExecutionPolicy RemoteSigned" first and choose "Y" there (you may need to run Powershell as administrator). After you executed the script, change execution policy back with "Set-ExecutionPolicy Restricted" and pressing "Y".
 pip install -r requirements.txt
 ```
