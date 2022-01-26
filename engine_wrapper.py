@@ -15,8 +15,8 @@ def create_engine(config, variant):
     engine_type = cfg.get("protocol")
     engine_options = cfg.get("engine_options")
     usi_options = cfg.get("usi_options", {}) or {}
-    if variant == 'Minishogi':
-        usi_options['UCI_Variant'] = 'minishogi'
+    if variant not in ['Standard', 'From Position']:
+        usi_options['UCI_Variant'] = variant.lower()
     commands = [engine_path]
     if engine_options:
         for k, v in engine_options.items():
