@@ -40,13 +40,13 @@ class EngineWrapper:
         pass
 
     def search_for(self, board, game, movetime):
-        moves = list(map(makeusi, game.state["moves"].split())) if game.variant_name == 'Minishogi' else ""
-        sfen = game.initial_sfen if game.variant_name == 'Minishogi' else board.sfen()
+        moves = "" if game.variant_name == 'Standard' or game.variant_name == 'From Position' else list(map(makeusi, game.state["moves"].split()))
+        sfen = board.sfen() if game.variant_name == 'Standard' or game.variant_name == 'From Position' else game.initial_sfen
         return self.search(sfen, moves, movetime=movetime // 1000)
     
     def search_with_ponder(self, game, board, btime, wtime, binc, winc, byo, ponder=False):
-        moves = list(map(makeusi, game.state["moves"].split())) if game.variant_name == 'Minishogi' else [m.usi() for m in list(board.move_stack)]
-        sfen = game.initial_sfen if game.variant_name == 'Minishogi' else board.sfen()
+        moves = [m.usi() for m in list(board.move_stack)] if game.variant_name == 'Standard' or game.variant_name == 'From Position' else list(map(makeusi, game.state["moves"].split()))
+        sfen = game.initial_sfen
         cmds = self.go_commands
         movetime = cmds.get("movetime")
         if movetime is not None:
