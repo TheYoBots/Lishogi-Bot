@@ -45,7 +45,7 @@ challenge:                   # Incoming challenges.
   variants:                  # Shogi variants to accept (https://lishogi.org/variant).
     - standard
 #   - fromPosition
-#   - minishogi              # Not yet supported. Removing the Hash '#' will only allow the bot to accept challenges, it won't play minishogi.
+#   - minishogi
   time_controls:             # Time controls to accept.
     - ultraBullet
     - bullet
