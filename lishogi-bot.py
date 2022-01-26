@@ -417,7 +417,7 @@ def setup_board(game):
     if game.variant_name == "From Position":
         board = shogi.Board(game.initial_sfen)
     else:
-        board = shogi.Board()  # Standard
+        board = shogi.Board() # Standard
 
     for move in game.state["moves"].split():
         usi_move = shogi.Move.from_usi(makeusi(move))
