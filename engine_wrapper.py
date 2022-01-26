@@ -8,11 +8,14 @@ import engine_ctrl
 
 
 @backoff.on_exception(backoff.expo, BaseException, max_time=120)
-def create_engine(config):
+def create_engine(config, variant):
     cfg = config["engine"]
     engine_path = os.path.realpath(os.path.join(cfg["dir"], cfg["name"]))
     engine_type = cfg.get("protocol")
     engine_options = cfg.get("engine_options")
+    usi_options = cfg.get("usi_options", {})
+    if variant == 'Minishogi':
+        usi_options['UCI_Variant'] = 'minishogi'
     commands = [engine_path]
     if engine_options:
         for k, v in engine_options.items():
@@ -28,24 +31,23 @@ def create_engine(config):
         raise ValueError(
             f"Invalid engine type: {engine_type}. Expected usi or homemade.")
 
-    return Engine(commands, cfg.get("usi_options", {}), silence_stderr)
+    return Engine(commands, usi_options, silence_stderr)
 
 
 class EngineWrapper:
     def __init__(self, commands, options=None, silence_stderr=False):
         pass
 
-    def search_for(self, board, movetime):
-        return self.search(board.sfen(), "", movetime=movetime // 1000)
+    def search_for(self, game, movetime):
+        return self.search(game.initial_sfen, game.state["moves"].split(), movetime=movetime // 1000)
     
     def search_with_ponder(self, game, board, btime, wtime, binc, winc, byo, ponder=False):
-        moves = [m.usi() for m in list(board.move_stack)]
         cmds = self.go_commands
         movetime = cmds.get("movetime")
         if movetime is not None:
             movetime = float(movetime) / 1000
         best_move, ponder_move = self.search(game.initial_sfen,
-                                             moves,
+                                             game.state["moves"].split(),
                                              btime=btime,
                                              wtime=wtime,
                                              binc=binc,

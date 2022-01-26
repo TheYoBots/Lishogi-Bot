@@ -223,7 +223,7 @@ def play_game(li, game_id, control_queue, engine_factory, user_profile, config, 
     initial_state = json.loads(next(lines).decode('utf-8'))
     game = model.Game(initial_state, user_profile["username"], li.baseUrl, config.get("abort_time", 20))
 
-    engine = engine_factory()
+    engine = engine_factory(game.variant_name)
     engine.get_opponent_info(game)
     conversation = Conversation(game, engine, li, __version__, challenge_queue)
 
@@ -277,9 +277,9 @@ def play_game(li, game_id, control_queue, engine_factory, user_profile, config, 
 
                     if len(board.move_stack) < 2:
                         conversation.send_message("player", hello)
-                        best_move, ponder_move = choose_first_move(engine, board)
+                        best_move, ponder_move = choose_first_move(engine, game)
                     elif is_correspondence:
-                        best_move, ponder_move = choose_move_time(engine, board, correspondence_move_time)
+                        best_move, ponder_move = choose_move_time(engine, game, correspondence_move_time)
                     else:
                         best_move, ponder_move = get_pondering_result(engine, game, board.move_stack, ponder_thread, ponder_usi)
                         if best_move is None:
@@ -349,8 +349,8 @@ def start_pondering(engine, board, best_move, ponder_move, btime, wtime, game, l
     if not can_ponder or ponder_move is None:
         return None, None
     ponder_board = copy.deepcopy(board)
-    ponder_board.push(shogi.Move.from_usi(best_move))
-    ponder_board.push(shogi.Move.from_usi(ponder_move))
+    ponder_board.push(shogi.Move.null())
+    ponder_board.push(shogi.Move.null())
     ponder_usi = ponder_move
 
     btime, wtime = adjust_game_time(btime, wtime, board, move_overhead, start_time, game.state["winc"], game.state["binc"], game.state["byo"])
@@ -380,14 +380,14 @@ def get_pondering_result(engine, game, moves, ponder_thread, ponder_usi):
         return None, None
 
 
-def choose_move_time(engine, board, search_time):
+def choose_move_time(engine, game, search_time):
     logger.info("Searching for time {}".format(search_time))
-    return engine.search_for(board, search_time)
+    return engine.search_for(game, search_time)
 
 
-def choose_first_move(engine, board):
+def choose_first_move(engine, game):
     # need to hardcode first movetime since Lishogi has 30 sec limit.
-    return choose_move_time(engine, board, 1000)
+    return choose_move_time(engine, game, 1000)
 
 
 def fake_thinking(config, board, game):
@@ -404,10 +404,16 @@ def print_move_number(board):
 
 
 def setup_board(game):
+    if game.variant_name == "Minishogi":
+        board = shogi.Board()
+        for move in game.state["moves"].split():
+            board.push(shogi.Move.null())
+        return board
+
     if game.variant_name == "From Position":
         board = shogi.Board(game.initial_sfen)
     else:
-        board = shogi.Board() # Standard
+        board = shogi.Board()  # Standard
 
     for move in game.state["moves"].split():
         usi_move = shogi.Move.from_usi(makeusi(move))
