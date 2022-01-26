@@ -52,7 +52,7 @@ class MinimalEngine(EngineWrapper):
             "name": self.engine_name
         }
 
-    def search_for(self, board, movetime):
+    def search_for(self, board, game, movetime):
         return self.search(board, movetime, False)
 
     def search_with_ponder(self, game, board, btime, wtime, binc, winc, byo, ponder=False):
