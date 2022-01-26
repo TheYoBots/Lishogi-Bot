@@ -349,12 +349,12 @@ def start_pondering(engine, board, best_move, ponder_move, btime, wtime, game, l
     if not can_ponder or ponder_move is None:
         return None, None
     ponder_board = copy.deepcopy(board)
-    if game.variant_name == 'Minishogi':
-        ponder_board.push(shogi.Move.null())
-        ponder_board.push(shogi.Move.null())
-    else:
+    if game.variant_name == 'Standard' or game.variant_name == 'From Position':
         ponder_board.push(shogi.Move.from_usi(best_move))
         ponder_board.push(shogi.Move.from_usi(ponder_move))
+    else:
+        ponder_board.push(shogi.Move.null())
+        ponder_board.push(shogi.Move.null())
     ponder_usi = ponder_move
 
     btime, wtime = adjust_game_time(btime, wtime, board, move_overhead, start_time, game.state["winc"], game.state["binc"], game.state["byo"])
@@ -408,23 +408,22 @@ def print_move_number(board):
 
 
 def setup_board(game):
-    if game.variant_name == "Minishogi":
+    if game.variant_name == 'Standard' or game.variant_name == 'From Position':
+        if game.variant_name == "From Position":
+            board = shogi.Board(game.initial_sfen)
+        else:
+            board = shogi.Board() # Standard
+
+        for move in game.state["moves"].split():
+            usi_move = shogi.Move.from_usi(makeusi(move))
+            if board.is_legal(usi_move):
+                board.push(usi_move)
+            else:
+                logger.debug("Ignoring illegal move {} on board {}".format(makeusi(move), board.sfen()))
+    else:
         board = shogi.Board()
         for move in game.state["moves"].split():
             board.push(shogi.Move.null())
-        return board
-
-    if game.variant_name == "From Position":
-        board = shogi.Board(game.initial_sfen)
-    else:
-        board = shogi.Board() # Standard
-
-    for move in game.state["moves"].split():
-        usi_move = shogi.Move.from_usi(makeusi(move))
-        if board.is_legal(usi_move):
-            board.push(usi_move)
-        else:
-            logger.debug("Ignoring illegal move {} on board {}".format(makeusi(move), board.sfen()))
 
     return board
 
