@@ -55,15 +55,7 @@ class MinimalEngine(EngineWrapper):
     def search_for(self, board, game, movetime):
         return self.search(board, movetime, False)
 
-    def search_with_ponder(self, game, board, btime, wtime, binc, winc, byo, ponder=False):
-        timeleft = 0
-        if board.turn:
-            timeleft = btime
-        else:
-            timeleft = wtime
-        return self.search(board, timeleft, ponder)
-
-    def search(self, board, timeleft, ponder):
+    def search(self, board, ponder):
         raise NotImplementedError("The search method is not implemented")
 
     def notify(self, method_name, *args, **kwargs):
