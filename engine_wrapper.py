@@ -2,6 +2,7 @@ import os
 import backoff
 import logging
 from util import makeusi
+from enum import Enum
 
 logger = logging.getLogger(__name__)
 
@@ -34,6 +35,18 @@ def create_engine(config, variant):
             f"Invalid engine type: {engine_type}. Expected usi or homemade.")
 
     return Engine(commands, usi_options, silence_stderr, cwd=engine_working_dir)
+
+
+class Termination(str, Enum):
+    MATE = 'mate'
+    TIMEOUT = 'outoftime'
+    RESIGN = 'resign'
+    ABORT = 'aborted'
+    DRAW = 'draw'
+    STALEMATE = 'stalemate'
+    TRYRULE = 'tryRule'
+    IMPASSE = 'impasse27'
+    PERPETUALCHECK = 'perpetualCheck'
 
 
 class EngineWrapper:
