@@ -263,6 +263,7 @@ def play_game(li, game_id, control_queue, engine_factory, user_profile, config, 
     correspondence_disconnect_time = 0
 
     while not terminated:
+        move_attempted = False
         try:
             if first_move:
                 upd = game.state
@@ -292,6 +293,7 @@ def play_game(li, game_id, control_queue, engine_factory, user_profile, config, 
                         best_move, ponder_move = choose_move_time(engine, board, game, correspondence_move_time)
                     else:
                         best_move, ponder_move = get_pondering_result(engine, game, board.move_stack, ponder_thread, ponder_usi)
+                        move_attempted = True
                         if best_move is None:
                             best_move, ponder_move = play_midgame_move(engine, board, upd["btime"], upd["wtime"], move_overhead, start_time, logger, game)
                     li.make_move(game.id, best_move)
@@ -318,6 +320,8 @@ def play_game(li, game_id, control_queue, engine_factory, user_profile, config, 
                         li.abort(game.id)
                     break
         except (HTTPError, ReadTimeout, RemoteDisconnected, ChunkedEncodingError, ConnectionError, ProtocolError):
+            if move_attempted:
+                continue
             if game.id not in (ongoing_game["gameId"] for ongoing_game in li.get_ongoing_games()):
                 break
         except StopIteration:
@@ -470,7 +474,7 @@ if __name__ == "__main__":
     enable_color_logging(debug_lvl=logging_level)
     logger.info(intro())
     CONFIG = load_config(args.config or "./config.yml")
-    li = lishogi.Lishogi(CONFIG["token"], CONFIG["url"], __version__)
+    li = lishogi.Lishogi(CONFIG["token"], CONFIG["url"], __version__, logging_level)
 
     user_profile = li.get_profile()
     username = user_profile["username"]

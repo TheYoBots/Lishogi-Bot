@@ -5,6 +5,7 @@ from urllib3.exceptions import ProtocolError
 from util import makeuci
 from http.client import RemoteDisconnected
 import backoff
+import logging
 
 ENDPOINTS = {
     "profile": "/api/account",
@@ -23,9 +24,9 @@ ENDPOINTS = {
 }
 
 
-# docs: https://lichess.org/api till lishogi API is made
+# docs: https://lichess.org/api
 class Lishogi:
-    def __init__(self, token, url, version):
+    def __init__(self, token, url, version, logging_level):
         self.version = version
         self.header = {
             "Authorization": "Bearer {}".format(token)
@@ -34,6 +35,7 @@ class Lishogi:
         self.session = requests.Session()
         self.session.headers.update(self.header)
         self.set_user_agent("?")
+        self.logging_level = logging_level
 
     def is_final(exception):
         return isinstance(exception, HTTPError) and exception.response.status_code < 500
@@ -42,8 +44,11 @@ class Lishogi:
                           (RemoteDisconnected, ConnectionError, ProtocolError, HTTPError, ReadTimeout),
                           max_time=60,
                           interval=0.1,
-                          giveup=is_final)
+                          giveup=is_final,
+                          backoff_log_level=logging.DEBUG,
+                          giveup_log_level=logging.DEBUG)
     def api_get(self, path, raise_for_status=True):
+        logging.getLogger('backoff').setLevel(self.logging_level)
         url = urljoin(self.baseUrl, path)
         response = self.session.get(url, timeout=2)
         if raise_for_status:
@@ -54,8 +59,11 @@ class Lishogi:
                           (RemoteDisconnected, ConnectionError, ProtocolError, HTTPError, ReadTimeout),
                           max_time=60,
                           interval=0.1,
-                          giveup=is_final)
+                          giveup=is_final,
+                          backoff_log_level=logging.DEBUG,
+                          giveup_log_level=logging.DEBUG)
     def api_post(self, path, data=None):
+        logging.getLogger('backoff').setLevel(self.logging_level)
         url = urljoin(self.baseUrl, path)
         response = self.session.post(url, data=data, timeout=2)
         response.raise_for_status()
