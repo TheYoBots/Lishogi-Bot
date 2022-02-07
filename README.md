@@ -67,7 +67,7 @@ Besides the above, there are many possible options within `config.yml` for confi
     cpuct: 3.1
 ```
 This would create the command-line option `--cpuct=3.1` to be used when starting the engine. Any number of options can be listed here, each getting their own command-line option.
-- `usi_options`: A list of options to pass to a USI engine after startup. Different engines have different options, so treat the options in `config.yml.default` as templates and not suggestions. When USI engines start, they print a list of configurations that can modify their behavior. For example, YaneuraOu v6.50 prints the following when run at the command line:
+- `usi_options`: A list of options to pass to a USI engine after startup. Different engines have different options, so treat the options in `config.yml.default` as templates and not suggestions. When USI engines start, they print a list of configurations that can modify their behavior after receiving the string "usi". For example, to find out what options YaneuraOu v6.50 supports, run the executable in a terminal, type `usi`, and press Enter. The engine will print the following when run at the command line:
 ```
 id name YaneuraOu NNUE 6.50
 id author by yaneurao
