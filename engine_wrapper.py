@@ -17,12 +17,12 @@ def create_engine(config, variant):
     engine_type = cfg.get("protocol")
     engine_options = cfg.get("engine_options")
     usi_options = cfg.get("usi_options", {}) or {}
-    if variant not in ['Standard', 'From Position']:
-        usi_options['USI_Variant'] = variant.lower()
+    if variant not in ["Standard", "From Position"]:
+        usi_options["USI_Variant"] = variant.lower()
     commands = [engine_path]
     if engine_options:
         for k, v in engine_options.items():
-            commands.append("--{}={}".format(k, v))
+            commands.append(f"--{k}={v}")
 
     silence_stderr = cfg.get("silence_stderr", False)
 
@@ -38,15 +38,15 @@ def create_engine(config, variant):
 
 
 class Termination(str, Enum):
-    MATE = 'mate'
-    TIMEOUT = 'outoftime'
-    RESIGN = 'resign'
-    ABORT = 'aborted'
-    DRAW = 'draw'
-    STALEMATE = 'stalemate'
-    TRYRULE = 'tryRule'
-    IMPASSE = 'impasse27'
-    PERPETUALCHECK = 'perpetualCheck'
+    MATE = "mate"
+    TIMEOUT = "outoftime"
+    RESIGN = "resign"
+    ABORT = "aborted"
+    DRAW = "draw"
+    STALEMATE = "stalemate"
+    TRYRULE = "tryRule"
+    IMPASSE = "impasse27"
+    PERPETUALCHECK = "perpetualCheck"
 
 
 class EngineWrapper:
@@ -54,12 +54,12 @@ class EngineWrapper:
         pass
 
     def search_for(self, board, game, movetime):
-        moves = "" if game.variant_name == 'Standard' or game.variant_name == 'From Position' else list(map(makeusi, game.state["moves"].split()))
-        sfen = board.sfen() if game.variant_name == 'Standard' or game.variant_name == 'From Position' else game.initial_sfen
+        moves = "" if game.variant_name == "Standard" or game.variant_name == "From Position" else list(map(makeusi, game.state["moves"].split()))
+        sfen = board.sfen() if game.variant_name == "Standard" or game.variant_name == "From Position" else game.initial_sfen
         return self.search(sfen, moves, movetime=movetime // 1000)
     
     def search_with_ponder(self, game, board, btime, wtime, binc, winc, byo, ponder=False):
-        moves = [m.usi() for m in list(board.move_stack)] if game.variant_name == 'Standard' or game.variant_name == 'From Position' else list(map(makeusi, game.state["moves"].split()))
+        moves = [m.usi() for m in list(board.move_stack)] if game.variant_name == "Standard" or game.variant_name == "From Position" else list(map(makeusi, game.state["moves"].split()))
         sfen = game.initial_sfen
         cmds = self.go_commands
         movetime = cmds.get("movetime")
@@ -99,7 +99,7 @@ class EngineWrapper:
 
     def get_stats(self, stats=None):
         if stats is None:
-            stats = ['score', 'depth', 'nodes', 'nps']
+            stats = ["score", "depth", "nodes", "nps"]
         info = self.engine.info
         return [f"{stat}: {info[stat]}" for stat in stats if stat in info]
 

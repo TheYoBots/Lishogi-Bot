@@ -29,7 +29,7 @@ class Lishogi:
     def __init__(self, token, url, version, logging_level):
         self.version = version
         self.header = {
-            "Authorization": "Bearer {}".format(token)
+            "Authorization": f"Bearer {token}"
         }
         self.baseUrl = url
         self.session = requests.Session()
@@ -48,7 +48,7 @@ class Lishogi:
                           backoff_log_level=logging.DEBUG,
                           giveup_log_level=logging.DEBUG)
     def api_get(self, path, raise_for_status=True):
-        logging.getLogger('backoff').setLevel(self.logging_level)
+        logging.getLogger("backoff").setLevel(self.logging_level)
         url = urljoin(self.baseUrl, path)
         response = self.session.get(url, timeout=2)
         if raise_for_status:
@@ -63,7 +63,7 @@ class Lishogi:
                           backoff_log_level=logging.DEBUG,
                           giveup_log_level=logging.DEBUG)
     def api_post(self, path, data=None):
-        logging.getLogger('backoff').setLevel(self.logging_level)
+        logging.getLogger("backoff").setLevel(self.logging_level)
         url = urljoin(self.baseUrl, path)
         response = self.session.post(url, data=data, timeout=2)
         response.raise_for_status()
@@ -79,7 +79,7 @@ class Lishogi:
         return self.api_post(ENDPOINTS["move"].format(game_id, makeuci(move)))
 
     def chat(self, game_id, room, text):
-        payload = {'room': room, 'text': text}
+        payload = {"room": room, "text": text}
         return self.api_post(ENDPOINTS["chat"].format(game_id), data=payload)
 
     def abort(self, game_id):
@@ -112,7 +112,7 @@ class Lishogi:
         self.api_post(ENDPOINTS["resign"].format(game_id))
 
     def set_user_agent(self, username):
-        self.header.update({"User-Agent": "Lishogi-Bot/{} user:{}".format(self.version, username)})
+        self.header.update({"User-Agent": f"Lishogi-Bot/{self.version} user:{username}"})
         self.session.headers.update(self.header)
 
     def challenge_ai(self):

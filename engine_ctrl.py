@@ -162,7 +162,7 @@ class Engine:
                 if bestmove and bestmove != "(none)":
                     info["bestmove"] = bestmove
                 if len(arg_split) == 3:
-                    if arg_split[1] == 'ponder':
+                    if arg_split[1] == "ponder":
                         ponder_move = arg_split[2]
                         if ponder_move and ponder_move != "(none)":
                             info["pondermove"] = ponder_move
