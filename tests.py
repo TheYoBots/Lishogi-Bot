@@ -6,7 +6,7 @@ import zipfile
 import yaml
 import shogi
 import shogi.KIF as kif
-from shutil import copyfile
+import shutil
 import importlib
 lishogi_bot = importlib.import_module("lishogi-bot")
 
@@ -23,7 +23,7 @@ def download_yo():
         file.write(response.content)
     with zipfile.ZipFile("yo.zip", "r") as zip_ref:
         zip_ref.extractall(".")
-    copyfile("YaneuraOu_NNUE-tournament-clang++-sse42.exe", "yo.exe")
+    shutil.copyfile(f"YaneuraOu_NNUE-tournament-clang++-sse42.exe", f"yo.exe")
 
 
 def run_bot(CONFIG, logging_level):
