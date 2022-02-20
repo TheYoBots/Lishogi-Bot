@@ -39,7 +39,6 @@ def run_bot(CONFIG, logging_level):
         is_bot = lishogi_bot.upgrade_account(li)
 
     if is_bot:
-        engine_factory = lishogi_bot.partial(lishogi_bot.engine_wrapper.create_engine, CONFIG)
         games = li.get_ongoing_games()
         game_ids = list(map(lambda game: game["gameId"], games))
         for game in game_ids:
@@ -64,7 +63,7 @@ def run_bot(CONFIG, logging_level):
 
         @pytest.mark.timeout(300)
         def run_test():
-            lishogi_bot.start(li, user_profile, engine_factory, CONFIG, logging_level, None, one_game=True)
+            lishogi_bot.start(li, user_profile, CONFIG, logging_level, None, one_game=True)
             response = requests.get(f"https://lishogi.org/game/export/{game_id}")
             response = response.content.decode()
             parser = kif.Parser()
