@@ -16,7 +16,7 @@ def create_engine(config, variant):
     engine_working_dir = cfg.get("working_dir") or os.getcwd()
     engine_type = cfg.get("protocol")
     engine_options = cfg.get("engine_options")
-    usi_options = cfg.get("usi_options", {}) or {}
+    usi_options = cfg.get("usi_options") or {}
     if variant not in ["Standard", "From Position"]:
         usi_options["USI_Variant"] = variant.lower()
     commands = [engine_path]
