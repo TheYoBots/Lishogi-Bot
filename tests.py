@@ -18,17 +18,12 @@ def test_nothing():
 
 
 def download_yo():
-    response = requests.get('https://github.com/TheYoBots/shoginet/blob/windows/YaneuraOu-by-mingw.exe?raw=true', allow_redirects=True)
-    with open('yo.exe', 'wb') as file:
+    response = requests.get('https://github.com/mizar/YaneuraOu/releases/download/v7.0.0/Suisho5-YaneuraOu-v7.0.0-windows.zip', allow_redirects=True)
+    with open('yo.zip', 'wb') as file:
         file.write(response.content)
-
-
-def download_suisho():
-    response = requests.get('https://github.com/WandererXII/shoginet/archive/refs/heads/main.zip', allow_redirects=True)
-    with open('shogi.zip', 'wb') as file:
-        file.write(response.content)
-    with zipfile.ZipFile('shogi.zip', 'r') as zip_ref:
+    with zipfile.ZipFile('yo.zip', 'r') as zip_ref:
         zip_ref.extractall('.')
+    copyfile('YaneuraOu_NNUE-tournament-clang++-sse42.exe', 'yo.exe')
 
 
 def run_bot(CONFIG, logging_level):
@@ -98,8 +93,6 @@ def test_bot():
     logging_level = lishogi_bot.logging.INFO  # lishogi_bot.logging_level.DEBUG
     lishogi_bot.logging.basicConfig(level=logging_level, filename=None, format="%(asctime)-15s: %(message)s")
     lishogi_bot.enable_color_logging(debug_lvl=logging_level)
-    download_suisho()
-    lishogi_bot.logger.info("Downloaded Suisho NNUE")
     download_yo()
     lishogi_bot.logger.info("Downloaded YaneuraOu for NNUE")
     with open("./config.yml.default") as file:
@@ -108,7 +101,6 @@ def test_bot():
     CONFIG['engine']['dir'] = './'
     CONFIG['engine']['name'] = 'yo.exe'
     CONFIG['engine']['usi_options']['BookFile'] = 'no_book'
-    CONFIG['engine']['usi_options']['EvalDir'] = './shoginet-main/eval'
     CONFIG['engine']['usi_options']['NetworkDelay'] = 500
     run_bot(CONFIG, logging_level)
 
