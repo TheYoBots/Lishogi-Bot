@@ -26,13 +26,13 @@ python3 -m pip install -r requirements.txt
 - **NOTE: Only Python 3.7 or later is supported!**
 - If you don't have Python, you may download it [here](https://www.python.org/downloads/). When installing it, enable `add Python to PATH`, then go to custom installation (this may be not necessary, but on some computers it won't work otherwise) and enable all options (especially `install for all users`), except the last . It's better to install Python in a path without spaces, like `C:\Python\`.
 - To type commands it's better to use PowerShell. Go to Start menu and type `PowerShell` (you may use `cmd` too, but sometimes it may not work).
-- Then you may need to upgrade pip. Execute `python -m pip install --upgrade pip` in PowerShell.
-- Download the repo into lishogi-bot directory.
+- Then you may need to upgrade pip. Execute `python3 -m pip install --upgrade pip` in PowerShell.
+- Download the repo into Lishogi-Bot directory.
 - Navigate to the directory in PowerShell: `cd [folder's adress]` (example, `cd C:\shogi\lishogi-bot`).
 - Install virtualenv: `pip install virtualenv`.
 - Setup virtualenv:
 ```python
-python -m venv .venv  # if this fails you probably need to add Python to your PATH.
+python3 -m venv .venv  # if this fails you probably need to add Python3 to your PATH.
 ./.venv/Scripts/Activate.ps1  # `.\.venv\Scripts\activate.bat` should work in cmd in administator mode. This may not work on Windows, and in this case you need to execute "Set-ExecutionPolicy RemoteSigned" first and choose "Y" there (you may need to run Powershell as administrator). After you executed the script, change execution policy back with "Set-ExecutionPolicy Restricted" and pressing "Y".
 pip install -r requirements.txt
 ```
@@ -47,16 +47,19 @@ pip install -r requirements.txt
 - **NOTE: You won't see this token again on Lishogi, so save it or store it somewhere.**
 
 ## Setup Engine
-- Place your engine(s) in the `engine: dir` directory.
-- In the `config.yml` file, enter the binary name as the `engine: name` field (In Windows you may need to type a name with `.exe`, like `YaneuraOu.exe`).
-- Using this process any engine can be added to the bot.
-- **Note: The engine you add has to be running under the USI protocol, only then it will work.**
+Within the file `config.yml`:
+- Enter the directory containing the engine executable in the `engine: dir` field.
+- Enter the executable name in the `engine: name` field (In Windows you may need to type a name with `.exe`, like `YaneuraOu.exe`)
+- If you want the engine to run in a different directory (e.g., if the engine needs to read or write files at a certain location), enter that directory in the `engine: working_dir` field.
+  - If this field is blank or missing, the current directory will be used.
+
+As an optional convenience, there is a folder named `engines` within the Lishogi-Bot folder where you can copy your engine and all the files it needs. This is the default executable location in the `config.yml.default` file.
 
 ### Engine Configuration
-Besides the above, there are many possible options within `config.yml` for configuring the engine for use with lishogi-bot.
+Besides the above, there are many possible options within `config.yml` for configuring the engine for use with Lishogi-Bot.
 - `protocol`: Specify which protocol your engine uses. 
   1. `"usi"` for the [Universal Shogi Interface](http://hgm.nubati.net/usi.html).
-  2. `"homemade"` if you want to write your own engine in Python within lichess-bot. See [**Creating a homemade bot**](#creating-a-homemade-bot) below.
+  2. `"homemade"` if you want to write your own engine in Python within Lishogi-Bot. See [**Creating a homemade bot**](#creating-a-homemade-bot) below.
 - `ponder`: Specify whether your bot will ponder, i.e., think while the bot's opponent is choosing a move.
 - `engine_options`: Command line options to pass to the engine on startup. For example, the `config.yml.default` has the configuration
 ```yml
@@ -64,7 +67,7 @@ Besides the above, there are many possible options within `config.yml` for confi
     cpuct: 3.1
 ```
 This would create the command-line option `--cpuct=3.1` to be used when starting the engine. Any number of options can be listed here, each getting their own command-line option.
-- `usi_options`: A list of options to pass to a USI engine after startup. Different engines have different options, so treat the options in `config.yml.default` as templates and not suggestions. When USI engines start, they print a list of configurations that can modify their behavior. For example, YaneuraOu v6.50 prints the following when run at the command line:
+- `usi_options`: A list of options to pass to a USI engine after startup. Different engines have different options, so treat the options in `config.yml.default` as templates and not suggestions. When USI engines start, they print a list of configurations that can modify their behavior after receiving the string "usi". For example, to find out what options YaneuraOu v6.50 supports, run the executable in a terminal, type `usi`, and press Enter. The engine will print the following when run at the command line:
 ```
 id name YaneuraOu NNUE 6.50
 id author by yaneurao
@@ -115,7 +118,7 @@ Any of the names following `option name` can be listed in `usi_options` in order
     NetworkDelay: 100
     Skill Level: 10
 ```
-The exception to this are the options `Threads`, `USI_Ponder` and `MultiPv`. These will be handled by lishogi-bot after a game starts and should not be listed in the `config.yml` file. Also, if an option is listed under `usi_options` that is not in the list printed by the engine, it will cause an error when the engine starts because the engine won't understand the option. The word after `type` indicates the expected type of the options: `string` for a text string, `spin` for a numeric value, `check` for a boolean True/False value.
+The exception to this are the options `Threads`, `USI_Ponder` and `MultiPv`. These will be handled by Lishogi-Bot after a game starts and should not be listed in the `config.yml` file. Also, if an option is listed under `usi_options` that is not in the list printed by the engine, it will cause an error when the engine starts because the engine won't understand the option. The word after `type` indicates the expected type of the options: `string` for a text string, `spin` for a numeric value, `check` for a boolean True/False value.
 
 One last option is `go_commands`. Beneath this option, arguments to the USI `go` command can be passed. For example,
 ```yml
@@ -171,7 +174,7 @@ will append `nodes 1 depth 5 movetime 1000` to the command to start thinking of 
     - rated
     - casual
 ```
-- `greeting`: Send messages via chat to the bot's opponent. The string `{me}` will be replaced by the bot's lichess account name. The string `{opponent}` will be replaced by the opponent's lichess account name. Any other word between curly brackets will be removed. If you want to put a curly bracket in the message, use two: `{{` or `}}`.
+- `greeting`: Send messages via chat to the bot's opponent. The string `{me}` will be replaced by the bot's lishogi account name. The string `{opponent}` will be replaced by the opponent's lishogi account name. Any other word between curly brackets will be removed. If you want to put a curly bracket in the message, use two: `{{` or `}}`.
   - `hello`: Message to send to opponent before the bot makes its first move.
   - `goodbye`: Message to send to opponent once the game is over.
 ```yml
@@ -189,9 +192,9 @@ After activating the virtual environment created in the installation steps (the 
 ```python
 python3 lishogi-bot.py
 ```
-The working directory for the engine execution will be the lishogi-bot directory. If your engine requires files located elsewhere, make sure they are specified by absolute path or copy the files to an appropriate location inside the lishogi-bot directory.
+The working directory for the engine execution will be the Lishogi-Bot directory. If your engine requires files located elsewhere, make sure they are specified by absolute path or copy the files to an appropriate location inside the Lishogi-Bot directory.
 
-To output more information (including your engine's thinking output and debugging information), the `-v` option can be passed to lishogi-bot:
+To output more information (including your engine's thinking output and debugging information), the `-v` option can be passed to Lishogi-Bot:
 ```python
 python3 lishogi-bot.py -v
 ```
@@ -240,4 +243,4 @@ WantedBy=multi-user.target
 Thanks to the Lichess Team for creating a [repository](https://github.com/ShailChoksi/lichess-bot) that could be easily accessed and modified to help converting it to a format that supports Lishogi. Thanks to [Tasuku SUENAGA a.k.a. gunyarakun](https://github.com/gunyarakun) and his [python-shogi](https://pypi.org/pypi/python-shogi/) code which allows engine communication seamlessly. Thanks to  [WandererXII](https://github.com/WandererXII) for all his effort and help.
 
 ## License
-lishogi-bot is licensed under the AGPLv3 (or any later version at your option). Check out the [LICENSE file](/LICENSE) for the full text.
+Lishogi-Bot is licensed under the AGPLv3 (or any later version at your option). Check out the [LICENSE file](/LICENSE) for the full text.

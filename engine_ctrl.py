@@ -10,10 +10,11 @@ from util import *
 
 
 class Engine:
-    def __init__(self, command):
+    def __init__(self, command, cwd=None):
         self.proccess = self.open_process(command)
         self.go_commands = None
         self.info = {}
+        cwd = cwd or os.path.realpath(os.path.expanduser("."))
 
     def set_go_commands(self, go_comm):
         self.go_commands = go_comm
@@ -161,7 +162,7 @@ class Engine:
                 if bestmove and bestmove != "(none)":
                     info["bestmove"] = bestmove
                 if len(arg_split) == 3:
-                    if arg_split[1] == 'ponder':
+                    if arg_split[1] == "ponder":
                         ponder_move = arg_split[2]
                         if ponder_move and ponder_move != "(none)":
                             info["pondermove"] = ponder_move

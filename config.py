@@ -13,7 +13,7 @@ def load_config(config_file):
         except Exception as e:
             logger.error("There appears to be a syntax problem with your config.yml")
             raise e
-            
+
         if "LISHOGI_BOT_TOKEN" in os.environ:
             CONFIG["token"] = os.environ["LISHOGI_BOT_TOKEN"]
 
@@ -24,7 +24,7 @@ def load_config(config_file):
                     ["challenge", dict, "Section `challenge` must be a dictionary with indented keys followed by colons.."]]
         for section in sections:
             if section[0] not in CONFIG:
-                raise Exception("Your config.yml does not have required section `{}`.".format(section[0]))
+                raise Exception(f"Your config.yml does not have required section `{section[0]}`.")
             elif not isinstance(CONFIG[section[0]], section[1]):
                 raise Exception(section[2])
 
@@ -32,15 +32,19 @@ def load_config(config_file):
                            ["name", str, "´name´ must be a string wrapped in quotes."]]
         for subsection in engine_sections:
             if subsection[0] not in CONFIG["engine"]:
-                raise Exception("Your config.yml does not have required `engine` subsection `{}`.".format(subsection))
+                raise Exception(f"Your config.yml does not have required `engine` subsection `{subsection}`.")
             if not isinstance(CONFIG["engine"][subsection[0]], subsection[1]):
-                raise Exception("´engine´ subsection {}".format(subsection[2]))
+                raise Exception(f"´engine´ subsection {subsection[2]}")
 
         if CONFIG["token"] == "xxxxxxxxxxxxxxxx":
             raise Exception("Your config.yml has the default Lishogi API token. This is probably wrong.")
 
         if not os.path.isdir(CONFIG["engine"]["dir"]):
-            raise Exception("Your engine directory `{}` is not a directory.".format(CONFIG["engine"]["dir"]))
+            raise Exception(f'Your engine directory `{CONFIG["engine"]["dir"]}` is not a directory.')
+
+        working_dir = CONFIG["engine"].get("working_dir")
+        if working_dir and not os.path.isdir(working_dir):
+            raise Exception(f"Your engine's working directory `{working_dir}` is not a directory.")
 
         engine = os.path.join(CONFIG["engine"]["dir"], CONFIG["engine"]["name"])
 
