@@ -5,4 +5,4 @@ python-shogi==1.0.15
 PyYAML>=5.4.1
 requests>=2.25.1
 urllib3==1.26.9
-backoff==2.0.0
+backoff==2.0.1
