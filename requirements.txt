@@ -1,4 +1,4 @@
-certifi==2022.5.18
+certifi==2022.5.18.1
 chardet==4.0.0
 idna==3.3
 python-shogi==1.0.15
