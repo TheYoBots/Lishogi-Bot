@@ -26,5 +26,7 @@ jobs:
         pip install pytest pytest-timeout
         pip install -r requirements.txt
     - name: Test with pytest
+      env:
+          BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
       run: |
         pytest tests.py -s
