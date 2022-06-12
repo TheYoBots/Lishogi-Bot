@@ -1,3 +1,4 @@
+import os
 import pytest
 import pytest_timeout
 import requests
@@ -10,7 +11,7 @@ import shutil
 import importlib
 lishogi_bot = importlib.import_module("lishogi-bot")
 
-TOKEN = "Ao7zQxDqoBhE7tpG"
+TOKEN = os.environ['BOT_TOKEN']
 
 
 def test_nothing():
