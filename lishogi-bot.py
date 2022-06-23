@@ -447,7 +447,7 @@ def get_lishogi_cloud_move(li, board, game, lishogi_cloud_cfg):
 def get_online_move(li, board, game, online_moves_cfg):
     lishogi_cloud_cfg = online_moves_cfg.get("lishogi_cloud_analysis", {})
     if best_move is None:
-        best_move, ponder_move = get_lichess_cloud_move(li, board, game, lishogi_cloud_cfg)
+        best_move, ponder_move = get_lishogi_cloud_move(li, board, game, lishogi_cloud_cfg)
     if best_move:
         return shogi.Move.from_uci(best_move, ponder_move)
     return shogi.Move.from_uci(best_move, ponder_move)
