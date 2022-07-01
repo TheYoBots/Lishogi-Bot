@@ -1,7 +1,6 @@
 import requests
 from urllib.parse import urljoin
 from requests.exceptions import ConnectionError, HTTPError, ReadTimeout
-from urllib3.exceptions import ProtocolError
 from util import makeuci
 from http.client import RemoteDisconnected
 import backoff
@@ -41,7 +40,7 @@ class Lishogi:
         return isinstance(exception, HTTPError) and exception.response.status_code < 500
 
     @backoff.on_exception(backoff.constant,
-                          (RemoteDisconnected, ConnectionError, ProtocolError, HTTPError, ReadTimeout),
+                          (RemoteDisconnected, ConnectionError, HTTPError, ReadTimeout),
                           max_time=60,
                           interval=0.1,
                           giveup=is_final,
@@ -56,7 +55,7 @@ class Lishogi:
         return response.json()
 
     @backoff.on_exception(backoff.constant,
-                          (RemoteDisconnected, ConnectionError, ProtocolError, HTTPError, ReadTimeout),
+                          (RemoteDisconnected, ConnectionError, HTTPError, ReadTimeout),
                           max_time=60,
                           interval=0.1,
                           giveup=is_final,

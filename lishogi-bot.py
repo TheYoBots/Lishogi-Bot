@@ -17,7 +17,6 @@ import random
 from config import load_config
 from conversation import Conversation, ChatLine
 from requests.exceptions import ChunkedEncodingError, ConnectionError, HTTPError, ReadTimeout
-from urllib3.exceptions import ProtocolError
 from ColorLogger import enable_color_logging
 from util import *
 import copy
@@ -322,7 +321,7 @@ def play_game(li, game_id, control_queue, user_profile, config, challenge_queue,
                     if game.is_abortable():
                         li.abort(game.id)
                     break
-        except (HTTPError, ReadTimeout, RemoteDisconnected, ChunkedEncodingError, ConnectionError, ProtocolError):
+        except (HTTPError, ReadTimeout, RemoteDisconnected, ChunkedEncodingError, ConnectionError):
             if move_attempted:
                 continue
             if game.id not in (ongoing_game["gameId"] for ongoing_game in li.get_ongoing_games()):
