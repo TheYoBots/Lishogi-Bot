@@ -72,7 +72,7 @@ def do_correspondence_ping(control_queue, period):
         control_queue.put_nowait({"type": "correspondence_ping"})
 
 
-def logging_configurer(level, filename):    
+def logging_configurer(level, filename):
     console_handler = RichHandler()
     console_formatter = logging.Formatter("%(message)s")
     console_handler.setFormatter(console_formatter)
@@ -428,7 +428,7 @@ def get_lishogi_cloud_move(li, board, game, lishogi_cloud_cfg):
     variant = "standard" if game.variant_name == "From Position" else game.variant_name.lower()
 
     try:
-        data = li.api_get(f"https://lishogi.org/api/cloud-eval", params={"fen": board.fen(), "multiPv": multipv, "variant": variant}, raise_for_status=False)
+        data = li.api_get("https://lishogi.org/api/cloud-eval", params={"fen": board.fen(), "multiPv": multipv, "variant": variant}, raise_for_status=False)
         if "error" not in data:
             if quality == "best":
                 depth = data["depth"]
