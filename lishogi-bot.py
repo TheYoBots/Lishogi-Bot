@@ -326,7 +326,7 @@ def play_game(li, game_id, control_queue, user_profile, config, challenge_queue,
                 bw = "b" if board.turn == shogi.BLACK else "w"
                 game.ping(config.get("abort_time", 30), (upd[f"{bw}time"] + upd[f"{bw}inc"] + upd["byo"]) / 1000 + 60, correspondence_disconnect_time)
             elif u_type == "ping":
-                if is_correspondence and not is_engine_move(game, board) and game.should_disconnect_now():
+                if is_correspondence and not is_engine_move(game, prior_game, board) and game.should_disconnect_now():
                     break
                 elif game.should_abort_now():
                     logger.info(f"Aborting {game.url()} by lack of activity")
