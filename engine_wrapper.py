@@ -34,6 +34,7 @@ def create_engine(config, variant):
         raise ValueError(
             f"Invalid engine type: {engine_type}. Expected usi or homemade.")
 
+    logger.debug(f"Starting engine: {' '.join(commands)}")
     return Engine(commands, usi_options, silence_stderr, cwd=engine_working_dir)
 
 
