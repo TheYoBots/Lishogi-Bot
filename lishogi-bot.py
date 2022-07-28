@@ -509,8 +509,8 @@ def tell_user_game_result(game, board):
     winner = game.state.get("winner")
     termination = game.state.get("status")
 
-    winning_name = game.sente if winner == "sente" else game.gote
-    losing_name = game.gote if winner == "gote" else game.gote
+    winning_name = game.sente.name if winner == "sente" else game.gote.name
+    losing_name = game.sente.name if winner == "gote" else game.gote.name
 
     if winner is not None:
         logger.info(f"{winning_name} won!")
