@@ -201,7 +201,7 @@ python3 lishogi-bot.py -v
 
 If you want to record the output to a log file, add the `-l` or `--logfile` along with a file name:
 ```
-python3 lichess-bot.py --logfile log.txt
+python3 lishogi-bot.py --logfile log.txt
 ```
 
 ## To Quit
