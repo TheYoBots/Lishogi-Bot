@@ -425,7 +425,7 @@ def get_lishogi_cloud_move(li, board, game, lishogi_cloud_cfg):
     variant = "standard" if game.variant_name == "From Position" else game.variant_name.lower()
 
     try:
-        data = li.api_get(f"https://lishogi.org/api/cloud-eval?fen={board.sfen()}&multiPv={multipv}&variant={variant}", raise_for_status=False)
+        data = li.api_get(f"https://lishogi.org/api/cloud-eval", params={"fen": board.fen(), "multiPv": multipv, "variant": variant}, raise_for_status=False)
         if "error" not in data:
             if quality == "best":
                 depth = data["depth"]
