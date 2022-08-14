@@ -77,7 +77,7 @@ class Game:
         self.variant_name = json.get("variant")["name"]
         self.sente = Player(json.get("sente"))
         self.gote = Player(json.get("gote"))
-        self.initial_sfen = json.get("initialFen")
+        self.initial_sfen = json.get("initialSfen")
         self.state = json.get("state")
         self.is_sente = bool(self.sente.name and self.sente.name.lower() == username.lower())
         self.my_color = "sente" if self.is_sente else "gote"

@@ -1,7 +1,6 @@
 import os
 import backoff
 import logging
-from util import makeusi
 from enum import Enum
 
 logger = logging.getLogger(__name__)
@@ -17,7 +16,7 @@ def create_engine(config, variant):
     engine_type = cfg.get("protocol")
     engine_options = cfg.get("engine_options")
     usi_options = cfg.get("usi_options") or {}
-    if variant not in ["Standard", "From Position"]:
+    if variant != "Standard":
         usi_options["USI_Variant"] = variant.lower()
     commands = [engine_path]
     if engine_options:
@@ -54,12 +53,12 @@ class EngineWrapper:
         pass
 
     def search_for(self, board, game, movetime):
-        moves = "" if game.variant_name == "Standard" or game.variant_name == "From Position" else list(map(makeusi, game.state["moves"].split()))
-        sfen = board.sfen() if game.variant_name == "Standard" or game.variant_name == "From Position" else game.initial_sfen
+        moves = "" if game.variant_name == "Standard" else game.state["moves"].split()
+        sfen = board.sfen() if game.variant_name == "Standard" else game.initial_sfen
         return self.search(sfen, moves, movetime=movetime // 1000)
     
     def search_with_ponder(self, game, board, btime, wtime, binc, winc, byo, ponder=False):
-        moves = [m.usi() for m in list(board.move_stack)] if game.variant_name == "Standard" or game.variant_name == "From Position" else list(map(makeusi, game.state["moves"].split()))
+        moves = [m.usi() for m in list(board.move_stack)] if game.variant_name == "Standard" else game.state["moves"].split()
         sfen = game.initial_sfen
         cmds = self.go_commands
         movetime = cmds.get("movetime")

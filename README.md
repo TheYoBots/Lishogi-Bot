@@ -154,7 +154,6 @@ will append `nodes 1 depth 5 movetime 1000` to the command to start thinking of 
 ```yml
   variants:
     - standard
-    - fromPosition
     - minishogi
 ```
 

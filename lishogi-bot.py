@@ -19,7 +19,6 @@ from conversation import Conversation, ChatLine
 from requests.exceptions import ChunkedEncodingError, ConnectionError, HTTPError, ReadTimeout
 from urllib3.exceptions import ProtocolError
 from ColorLogger import enable_color_logging
-from util import *
 import copy
 from collections import defaultdict
 from http.client import RemoteDisconnected
@@ -366,7 +365,7 @@ def start_pondering(engine, board, best_move, ponder_move, btime, wtime, game, l
     if not can_ponder or ponder_move is None:
         return None, None
     ponder_board = copy.deepcopy(board)
-    if game.variant_name == "Standard" or game.variant_name == "From Position":
+    if game.variant_name == "Standard":
         ponder_board.push(shogi.Move.from_usi(best_move))
         ponder_board.push(shogi.Move.from_usi(ponder_move))
     else:
@@ -410,10 +409,10 @@ def get_lishogi_cloud_move(li, board, game, lishogi_cloud_cfg):
 
     quality = lishogi_cloud_cfg.get("move_quality", "best")
     multipv = 1 if quality == "best" else 5
-    variant = "standard" if game.variant_name == "From Position" else game.variant_name.lower()
+    variant = game.variant_name.lower()
 
     try:
-        data = li.api_get(f"https://lishogi.org/api/cloud-eval?fen={board.sfen()}&multiPv={multipv}&variant={variant}", raise_for_status=False)
+        data = li.api_get(f"https://lishogi.org/api/cloud-eval?sfen={board.sfen()}&multiPv={multipv}&variant={variant}", raise_for_status=False)
         if "error" not in data:
             if quality == "best":
                 depth = data["depth"]
@@ -449,8 +448,8 @@ def get_online_move(li, board, game, online_moves_cfg):
     if best_move is None:
         best_move, ponder_move = get_lishogi_cloud_move(li, board, game, lishogi_cloud_cfg)
     if best_move:
-        return shogi.Move.from_uci(best_move, ponder_move)
-    return shogi.Move.from_uci(best_move, ponder_move)
+        return shogi.Move.from_usi(best_move, ponder_move)
+    return shogi.Move.from_usi(best_move, ponder_move)
 
 
 def choose_move_time(engine, board, game, search_time):
@@ -477,18 +476,18 @@ def print_move_number(board):
 
 
 def setup_board(game):
-    if game.variant_name == "Standard" or game.variant_name == "From Position":
-        if game.variant_name == "From Position":
+    if game.variant_name == "Standard":
+        if game.initial_sfen != "startpos":
             board = shogi.Board(game.initial_sfen)
         else:
             board = shogi.Board() # Standard
 
         for move in game.state["moves"].split():
-            usi_move = shogi.Move.from_usi(makeusi(move))
+            usi_move = shogi.Move.from_usi(move)
             if board.is_legal(usi_move):
                 board.push(usi_move)
             else:
-                logger.debug(f"Ignoring illegal move {makeusi(move)} on board {board.sfen()}")
+                logger.debug(f"Ignoring illegal move {move} on board {board.sfen()}")
     else:
         board = shogi.Board()
         for move in game.state["moves"].split():
