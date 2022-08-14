@@ -18,7 +18,6 @@ from config import load_config
 from conversation import Conversation, ChatLine
 from requests.exceptions import ChunkedEncodingError, ConnectionError, HTTPError, ReadTimeout
 from rich.logging import RichHandler
-from util import *
 import copy
 from collections import defaultdict
 from http.client import RemoteDisconnected
@@ -326,7 +325,7 @@ def play_game(li, game_id, control_queue, user_profile, config, challenge_queue,
                 bw = "b" if board.turn == shogi.BLACK else "w"
                 game.ping(config.get("abort_time", 30), (upd[f"{bw}time"] + upd[f"{bw}inc"] + upd["byo"]) / 1000 + 60, correspondence_disconnect_time)
             elif u_type == "ping":
-                if is_correspondence and not is_engine_move(game, prior_game, board) and game.should_disconnect_now():
+                if is_correspondence and not is_engine_move(game, board) and game.should_disconnect_now():
                     break
                 elif game.should_abort_now():
                     logger.info(f"Aborting {game.url()} by lack of activity")
@@ -381,7 +380,7 @@ def start_pondering(engine, board, best_move, ponder_move, btime, wtime, game, l
     if not can_ponder or ponder_move is None:
         return None, None
     ponder_board = copy.deepcopy(board)
-    if game.variant_name == "Standard" or game.variant_name == "From Position":
+    if game.variant_name == "Standard":
         ponder_board.push(shogi.Move.from_usi(best_move))
         ponder_board.push(shogi.Move.from_usi(ponder_move))
     else:
@@ -425,10 +424,10 @@ def get_lishogi_cloud_move(li, board, game, lishogi_cloud_cfg):
 
     quality = lishogi_cloud_cfg.get("move_quality", "best")
     multipv = 1 if quality == "best" else 5
-    variant = "standard" if game.variant_name == "From Position" else game.variant_name.lower()
+    variant = game.variant_name.lower()
 
     try:
-        data = li.api_get("https://lishogi.org/api/cloud-eval", params={"fen": board.fen(), "multiPv": multipv, "variant": variant}, raise_for_status=False)
+        data = li.api_get("https://lishogi.org/api/cloud-eval", params={"sfen": board.sfen(), "multiPv": multipv, "variant": variant}, raise_for_status=False)
         if "error" not in data:
             if quality == "best":
                 depth = data["depth"]
@@ -459,13 +458,13 @@ def get_lishogi_cloud_move(li, board, game, lishogi_cloud_cfg):
     return move
 
 
-def get_online_move(li, board, game, online_moves_cfg):
+def get_online_move(li, board, best_move, game, online_moves_cfg):
     lishogi_cloud_cfg = online_moves_cfg.get("lishogi_cloud_analysis", {})
     if best_move is None:
         best_move, ponder_move = get_lishogi_cloud_move(li, board, game, lishogi_cloud_cfg)
     if best_move:
-        return shogi.Move.from_uci(best_move, ponder_move)
-    return shogi.Move.from_uci(best_move, ponder_move)
+        return shogi.Move.from_usi(best_move, ponder_move)
+    return shogi.Move.from_usi(best_move, ponder_move)
 
 
 def choose_move_time(engine, board, game, search_time):
@@ -492,18 +491,18 @@ def print_move_number(board):
 
 
 def setup_board(game):
-    if game.variant_name == "Standard" or game.variant_name == "From Position":
-        if game.variant_name == "From Position":
+    if game.variant_name == "Standard":
+        if game.initial_sfen != "startpos":
             board = shogi.Board(game.initial_sfen)
         else:
             board = shogi.Board() # Standard
 
         for move in game.state["moves"].split():
-            usi_move = shogi.Move.from_usi(makeusi(move))
+            usi_move = shogi.Move.from_usi(move)
             if board.is_legal(usi_move):
                 board.push(usi_move)
             else:
-                logger.debug(f"Ignoring illegal move {makeusi(move)} on board {board.sfen()}")
+                logger.debug(f"Ignoring illegal move {move} on board {board.sfen()}")
     else:
         board = shogi.Board()
         for move in game.state["moves"].split():

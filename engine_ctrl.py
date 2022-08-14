@@ -6,8 +6,6 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-from util import *
-
 
 class Engine:
     def __init__(self, command, cwd=None):
