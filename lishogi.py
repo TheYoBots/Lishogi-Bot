@@ -1,11 +1,10 @@
 import requests
 from urllib.parse import urljoin
 from requests.exceptions import ConnectionError, HTTPError, ReadTimeout
-from urllib3.exceptions import ProtocolError
-from util import makeuci
 from http.client import RemoteDisconnected
 import backoff
 import logging
+import time
 
 ENDPOINTS = {
     "profile": "/api/account",
@@ -22,6 +21,17 @@ ENDPOINTS = {
     "resign": "/api/bot/game/{}/resign",
     "challenge_ai": "/api/challenge/ai"
 }
+
+
+logger = logging.getLogger(__name__)
+
+
+def rate_limit_check(response):
+    if response.status_code == 429:
+        logger.warning("Rate limited. Waiting 1 minute until next request.")
+        time.sleep(60)
+        return True
+    return False
 
 
 # docs: https://lichess.org/api
@@ -41,7 +51,7 @@ class Lishogi:
         return isinstance(exception, HTTPError) and exception.response.status_code < 500
 
     @backoff.on_exception(backoff.constant,
-                          (RemoteDisconnected, ConnectionError, ProtocolError, HTTPError, ReadTimeout),
+                          (RemoteDisconnected, ConnectionError, HTTPError, ReadTimeout),
                           max_time=60,
                           interval=0.1,
                           giveup=is_final,
@@ -51,22 +61,23 @@ class Lishogi:
         logging.getLogger("backoff").setLevel(self.logging_level)
         url = urljoin(self.baseUrl, path)
         response = self.session.get(url, timeout=2)
-        if raise_for_status:
+        if rate_limit_check(response) or raise_for_status:
             response.raise_for_status()
         return response.json()
 
     @backoff.on_exception(backoff.constant,
-                          (RemoteDisconnected, ConnectionError, ProtocolError, HTTPError, ReadTimeout),
+                          (RemoteDisconnected, ConnectionError, HTTPError, ReadTimeout),
                           max_time=60,
                           interval=0.1,
                           giveup=is_final,
                           backoff_log_level=logging.DEBUG,
                           giveup_log_level=logging.DEBUG)
-    def api_post(self, path, data=None):
+    def api_post(self, path, data=None, raise_for_status=True):
         logging.getLogger("backoff").setLevel(self.logging_level)
         url = urljoin(self.baseUrl, path)
         response = self.session.post(url, data=data, timeout=2)
-        response.raise_for_status()
+        if rate_limit_check(response) or raise_for_status:
+            response.raise_for_status()
         return response.json()
 
     def get_game(self, game_id):
@@ -76,7 +87,7 @@ class Lishogi:
         return self.api_post(ENDPOINTS["upgrade"])
 
     def make_move(self, game_id, move):
-        return self.api_post(ENDPOINTS["move"].format(game_id, makeuci(move)))
+        return self.api_post(ENDPOINTS["move"].format(game_id, move))
 
     def chat(self, game_id, room, text):
         payload = {"room": room, "text": text}

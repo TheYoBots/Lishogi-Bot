@@ -7,19 +7,17 @@ import lishogi
 import logging
 import logging.handlers
 import multiprocessing
-import logging_pool
 import signal
 import time
 import backoff
 import sys
 import threading
 import random
+import traceback
 from config import load_config
 from conversation import Conversation, ChatLine
 from requests.exceptions import ChunkedEncodingError, ConnectionError, HTTPError, ReadTimeout
-from urllib3.exceptions import ProtocolError
-from ColorLogger import enable_color_logging
-from util import *
+from rich.logging import RichHandler
 import copy
 from collections import defaultdict
 from http.client import RemoteDisconnected
@@ -72,10 +70,23 @@ def do_correspondence_ping(control_queue, period):
         time.sleep(period)
         control_queue.put_nowait({"type": "correspondence_ping"})
 
-def listener_configurer(level, filename):
-    logging.basicConfig(level=level, filename=filename,
-                        format="%(asctime)-15s: %(message)s")
-    enable_color_logging(level)
+
+def logging_configurer(level, filename):
+    console_handler = RichHandler()
+    console_formatter = logging.Formatter("%(message)s")
+    console_handler.setFormatter(console_formatter)
+    all_handlers = [console_handler]
+
+    if filename:
+        file_handler = logging.FileHandler(filename, delay=True)
+        FORMAT = "%(asctime)s %(name)s %(levelname)s %(message)s"
+        file_formatter = logging.Formatter(FORMAT)
+        file_handler.setFormatter(file_formatter)
+        all_handlers.append(file_handler)
+
+    logging.basicConfig(level=level,
+                        handlers=all_handlers,
+                        force=True)
 
 
 def logging_listener_proc(queue, configurer, level, log_filename):
@@ -95,6 +106,10 @@ def game_logging_configurer(queue, level):
         root.handlers.clear()
         root.addHandler(h)
         root.setLevel(level)
+
+
+def game_error_handler(error):
+    logger.error("".join(traceback.format_exception(error)))
 
 
 def start(li, user_profile, config, logging_level, log_filename, one_game=False):
@@ -120,11 +135,10 @@ def start(li, user_profile, config, logging_level, log_filename, one_game=False)
 
 
     logging_queue = manager.Queue()
-    logging_listener = multiprocessing.Process(target=logging_listener_proc, args=(logging_queue, listener_configurer, logging_level, log_filename))
+    logging_listener = multiprocessing.Process(target=logging_listener_proc, args=(logging_queue, logging_configurer, logging_level, log_filename))
     logging_listener.start()
 
-
-    with logging_pool.LoggingPool(max_games + 1) as pool:
+    with multiprocessing.pool.Pool(max_games + 1) as pool:
         while not terminated:
             try:
                 event = control_queue.get()
@@ -170,7 +184,7 @@ def start(li, user_profile, config, logging_level, log_filename, one_game=False)
                         queued_processes -= 1
                     busy_processes += 1
                     logger.info(f"--- Process Used. Total Queued: {queued_processes}. Total Used: {busy_processes}")
-                    pool.apply_async(play_game, [li, game_id, control_queue, user_profile, config, challenge_queue, correspondence_queue, logging_queue, game_logging_configurer, logging_level])
+                    pool.apply_async(play_game, [li, game_id, control_queue, user_profile, config, challenge_queue, correspondence_queue, logging_queue, game_logging_configurer, logging_level], error_callback=game_error_handler)
 
             is_correspondence_ping = event["type"] == "correspondence_ping"
             is_local_game_done = event["type"] == "local_game_done"
@@ -191,7 +205,7 @@ def start(li, user_profile, config, logging_level, log_filename, one_game=False)
                     else:
                         busy_processes += 1
                         logger.info(f"--- Process Used. Total Queued: {queued_processes}. Total Used: {busy_processes}")
-                        pool.apply_async(play_game, [li, game_id, control_queue, user_profile, config, challenge_queue, correspondence_queue, logging_queue, game_logging_configurer, logging_level])
+                        pool.apply_async(play_game, [li, game_id, control_queue, user_profile, config, challenge_queue, correspondence_queue, logging_queue, game_logging_configurer, logging_level], error_callback=game_error_handler)
 
             while (queued_processes + busy_processes) < max_games and challenge_queue:  # keep processing the queue until empty or max_games is reached
                 chlng = challenge_queue.pop(0)
@@ -220,8 +234,8 @@ ponder_results = {}
 
 
 @backoff.on_exception(backoff.expo, BaseException, max_time=600, giveup=is_final)
-def play_game(li, game_id, control_queue, user_profile, config, challenge_queue, correspondence_queue, logging_queue, logging_configurer, logging_level):
-    logging_configurer(logging_queue, logging_level)
+def play_game(li, game_id, control_queue, user_profile, config, challenge_queue, correspondence_queue, logging_queue, game_logging_configurer, logging_level):
+    game_logging_configurer(logging_queue, logging_level)
     logger = logging.getLogger(__name__)
 
     response = li.get_game_stream(game_id)
@@ -322,7 +336,7 @@ def play_game(li, game_id, control_queue, user_profile, config, challenge_queue,
                     if game.is_abortable():
                         li.abort(game.id)
                     break
-        except (HTTPError, ReadTimeout, RemoteDisconnected, ChunkedEncodingError, ConnectionError, ProtocolError):
+        except (HTTPError, ReadTimeout, RemoteDisconnected, ChunkedEncodingError, ConnectionError):
             if move_attempted:
                 continue
             if game.id not in (ongoing_game["gameId"] for ongoing_game in li.get_ongoing_games()):
@@ -366,7 +380,7 @@ def start_pondering(engine, board, best_move, ponder_move, btime, wtime, game, l
     if not can_ponder or ponder_move is None:
         return None, None
     ponder_board = copy.deepcopy(board)
-    if game.variant_name == "Standard" or game.variant_name == "From Position":
+    if game.variant_name == "Standard":
         ponder_board.push(shogi.Move.from_usi(best_move))
         ponder_board.push(shogi.Move.from_usi(ponder_move))
     else:
@@ -410,10 +424,10 @@ def get_lishogi_cloud_move(li, board, game, lishogi_cloud_cfg):
 
     quality = lishogi_cloud_cfg.get("move_quality", "best")
     multipv = 1 if quality == "best" else 5
-    variant = "standard" if game.variant_name == "From Position" else game.variant_name.lower()
+    variant = game.variant_name.lower()
 
     try:
-        data = li.api_get(f"https://lishogi.org/api/cloud-eval?fen={board.sfen()}&multiPv={multipv}&variant={variant}", raise_for_status=False)
+        data = li.api_get("https://lishogi.org/api/cloud-eval", params={"sfen": board.sfen(), "multiPv": multipv, "variant": variant}, raise_for_status=False)
         if "error" not in data:
             if quality == "best":
                 depth = data["depth"]
@@ -444,13 +458,13 @@ def get_lishogi_cloud_move(li, board, game, lishogi_cloud_cfg):
     return move
 
 
-def get_online_move(li, board, game, online_moves_cfg):
+def get_online_move(li, board, best_move, game, online_moves_cfg):
     lishogi_cloud_cfg = online_moves_cfg.get("lishogi_cloud_analysis", {})
     if best_move is None:
         best_move, ponder_move = get_lishogi_cloud_move(li, board, game, lishogi_cloud_cfg)
     if best_move:
-        return shogi.Move.from_uci(best_move, ponder_move)
-    return shogi.Move.from_uci(best_move, ponder_move)
+        return shogi.Move.from_usi(best_move, ponder_move)
+    return shogi.Move.from_usi(best_move, ponder_move)
 
 
 def choose_move_time(engine, board, game, search_time):
@@ -477,18 +491,18 @@ def print_move_number(board):
 
 
 def setup_board(game):
-    if game.variant_name == "Standard" or game.variant_name == "From Position":
-        if game.variant_name == "From Position":
+    if game.variant_name == "Standard":
+        if game.initial_sfen != "startpos":
             board = shogi.Board(game.initial_sfen)
         else:
             board = shogi.Board() # Standard
 
         for move in game.state["moves"].split():
-            usi_move = shogi.Move.from_usi(makeusi(move))
+            usi_move = shogi.Move.from_usi(move)
             if board.is_legal(usi_move):
                 board.push(usi_move)
             else:
-                logger.debug(f"Ignoring illegal move {makeusi(move)} on board {board.sfen()}")
+                logger.debug(f"Ignoring illegal move {move} on board {board.sfen()}")
     else:
         board = shogi.Board()
         for move in game.state["moves"].split():
@@ -509,8 +523,8 @@ def tell_user_game_result(game, board):
     winner = game.state.get("winner")
     termination = game.state.get("status")
 
-    winning_name = game.sente if winner == "sente" else game.gote
-    losing_name = game.gote if winner == "gote" else game.gote
+    winning_name = game.sente.name if winner == "sente" else game.gote.name
+    losing_name = game.sente.name if winner == "gote" else game.gote.name
 
     if winner is not None:
         logger.info(f"{winning_name} won!")
@@ -548,19 +562,17 @@ def intro():
     """ % __version__
 
 
-if __name__ == "__main__":
+def start_lishogi_bot():
     parser = argparse.ArgumentParser(description="Play on Lishogi with a bot")
-    parser.add_argument("-u", action="store_true", help="Add this flag to upgrade your account to a bot account.")
-    parser.add_argument("-v", action="store_true", help="Verbose output. Changes log level from INFO to DEBUG.")
+    parser.add_argument("-u", action="store_true", help="Upgrade your account to a bot account.")
+    parser.add_argument("-v", action="store_true", help="Make output more verbose. Include all communication with lishogi.org.")
     parser.add_argument("--config", help="Specify a configuration file (defaults to ./config.yml)")
-    parser.add_argument("-l", "--logfile", help="Log file to append logs to.", default=None)
+    parser.add_argument("-l", "--logfile", help="Record all console output to a log file.", default=None)
     args = parser.parse_args()
 
     logging_level = logging.DEBUG if args.v else logging.INFO
-    logging.basicConfig(level=logging_level, filename=args.logfile,
-                        format="%(asctime)-15s: %(message)s")
-    enable_color_logging(debug_lvl=logging_level)
-    logger.info(intro())
+    logging_configurer(logging_level, args.logfile)
+    logger.info(intro(), extra={"highlighter": None})
     CONFIG = load_config(args.config or "./config.yml")
     li = lishogi.Lishogi(CONFIG["token"], CONFIG["url"], __version__, logging_level)
 
@@ -576,3 +588,11 @@ if __name__ == "__main__":
         start(li, user_profile, CONFIG, logging_level, args.logfile)
     else:
         logger.error(f"{username} is not a bot account. Please upgrade it to a bot account!")
+
+
+if __name__ == "__main__":
+    try:
+        start_lishogi_bot()
+    except Exception as error:
+        logger.error(error)
+        logger.error(game_error_handler(error))

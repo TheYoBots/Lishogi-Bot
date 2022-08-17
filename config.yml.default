@@ -53,7 +53,6 @@ challenge:                     # Incoming challenges.
   min_base: 0                  # Minimum amount of base time to accept a challenge.
   variants:                    # Shogi variants to accept (https://lishogi.org/variant).
     - standard
-#   - fromPosition
 #   - minishogi
   time_controls:               # Time controls to accept.
     - ultraBullet
