@@ -29,7 +29,7 @@ def download_yo():
 
 def run_bot(CONFIG, logging_level):
     lishogi_bot.logger.info(lishogi_bot.intro())
-    li = lishogi_bot.lishogi.Lishogi(TOKEN, CONFIG["url"], lishogi_bot.__version__, logging_level)
+    li = lishogi_bot.lishogi.Lishogi(CONFIG["token"], CONFIG["url"], lishogi_bot.__version__, logging_level)
 
     user_profile = li.get_profile()
     username = user_profile["username"]
@@ -96,6 +96,7 @@ def test_bot():
     lishogi_bot.logger.info("Downloaded YaneuraOu for NNUE")
     with open("./config.yml.default") as file:
         CONFIG = yaml.safe_load(file)
+    CONFIG["token"] = TOKEN
     CONFIG["engine"]["dir"] = "./"
     CONFIG["engine"]["name"] = "yo.exe"
     CONFIG["engine"]["usi_options"]["BookFile"] = "no_book"
