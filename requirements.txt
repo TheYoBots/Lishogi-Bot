@@ -1,5 +1,5 @@
 python-shogi==1.0.16
 PyYAML>=5.4.1
 requests>=2.25.1
-backoff==2.1.2
+backoff==2.2.1
 rich==12.4.4
