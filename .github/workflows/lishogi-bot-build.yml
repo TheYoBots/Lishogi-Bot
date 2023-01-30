@@ -6,8 +6,7 @@ name: Lishogi Bot Build
 on:
   push:
     branches: [ master ]
-  pull_request:
-    branches: [ master ]
+  pull_request_target:
 
 env:
   BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
