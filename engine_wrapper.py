@@ -5,7 +5,7 @@ from enum import Enum
 
 logger = logging.getLogger(__name__)
 
-import engine_ctrl
+from engine_ctrl import usi
 
 
 @backoff.on_exception(backoff.expo, BaseException, max_time=120)
@@ -130,7 +130,7 @@ class USIEngine(EngineWrapper):
         commands = commands[0] if len(commands) == 1 else commands
         self.go_commands = options.pop("go_commands", {}) or {}
 
-        self.engine = engine_ctrl.Engine(commands, cwd=cwd)
+        self.engine = usi.Engine(commands, cwd=cwd)
         self.engine.usi()
 
         if options:
