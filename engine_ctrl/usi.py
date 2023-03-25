@@ -124,7 +124,7 @@ class Engine:
 
         self.send("setoption name %s value %s" % (name, value))
 
-    def go(self, position, moves, movetime=None, btime=None, wtime=None, binc=None, winc=None, byo=None, depth=None, nodes=None, ponder=False):
+    def go(self, variant, position, moves, movetime=None, btime=None, wtime=None, binc=None, winc=None, byo=None, depth=None, nodes=None, ponder=False):
         self.position(position, moves)
 
         builder = []

@@ -118,8 +118,8 @@ class Engine:
 
         #self.send("setoption name %s value %s" % (name, value))
 
-    def go(self, position, moves, movetime=None, btime=None, wtime=None, binc=None, winc=None, byo=None, depth=None, nodes=None, ponder=False):
-        self.position(position, moves)
+    def go(self, variant, position, moves, movetime=None, btime=None, wtime=None, binc=None, winc=None, byo=None, depth=None, nodes=None, ponder=False):
+        self.setboard(variant, position, moves)
 
         builder = []
         if ponder:
@@ -127,43 +127,36 @@ class Engine:
         else:
             builder.append("easy")
         if movetime is not None:
-            builder.append("st")
-            builder.append(str(movetime))
+            builder.append("st %d" % movetime)
         #if nodes is not None:
         #    builder.append("nodes")
         #    builder.append(str(nodes))
         if depth is not None:
-            builder.append("sd")
-            builder.append(str(depth))
+            builder.append("sd %d" % depth)
         # In Shogi and USI, black is the player to move first
         if btime is not None:
-            builder.append("time")
-            builder.append(str(btime))
+            builder.append("time %d" % btime)
         if wtime is not None:
-            builder.append("otim")
-            builder.append(str(wtime))
+            builder.append("otim %d" % wtime)
         #if binc is not None:
-        #    builder.append("binc")
-        #    builder.append(str(binc))
+        #    builder.append("binc %d" % inc)
         #if winc is not None:
-        #    builder.append("winc")
-        #    builder.append(str(winc))
+        #    builder.append("winc %d" % inc)
         #if byo is not None:
-        #    builder.append("byoyomi")
-        #    builder.append(str(byo))
+        #    builder.append("byoyomi %d" % byo)
         builder.append("go")
 
         self.send("\n".join(builder))
         logger.info("\n".join(builder))
 
         info = {}
-        info["bestmove"] = None
+        info["move"] = None
         info["pondermove"] = None
 
         while True:
             command, arg = self.recv_cecp()
 
-            if command == "bestmove":
+            if command == "move":
                 arg_split = arg.split()
                 bestmove = arg_split[0]
                 if bestmove and bestmove != "(none)":
@@ -235,11 +228,12 @@ class Engine:
             else:
                 logger.error("Unexpected engine response to go: %s %s" % (command, arg))
 
-    def position(self, position, moves):
-        if position != "startpos":
-            position = "sfen " + position
-        self.send("position %s moves %s" % (position, " ".join(moves)))
-        logger.debug("position %s moves %s" % (position, " ".join(moves)))
+    def setboard(self, variant, position, moves):
+        if variant == "Chushogi":
+            variant = "chu"
+        self.send("variant %s" % variant)
+        logger.debug("variant %s\nsetboard %s moves %s" % (variant, position, moves))
+        # Future work: implement force with moves to set position
 
     def stop(self):
         self.send("stop")
