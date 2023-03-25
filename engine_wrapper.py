@@ -5,6 +5,7 @@ from enum import Enum
 
 logger = logging.getLogger(__name__)
 
+from engine_ctrl import cecp
 from engine_ctrl import usi
 
 
@@ -27,6 +28,8 @@ def create_engine(config, variant):
 
     if engine_type == "homemade":
         Engine = getHomemadeEngine(cfg["name"])
+    elif engine_type == "cecp":
+        Engine = SECPEngine
     elif engine_type == "usi":
         Engine = USIEngine
     else:
@@ -123,6 +126,42 @@ class EngineWrapper:
 
     def kill_process(self):
         pass
+
+
+class SECPEngine(EngineWrapper):
+    def __init__(self, commands, options, silence_stderr=False, cwd=None):
+        commands = commands[0] if len(commands) == 1 else commands
+        self.go_commands = options.pop("go_commands", {}) or {}
+
+        self.engine = cecp.Engine(commands, cwd=cwd)
+        self.engine.cecp()
+        if options:
+            for name, value in options.items():
+                self.engine.setoption(name, value)
+        self.engine.ping()
+
+    def ponderhit(self):
+        self.engine.ponderhit()
+
+    def stop(self):
+        self.engine.stop()
+
+    def quit(self):
+        self.engine.quit()
+
+    def kill_process(self):
+        self.engine.kill_process()
+
+    def get_opponent_info(self, game):
+        name = game.opponent.name
+        if name:
+            rating = game.opponent.rating if game.opponent.rating is not None else "none"
+            title = game.opponent.title if game.opponent.title else "none"
+            player_type = "computer" if title == "BOT" else "human"
+
+    def report_game_result(self, game, board):
+        moves = [m.usi() for m in board.move_stack]
+        self.engine.position(game.initial_sfen, moves)
 
 
 class USIEngine(EngineWrapper):
