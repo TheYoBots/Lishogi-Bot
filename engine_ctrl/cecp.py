@@ -87,13 +87,13 @@ class Engine:
         while True:
             command, arg = self.recv_cecp()
 
-            if command == "feature" and arg == "done=1":
-                return engine_info
-            #elif command == "id":
-            #    name_and_value = arg.split(None, 1)
-            #    if len(name_and_value) == 2:
-            #        engine_info[name_and_value[0]] = name_and_value[1]
-            elif command == "feature":
+            if command == "feature":
+                if arg == "done=1":
+                    return engine_info
+                #elif command == "id":
+                #    name_and_value = arg.split(None, 1)
+                #    if len(name_and_value) == 2:
+                #        engine_info[name_and_value[0]] = name_and_value[1]
                 pass
             else:
                 logger.warning("Unexpected engine response to protover 2: %s %s" % (command, arg))
@@ -159,12 +159,12 @@ class Engine:
             if command == "move":
                 arg_split = arg.split()
                 bestmove = arg_split[0]
-                if bestmove and bestmove != "(none)":
+                if bestmove and bestmove != "@@@@":
                     info["bestmove"] = bestmove
                 if len(arg_split) == 3:
                     if arg_split[1] == "ponder":
                         ponder_move = arg_split[2]
-                        if ponder_move and ponder_move != "(none)":
+                        if ponder_move and ponder_move != "@@@@":
                             info["pondermove"] = ponder_move
                 return (info["bestmove"], info["pondermove"])
 
@@ -231,6 +231,8 @@ class Engine:
     def setboard(self, variant, position, moves):
         if variant == "Chushogi":
             variant = "chu"
+        else:
+            variant = variant.lower()
         self.send("variant %s" % variant)
         logger.debug("variant %s\nsetboard %s moves %s" % (variant, position, moves))
         # Future work: implement force with moves to set position
