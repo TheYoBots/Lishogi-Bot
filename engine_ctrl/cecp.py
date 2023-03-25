@@ -115,7 +115,7 @@ class Engine:
         elif name == "threads":
             name = "cores"
         elif name == "usi_variant":
-            name = "variant"
+            name = "new\nvariant"
             value = value.lower()
             if value == "chushogi":
                 value = "chu"
