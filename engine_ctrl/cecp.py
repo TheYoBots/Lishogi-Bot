@@ -116,43 +116,45 @@ class Engine:
         elif value is None:
             value = "none"
 
-        self.send("setoption name %s value %s" % (name, value))
+        #self.send("setoption name %s value %s" % (name, value))
 
     def go(self, position, moves, movetime=None, btime=None, wtime=None, binc=None, winc=None, byo=None, depth=None, nodes=None, ponder=False):
         self.position(position, moves)
 
         builder = []
-        builder.append("go")
         if ponder:
-            builder.append("ponder")
+            builder.append("hard")
+        else:
+            builder.append("easy")
         if movetime is not None:
-            builder.append("movetime")
+            builder.append("st")
             builder.append(str(movetime))
-        if nodes is not None:
-            builder.append("nodes")
-            builder.append(str(nodes))
+        #if nodes is not None:
+        #    builder.append("nodes")
+        #    builder.append(str(nodes))
         if depth is not None:
-            builder.append("depth")
+            builder.append("sd")
             builder.append(str(depth))
         # In Shogi and USI, black is the player to move first
         if btime is not None:
-            builder.append("btime")
+            builder.append("time")
             builder.append(str(btime))
         if wtime is not None:
-            builder.append("wtime")
+            builder.append("otim")
             builder.append(str(wtime))
-        if binc is not None:
-            builder.append("binc")
-            builder.append(str(binc))
-        if winc is not None:
-            builder.append("winc")
-            builder.append(str(winc))
-        if byo is not None:
-            builder.append("byoyomi")
-            builder.append(str(byo))
+        #if binc is not None:
+        #    builder.append("binc")
+        #    builder.append(str(binc))
+        #if winc is not None:
+        #    builder.append("winc")
+        #    builder.append(str(winc))
+        #if byo is not None:
+        #    builder.append("byoyomi")
+        #    builder.append(str(byo))
+        builder.append("go")
 
-        self.send(" ".join(builder))
-        logger.info(" ".join(builder))
+        self.send("\n".join(builder))
+        logger.info("\n".join(builder))
 
         info = {}
         info["bestmove"] = None
