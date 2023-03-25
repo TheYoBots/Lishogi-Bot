@@ -109,6 +109,17 @@ class Engine:
                 logger.warning("Unexpected engine response to ping: %s %s" % (command, arg))
 
     def setoption(self, name, value):
+        name = name.lower()
+        if name == "hash":
+            name = "memory"
+        elif name == "threads":
+            name = "cores"
+        elif name == "usi_variant":
+            name = "variant"
+            value = value.lower()
+            if value == "chushogi":
+                value = "chu"
+
         if value is True:
             value = "true"
         elif value is False:
@@ -116,10 +127,10 @@ class Engine:
         elif value is None:
             value = "none"
 
-        #self.send("setoption name %s value %s" % (name, value))
+        self.send("%s %s" % (name, value))
 
-    def go(self, variant, position, moves, movetime=None, btime=None, wtime=None, binc=None, winc=None, byo=None, depth=None, nodes=None, ponder=False):
-        self.setboard(variant, position, moves)
+    def go(self, position, moves, movetime=None, btime=None, wtime=None, binc=None, winc=None, byo=None, depth=None, nodes=None, ponder=False):
+        self.setboard(position, moves)
 
         builder = []
         if ponder:
@@ -228,14 +239,10 @@ class Engine:
             else:
                 logger.error("Unexpected engine response to go: %s %s" % (command, arg))
 
-    def setboard(self, variant, position, moves):
-        if variant == "Chushogi":
-            variant = "chu"
-        else:
-            variant = variant.lower()
-        self.send("variant %s" % variant)
-        logger.debug("variant %s\nsetboard %s moves %s" % (variant, position, moves))
-        # Future work: implement force with moves to set position
+    def setboard(self, position, moves):
+        #self.send("setboard %s moves %s" % (position, moves))
+        #logger.debug("setboard %s moves %s" % (position, moves))
+        return
 
     def stop(self):
         self.send("stop")
