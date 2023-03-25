@@ -237,7 +237,7 @@ class Engine:
                         info["score"]["upperbound"] = upperbound
                 self.info = info
             else:
-                logger.error("Unexpected engine response to go: %s %s" % (command, arg))
+                logger.warning("Unexpected engine response to go: %s %s" % (command, arg))
 
     def setboard(self, position, moves):
         #self.send("setboard %s moves %s" % (position, moves))
