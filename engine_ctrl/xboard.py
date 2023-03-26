@@ -71,21 +71,21 @@ class Engine:
             if line:
                 return line
 
-    def recv_cecp(self):
+    def recv_xboard(self):
         command_and_args = self.recv().split(None, 1)
         if len(command_and_args) == 1:
             return command_and_args[0], ""
         elif len(command_and_args) == 2:
             return command_and_args
 
-    def cecp(self):
+    def xboard(self):
         self.send("xboard")
         self.send("protover 2")
 
         engine_info = {}
 
         while True:
-            command, arg = self.recv_cecp()
+            command, arg = self.recv_xboard()
 
             if command == "feature":
                 if arg == "done=1":
@@ -102,7 +102,7 @@ class Engine:
     def ping(self):
         self.send("ping")
         while True:
-            command, arg = self.recv_cecp()
+            command, arg = self.recv_xboard()
             if command == "pong":
                 break
             else:
@@ -165,7 +165,7 @@ class Engine:
         info["pondermove"] = None
 
         while True:
-            command, arg = self.recv_cecp()
+            command, arg = self.recv_xboard()
 
             if command == "move":
                 arg_split = arg.split()

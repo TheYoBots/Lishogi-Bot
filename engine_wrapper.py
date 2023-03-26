@@ -5,8 +5,7 @@ from enum import Enum
 
 logger = logging.getLogger(__name__)
 
-from engine_ctrl import cecp
-from engine_ctrl import usi
+from engine_ctrl import usi, xboard
 
 
 @backoff.on_exception(backoff.expo, BaseException, max_time=120)
@@ -28,10 +27,10 @@ def create_engine(config, variant):
 
     if engine_type == "homemade":
         Engine = getHomemadeEngine(cfg["name"])
-    elif engine_type == "cecp":
-        Engine = SECPEngine
     elif engine_type == "usi":
         Engine = USIEngine
+    elif engine_type == "xboard":
+        Engine = XBoardEngine
     else:
         raise ValueError(
             f"Invalid engine type: {engine_type}. Expected usi or homemade.")
@@ -128,13 +127,13 @@ class EngineWrapper:
         pass
 
 
-class SECPEngine(EngineWrapper):
+class XBoardEngine(EngineWrapper):
     def __init__(self, commands, options, silence_stderr=False, cwd=None):
         commands = commands[0] if len(commands) == 1 else commands
         self.go_commands = options.pop("go_commands", {}) or {}
 
-        self.engine = cecp.Engine(commands, cwd=cwd)
-        self.engine.cecp()
+        self.engine = xboard.Engine(commands, cwd=cwd)
+        self.engine.xboard()
         if options:
             for name, value in options.items():
                 self.engine.setoption(name, value)
