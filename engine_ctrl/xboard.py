@@ -1,3 +1,4 @@
+import shogi
 import threading
 import subprocess
 import os
@@ -129,8 +130,10 @@ class Engine:
 
         self.send("%s %s" % (name, value))
 
-    def go(self, position, moves, movetime=None, btime=None, wtime=None, binc=None, winc=None, byo=None, depth=None, nodes=None, ponder=False):
+    def go(self, position, moves, turn, movetime=None, btime=None, wtime=None, binc=None, winc=None, byo=None, depth=None, nodes=None, ponder=False):
         self.setboard(position, moves)
+        time = btime if turn == shogi.BLACK else wtime
+        otim = btime if turn == shogi.WHITE else wtime
 
         builder = []
         if ponder:
@@ -145,10 +148,10 @@ class Engine:
         if depth is not None:
             builder.append("sd %d" % depth)
         # In Shogi and USI, black is the player to move first
-        if btime is not None:
-            builder.append("time %d" % btime)
-        if wtime is not None:
-            builder.append("otim %d" % wtime)
+        if time is not None:
+            builder.append("time %d" % time)
+        if otim is not None:
+            builder.append("otim %d" % otim)
         #if binc is not None:
         #    builder.append("binc %d" % inc)
         #if winc is not None:
