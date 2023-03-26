@@ -59,7 +59,7 @@ As an optional convenience, there is a folder named `engines` within the Lishogi
 Besides the above, there are many possible options within `config.yml` for configuring the engine for use with Lishogi-Bot.
 - `protocol`: Specify which protocol your engine uses. 
   1. `"usi"` for the [Universal Shogi Interface](http://hgm.nubati.net/usi.html).
-  2. `"cecp"` for an incomplete [Chess Engine Communication Protocol](http://hgm.nubati.net/CECP.html) implementation.
+  2. `"xboard"` for an incomplete [Chess Engine Communication Protocol](http://hgm.nubati.net/CECP.html) implementation.
   3. `"homemade"` if you want to write your own engine in Python within Lishogi-Bot. See [**Creating a homemade bot**](#creating-a-homemade-bot) below.
 - `ponder`: Specify whether your bot will ponder, i.e., think while the bot's opponent is choosing a move.
 - `engine_options`: Command line options to pass to the engine on startup. For example, the `config.yml.default` has the configuration
