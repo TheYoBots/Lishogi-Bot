@@ -363,7 +363,7 @@ def play_game(li, game_id, control_queue, user_profile, config, challenge_queue,
 
 def play_midgame_move(engine, board, btime, wtime, move_overhead, start_time, logger, game):
     btime, wtime = adjust_game_time(btime, wtime, board, move_overhead, start_time)
-    logger.info(f"Searching for btime {btime} wtime {wtime}")
+    logger.info(f"Search btime {btime} wtime {wtime}")
     best_move, ponder_move = engine.search_with_ponder(game, board, btime, wtime, game.state["binc"], game.state["winc"], game.state["byo"])
     return best_move, ponder_move
 
@@ -468,7 +468,7 @@ def get_online_move(li, board, best_move, game, online_moves_cfg):
 
 
 def choose_move_time(engine, board, game, search_time):
-    logger.info(f"Searching for time {search_time}")
+    logger.info(f"Search for time {search_time}")
     return engine.search_for(board, game, search_time)
 
 
