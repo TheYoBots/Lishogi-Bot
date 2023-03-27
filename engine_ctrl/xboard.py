@@ -79,9 +79,10 @@ class Engine:
         elif len(command_and_args) == 2:
             return command_and_args
 
-    def xboard(self):
+    def xboard(self, mps, base, inc):
         self.send("xboard")
         self.send("protover 2")
+        self.send("level %d %d %d" % (mps, base, inc))
 
         engine_info = {}
 
@@ -101,7 +102,7 @@ class Engine:
             self.id = engine_info
 
     def ping(self):
-        self.send("ping")
+        self.send("ping 1")
         while True:
             command, arg = self.recv_xboard()
             if command == "pong":
@@ -115,11 +116,6 @@ class Engine:
             name = "memory"
         elif name == "threads":
             name = "cores"
-        elif name == "usi_variant":
-            name = "new\nvariant"
-            value = value.lower()
-            if value == "chushogi":
-                value = "chu"
 
         if value is True:
             value = "true"
@@ -130,12 +126,17 @@ class Engine:
 
         self.send("%s %s" % (name, value))
 
-    def go(self, position, moves, turn, movetime=None, btime=None, wtime=None, binc=None, winc=None, byo=None, depth=None, nodes=None, ponder=False):
+    def go(self, variant, position, moves, turn, movetime=None, btime=None, wtime=None, binc=None, winc=None, byo=None, depth=None, nodes=None, ponder=False):
         self.setboard(position, moves)
         time = btime if turn == shogi.BLACK else wtime
         otim = btime if turn == shogi.WHITE else wtime
 
         builder = []
+        builder.append("new")
+        variant = variant.lower()
+        if variant == "chushogi":
+            variant = "chu"
+        builder.append("variant %s" % variant)
         if ponder:
             builder.append("hard")
         else:
