@@ -136,6 +136,8 @@ class Engine:
         variant = variant.lower()
         if variant == "chushogi":
             variant = "chu"
+        elif variant == "standard":
+            variant = "shogi"
         builder.append("variant %s" % variant)
         if ponder:
             builder.append("hard")
@@ -168,6 +170,9 @@ class Engine:
         info["move"] = None
         info["pondermove"] = None
 
+        files = {'a': '9', 'b': '8', 'c': '7', 'd': '6', 'e': '5', 'f': '4', 'g': '3', 'h': '2', 'i': '1'}
+        ranks = {'1': 'i', '2': 'h', '3': 'g', '4': 'f', '5': 'e', '6': 'd', '7': 'c', '8': 'b', '9': 'a'}
+
         while True:
             command, arg = self.recv_xboard()
 
@@ -175,12 +180,19 @@ class Engine:
                 arg_split = arg.split()
                 bestmove = arg_split[0]
                 if bestmove and bestmove != "@@@@":
-                    info["bestmove"] = bestmove
-                if len(arg_split) == 3:
-                    if arg_split[1] == "ponder":
-                        ponder_move = arg_split[2]
-                        if ponder_move and ponder_move != "@@@@":
-                            info["pondermove"] = ponder_move
+                    # Translate a3a4 -> 9g9f
+                    info["bestmove"] = ''
+                    info["bestmove"] += files[bestmove[0]]
+                    info["bestmove"] += ranks[bestmove[1]]
+                    info["bestmove"] += files[bestmove[2]]
+                    info["bestmove"] += ranks[bestmove[3]]
+                    if len(bestmove) > 4:
+                        info["bestmove"] += bestmove[4:]
+                #if len(arg_split) == 3:
+                #    if arg_split[1] == "ponder":
+                #        ponder_move = arg_split[2]
+                #        if ponder_move and ponder_move != "@@@@":
+                #            info["pondermove"] = ponder_move
                 return (info["bestmove"], info["pondermove"])
 
             elif command == "info":
