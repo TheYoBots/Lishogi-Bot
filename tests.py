@@ -31,16 +31,6 @@ def run_bot(CONFIG, logging_level):
         is_bot = lishogi_bot.upgrade_account(li)
 
     if is_bot:
-        games = li.get_ongoing_games()
-        game_ids = list(map(lambda game: game["gameId"], games))
-        for game in game_ids:
-            try:
-                li.abort(game)
-            except:
-                pass
-            time.sleep(2)
-        while li.get_ongoing_games():
-            time.sleep(60)
         game_id = li.challenge_ai()["id"]
         time.sleep(2)
         games = li.get_ongoing_games()
