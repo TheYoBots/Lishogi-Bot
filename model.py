@@ -73,6 +73,7 @@ class Game:
         clock = json.get("clock") or {}
         self.clock_initial = clock.get("initial", 1000 * 3600 * 24 * 365 * 10) # unlimited = 10 years
         self.clock_increment = clock.get("increment", 0)
+        self.clock_byoyomi = clock.get("byoyomi", 0)
         self.perf_name = json.get("perf").get("name") if json.get("perf") else "{perf?}"
         self.variant_name = json.get("variant")["name"]
         self.sente = Player(json.get("sente"))
@@ -87,7 +88,7 @@ class Game:
         self.base_url = base_url
         self.sente_starts = self.initial_sfen == "startpos" or self.initial_sfen.split()[1] == "b"
         self.abort_at = time.time() + abort_time
-        self.terminate_at = time.time() + (self.clock_initial + self.clock_increment) / 1000 + abort_time + 60
+        self.terminate_at = time.time() + (self.clock_initial + self.clock_increment + self.clock_byoyomi) / 1000 + abort_time + 60
         self.disconnect_at = time.time()
 
     def url(self):
