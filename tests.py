@@ -5,8 +5,6 @@ import requests
 import time
 import zipfile
 import yaml
-import shogi
-import shogi.KIF as kif
 import shutil
 import importlib
 lishogi_bot = importlib.import_module("lishogi-bot")
@@ -56,16 +54,11 @@ def run_bot(CONFIG, logging_level):
         @pytest.mark.timeout(300)
         def run_test():
             lishogi_bot.start(li, user_profile, CONFIG, logging_level, None, one_game=True)
-            response = requests.get(f"https://lishogi.org/game/export/{game_id}")
-            response = response.content.decode()
-            parser = kif.Parser()
-            summary = parser.parse_str(response)[0]
-            starting = "lishogi" in summary["names"][1]
-            board = shogi.Board()
-            for move in summary["moves"]:
-                board.push_usi(move)
-            win = board.turn == (shogi.WHITE if starting else shogi.BLACK) and board.is_game_over()
-            assert win
+            headers = {"Accept": "application/json"}
+            response = requests.get(f"https://lishogi.org/game/export/{game_id}?moves=false", headers=headers)
+            json = response.json()
+            winner = json["winner"]
+            assert "user" in json["players"][winner]
 
         run_test()
     else:
