@@ -5,8 +5,6 @@ import requests
 import time
 import zipfile
 import yaml
-import shogi
-import shogi.KIF as kif
 import shutil
 import importlib
 lishogi_bot = importlib.import_module("lishogi-bot")
@@ -31,6 +29,14 @@ def run_bot(CONFIG, logging_level):
         is_bot = lishogi_bot.upgrade_account(li)
 
     if is_bot:
+        games = li.get_ongoing_games()
+        game_ids = list(map(lambda game: game["gameId"], games))
+        for game in game_ids:
+            try:
+                li.abort(game)
+            except:
+                pass
+            time.sleep(2)
         game_id = li.challenge_ai()["id"]
         time.sleep(2)
         games = li.get_ongoing_games()
@@ -46,16 +52,11 @@ def run_bot(CONFIG, logging_level):
         @pytest.mark.timeout(300)
         def run_test():
             lishogi_bot.start(li, user_profile, CONFIG, logging_level, None, one_game=True)
-            response = requests.get(f"https://lishogi.org/game/export/{game_id}")
-            response = response.content.decode()
-            parser = kif.Parser()
-            summary = parser.parse_str(response)[0]
-            starting = "lishogi" in summary["names"][1]
-            board = shogi.Board()
-            for move in summary["moves"]:
-                board.push_usi(move)
-            win = board.turn == (shogi.WHITE if starting else shogi.BLACK) and board.is_game_over()
-            assert win
+            headers = {"Accept": "application/json"}
+            response = requests.get(f"https://lishogi.org/game/export/{game_id}?moves=false", headers=headers)
+            json = response.json()
+            winner = json["winner"]
+            assert "user" in json["players"][winner]
 
         run_test()
     else:
