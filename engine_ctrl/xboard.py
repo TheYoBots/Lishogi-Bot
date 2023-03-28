@@ -127,10 +127,10 @@ class Engine:
         self.send("%s %s" % (name, value))
 
     def go(self, variant, position, moves, turn, movetime=None, btime=None, wtime=None, binc=None, winc=None, byo=None, depth=None, nodes=None, ponder=False):
-        self.setboard(position, moves)
         time = btime if turn == shogi.BLACK else wtime
         otim = btime if turn == shogi.WHITE else wtime
 
+        logger.debug("%s setboard %s moves %s" % (variant, position, moves))
         builder = []
         builder.append("new")
         variant = variant.lower()
@@ -139,6 +139,7 @@ class Engine:
         elif variant == "standard":
             variant = "shogi"
         builder.append("variant %s" % variant)
+        #builder.append("setboard %s" % position.split(' ')[0])
         if ponder:
             builder.append("hard")
         else:
@@ -254,11 +255,6 @@ class Engine:
                 self.info = info
             else:
                 logger.warning("Unexpected engine response to go: %s %s" % (command, arg))
-
-    def setboard(self, position, moves):
-        #self.send("setboard %s moves %s" % (position, moves))
-        #logger.debug("setboard %s moves %s" % (position, moves))
-        return
 
     def stop(self):
         self.send("stop")
