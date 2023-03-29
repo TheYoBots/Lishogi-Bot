@@ -20,6 +20,7 @@ def create_engine(config):
     if engine_options:
         for k, v in engine_options.items():
             commands.append(f"--{k}={v}")
+    go_commands = cfg.get("go_commands") or {}
 
     silence_stderr = cfg.get("silence_stderr", False)
 
@@ -32,7 +33,7 @@ def create_engine(config):
             f"Invalid engine type: {engine_type}. Expected usi or homemade.")
 
     logger.debug(f"Starting engine: {' '.join(commands)}")
-    return Engine(commands, usi_options, silence_stderr, cwd=engine_working_dir)
+    return Engine(commands, usi_options, go_commands, silence_stderr, cwd=engine_working_dir)
 
 
 class Termination(str, Enum):
@@ -48,7 +49,8 @@ class Termination(str, Enum):
 
 
 class EngineWrapper:
-    def __init__(self, options=None):
+    def __init__(self, go_commands):
+        self.go_commands = go_commands
         pass
 
     def search_for(self, board, game, movetime):
@@ -92,8 +94,8 @@ class EngineWrapper:
         return best_move, ponder_move
 
     def print_stats(self, stats=None):
-        for line in self.get_stats(stats=stats):
-            logger.info(f"{line}")
+        lines = self.get_stats(stats=stats)
+        logger.info(', '.join(lines))
 
     def get_stats(self, stats=None):
         if stats is None:
@@ -124,9 +126,9 @@ class EngineWrapper:
 
 
 class USIEngine(EngineWrapper):
-    def __init__(self, commands, options, silence_stderr=False, cwd=None):
+    def __init__(self, commands, options, go_commands, silence_stderr=False, cwd=None):
         commands = commands[0] if len(commands) == 1 else commands
-        self.go_commands = options.pop("go_commands", {}) or {}
+        super(USIEngine, self).__init__(go_commands)
 
         self.engine = usi.Engine(commands, cwd=cwd)
         self.engine.usi()
