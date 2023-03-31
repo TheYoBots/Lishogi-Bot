@@ -8,9 +8,10 @@ logger = logging.getLogger(__name__)
 
 
 class Engine:
-    def __init__(self, command, cwd=None):
+    def __init__(self, variants, command, cwd=None):
         self.info = {}
         self.id = {}
+        self.variants = variants
         cwd = cwd or os.path.realpath(os.path.expanduser("."))
         self.proccess = self.open_process(command, cwd)
         self.go_commands = None
@@ -123,6 +124,13 @@ class Engine:
             value = "none"
 
         self.send("setoption name %s value %s" % (name, value))
+
+    def set_variant_options(self, variant):
+        variant = variant.lower()
+        if variant in ["standard"]:
+            self.setoption("USI_Variant", "shogi")
+        else:
+            self.setoption("USI_Variant", variant)
 
     def go(self, position, moves, movetime=None, btime=None, wtime=None, binc=None, winc=None, byo=None, depth=None, nodes=None, ponder=False):
         self.position(position, moves)

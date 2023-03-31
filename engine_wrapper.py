@@ -9,15 +9,13 @@ from engine_ctrl import usi
 
 
 @backoff.on_exception(backoff.expo, BaseException, max_time=120)
-def create_engine(config, variant):
+def create_engine(config):
     cfg = config["engine"]
     engine_path = os.path.realpath(os.path.join(cfg["dir"], cfg["name"]))
     engine_working_dir = cfg.get("working_dir") or os.getcwd()
     engine_type = cfg.get("protocol")
     engine_options = cfg.get("engine_options")
     usi_options = cfg.get("usi_options") or {}
-    if variant != "Standard":
-        usi_options["USI_Variant"] = variant.lower()
     commands = [engine_path]
     if engine_options:
         for k, v in engine_options.items():
