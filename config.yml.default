@@ -54,6 +54,7 @@ challenge:                     # Incoming challenges.
   variants:                    # Shogi variants to accept (https://lishogi.org/variant).
     - standard
 #   - minishogi
+#   - chushogi
   time_controls:               # Time controls to accept.
     - ultraBullet
     - bullet
