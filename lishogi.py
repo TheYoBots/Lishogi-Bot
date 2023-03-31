@@ -127,5 +127,5 @@ class Lishogi:
         self.session.headers.update(self.header)
 
     def challenge_ai(self):
-        data = {"level": 1, "clock.limit": 60, "clock.increment": 0, "clock.byoyomi": 2, "clock.periods": 1, "variant": "\"minishogi\""}
+        data = {"level": 1, "clock.limit": 60, "clock.increment": 0, "clock.byoyomi": 2, "clock.periods": 1}
         return self.api_post(ENDPOINTS["challenge_ai"], data=data)

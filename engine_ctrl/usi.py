@@ -8,9 +8,10 @@ logger = logging.getLogger(__name__)
 
 
 class Engine:
-    def __init__(self, command, cwd=None):
+    def __init__(self, variants, command, cwd=None):
         self.info = {}
         self.id = {}
+        self.variants = variants
         cwd = cwd or os.path.realpath(os.path.expanduser("."))
         self.proccess = self.open_process(command, cwd)
         self.go_commands = None
@@ -82,22 +83,18 @@ class Engine:
         self.send("usi")
 
         engine_info = {}
-        variants = set()
 
         while True:
             command, arg = self.recv_usi()
 
             if command == "usiok":
-                return engine_info, variants
+                return engine_info
             elif command == "id":
                 name_and_value = arg.split(None, 1)
                 if len(name_and_value) == 2:
                     engine_info[name_and_value[0]] = name_and_value[1]
             elif command == "option":
-                if arg.startswith("name USI_Variant type combo default shogi"):
-                    for variant in arg.split(" ")[6:]:
-                        if variant != "var":
-                            variants.add(variant)
+                pass
             elif command == "Fairy-Stockfish" and " by " in arg:
                 # Ignore identification line
                 pass
