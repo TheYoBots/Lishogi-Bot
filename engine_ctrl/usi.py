@@ -82,18 +82,22 @@ class Engine:
         self.send("usi")
 
         engine_info = {}
+        variants = set()
 
         while True:
             command, arg = self.recv_usi()
 
             if command == "usiok":
-                return engine_info
+                return engine_info, variants
             elif command == "id":
                 name_and_value = arg.split(None, 1)
                 if len(name_and_value) == 2:
                     engine_info[name_and_value[0]] = name_and_value[1]
             elif command == "option":
-                pass
+                if arg.startswith("name USI_Variant type combo default shogi"):
+                    for variant in arg.split(" ")[6:]:
+                        if variant != "var":
+                            variants.add(variant)
             elif command == "Fairy-Stockfish" and " by " in arg:
                 # Ignore identification line
                 pass
@@ -123,6 +127,13 @@ class Engine:
             value = "none"
 
         self.send("setoption name %s value %s" % (name, value))
+
+    def set_variant_options(self, variant):
+        variant = variant.lower()
+        if variant in ["standard"]:
+            self.setoption("USI_Variant", "shogi")
+        else:
+            self.setoption("USI_Variant", variant)
 
     def go(self, position, moves, movetime=None, btime=None, wtime=None, binc=None, winc=None, byo=None, depth=None, nodes=None, ponder=False):
         self.position(position, moves)
