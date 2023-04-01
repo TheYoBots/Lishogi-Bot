@@ -57,12 +57,14 @@ class Lishogi:
                           giveup=is_final,
                           backoff_log_level=logging.DEBUG,
                           giveup_log_level=logging.DEBUG)
-    def api_get(self, path, raise_for_status=True):
+    def api_get(self, path, raise_for_status=True, timeout=2):
         logging.getLogger("backoff").setLevel(self.logging_level)
         url = urljoin(self.baseUrl, path)
-        response = self.session.get(url, timeout=2)
+        logger.debug(url)
+        response = self.session.get(url, timeout=timeout)
         if rate_limit_check(response) or raise_for_status:
             response.raise_for_status()
+        logger.debug(response.json())
         return response.json()
 
     @backoff.on_exception(backoff.constant,
@@ -72,12 +74,14 @@ class Lishogi:
                           giveup=is_final,
                           backoff_log_level=logging.DEBUG,
                           giveup_log_level=logging.DEBUG)
-    def api_post(self, path, data=None, raise_for_status=True):
+    def api_post(self, path, data=None, raise_for_status=True, timeout=2):
         logging.getLogger("backoff").setLevel(self.logging_level)
         url = urljoin(self.baseUrl, path)
-        response = self.session.post(url, data=data, timeout=2)
+        logger.debug(url)
+        response = self.session.post(url, data=data, timeout=timeout)
         if rate_limit_check(response) or raise_for_status:
             response.raise_for_status()
+        logger.debug(response.json())
         return response.json()
 
     def get_game(self, game_id):
@@ -126,6 +130,6 @@ class Lishogi:
         self.header.update({"User-Agent": f"Lishogi-Bot/{self.version} user:{username}"})
         self.session.headers.update(self.header)
 
-    def challenge_ai(self):
-        data = {"level": 1, "clock.limit": 60, "clock.increment": 0, "clock.byoyomi": 2, "clock.periods": 1}
-        return self.api_post(ENDPOINTS["challenge_ai"], data=data)
+    def challenge_ai(self, color="random"):
+        challenge = {"level": 1, "color": color, "clock.limit": 60, "clock.increment": 0, "clock.byoyomi": 2, "clock.periods": 1}
+        return self.api_post(ENDPOINTS["challenge_ai"], data=challenge, timeout=30)
