@@ -130,6 +130,6 @@ class Lishogi:
         self.header.update({"User-Agent": f"Lishogi-Bot/{self.version} user:{username}"})
         self.session.headers.update(self.header)
 
-    def challenge_ai(self, color="random"):
-        challenge = {"level": 1, "color": color, "clock.limit": 60, "clock.increment": 0, "clock.byoyomi": 2, "clock.periods": 1}
+    def challenge_ai(self, color="random", sfen="lnsgkgsnl/1r5b1/ppppppppp/9/9/9/PPPPPPPPP/1B5R1/LNSGKGSNL b - 1"):
+        challenge = {"level": 1, "color": color, "sfen": sfen, "clock.limit": 60, "clock.increment": 0, "clock.byoyomi": 2, "clock.periods": 1}
         return self.api_post(ENDPOINTS["challenge_ai"], data=challenge, timeout=30)
