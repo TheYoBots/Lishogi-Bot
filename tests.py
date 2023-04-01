@@ -79,6 +79,8 @@ def test_bot():
     with open("./config.yml.default") as file:
         CONFIG = yaml.safe_load(file)
     CONFIG["token"] = TOKEN
+    CONFIG["engine"]["dir"] = "/usr/games"
+    CONFIG["engine"]["name"] = "fairy-stockfish"
     run_bot(CONFIG, logging_level)
 
 
