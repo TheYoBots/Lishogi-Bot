@@ -94,8 +94,9 @@ class EngineWrapper:
         return best_move, ponder_move
 
     def print_stats(self, stats=None):
-        lines = self.get_stats(stats=stats)
-        logger.info(', '.join(lines))
+        for line in self.get_stats(stats=stats):
+            logger.info(f"{line}")
+
 
     def get_stats(self, stats=None):
         if stats is None:
