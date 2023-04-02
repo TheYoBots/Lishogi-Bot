@@ -11,7 +11,6 @@ class Engine:
     def __init__(self, command, cwd=None):
         self.info = {}
         self.id = {}
-        #self.variants = variants
         cwd = cwd or os.path.realpath(os.path.expanduser("."))
         self.proccess = self.open_process(command, cwd)
         self.go_commands = None
