@@ -97,7 +97,6 @@ class EngineWrapper:
         for line in self.get_stats(stats=stats):
             logger.info(f"{line}")
 
-
     def get_stats(self, stats=None):
         if stats is None:
             stats = ["score", "depth", "nodes", "nps"]
