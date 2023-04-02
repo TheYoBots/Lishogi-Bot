@@ -23,10 +23,10 @@ engine:                        # Engine Settings.
 #   Move Overhead: 500         # Increase if your bot flags games too often.
     Threads: 1                 # Max CPU threads the engine can use.
 #   USI_Hash: 256              # Max memory (in megabytes) the engine can allocate.
-#   go_commands:               # Additional options to pass to the USI go command.
-#     nodes: 1                 # Search so many nodes only.
-#     depth: 5                 # Search depth ply only.
-#     movetime: 1000           # Integer. Search exactly movetime milliseconds.
+  go_commands:                 # Additional options to pass to the USI go command.
+#   nodes: 1                   # Search so many nodes only.
+#   depth: 5                   # Search depth ply only.
+#   movetime: 1000             # Integer. Search exactly movetime milliseconds.
   silence_stderr: false        # Some engines are very noisy.
 
 abort_time: 30                 # Time in seconds after which the engine will abort the game if there is no activity.
