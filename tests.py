@@ -81,6 +81,8 @@ def test_bot():
     CONFIG["token"] = TOKEN
     CONFIG["engine"]["dir"] = "/usr/games"
     CONFIG["engine"]["name"] = "fairy-stockfish"
+    CONFIG["engine"]["go_commands"] = {}
+    CONFIG["engine"]["go_commands"]["nodes"] = "100000"
     run_bot(CONFIG, logging_level)
 
 
