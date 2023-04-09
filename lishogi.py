@@ -60,7 +60,7 @@ class Lishogi:
     def api_get(self, path, raise_for_status=True, timeout=2):
         logging.getLogger("backoff").setLevel(self.logging_level)
         url = urljoin(self.baseUrl, path)
-        logger.debug(url)
+        logger.info("GET [%s]", url)
         response = self.session.get(url, timeout=timeout)
         if rate_limit_check(response) or raise_for_status:
             response.raise_for_status()
@@ -77,7 +77,7 @@ class Lishogi:
     def api_post(self, path, data=None, raise_for_status=True, timeout=2):
         logging.getLogger("backoff").setLevel(self.logging_level)
         url = urljoin(self.baseUrl, path)
-        logger.debug(url)
+        logger.info("POST [%s] %s", url, data) if data else logger.info("POST [%s]", url)
         response = self.session.post(url, data=data, timeout=timeout)
         if rate_limit_check(response) or raise_for_status:
             response.raise_for_status()
@@ -131,5 +131,5 @@ class Lishogi:
         self.session.headers.update(self.header)
 
     def challenge_ai(self):
-        challenge = {"level": 1, "clock.limit": 60, "clock.increment": 0, "clock.byoyomi": 2, "clock.periods": 1}
+        challenge = {"level": 1, "clock.limit": 60, "clock.increment": 2, "clock.byoyomi": 0, "clock.periods": 1}
         return self.api_post(ENDPOINTS["challenge_ai"], data=challenge, timeout=30)
