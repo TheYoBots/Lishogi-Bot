@@ -102,10 +102,12 @@ class Lishogi:
 
     def get_event_stream(self):
         url = urljoin(self.baseUrl, ENDPOINTS["stream_event"])
+        logger.info("GET [%s]", url)
         return requests.get(url, headers=self.header, stream=True)
 
     def get_game_stream(self, game_id):
         url = urljoin(self.baseUrl, ENDPOINTS["stream"].format(game_id))
+        logger.info("GET [%s]", url)
         return requests.get(url, headers=self.header, stream=True)
 
     def accept_challenge(self, challenge_id):
