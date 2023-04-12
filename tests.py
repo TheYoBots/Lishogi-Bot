@@ -41,15 +41,6 @@ def run_bot(CONFIG, logging_level):
             time.sleep(60)
         game_id = li.challenge_ai()["id"]
         time.sleep(2)
-        games = li.get_ongoing_games()
-        game_ids = list(map(lambda game: game["gameId"], games))
-        for game in game_ids:
-            if game != game_id:
-                try:
-                    li.abort(game)
-                except:
-                    pass
-                time.sleep(2)
 
         @pytest.mark.timeout(300)
         def run_test():
@@ -74,13 +65,14 @@ def run_bot(CONFIG, logging_level):
 
 
 def test_bot():
-    logging_level = lishogi_bot.logging.INFO  # lishogi_bot.logging_level.DEBUG
+    logging_level = lishogi_bot.logging.INFO
     lishogi_bot.logging_configurer(logging_level, None)
     with open("./config.yml.default") as file:
         CONFIG = yaml.safe_load(file)
     CONFIG["token"] = TOKEN
     CONFIG["engine"]["dir"] = "/usr/games"
     CONFIG["engine"]["name"] = "fairy-stockfish"
+    CONFIG["engine"]["protocol"] = "usi"
     CONFIG["engine"]["go_commands"] = {}
     CONFIG["engine"]["go_commands"]["nodes"] = "100000"
     run_bot(CONFIG, logging_level)
