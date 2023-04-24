@@ -45,7 +45,7 @@ challenge:                     # Incoming challenges.
   sort_by: "best"              # Possible values here are "best" and "first".
   accept_bot: true             # Accepts challenges coming from other bots. Setting this to "true" will allow games from both human and bot, but setting it to false will allow games only from human.
   only_bot: false              # Enable this to accept challenges only from bots. This will disable accepting challenges from human.
-  max_increment: 180           # Maximum amount of increment to accaept a challenge. The max is 180. Set to 0 for no increment.
+  max_increment: 180           # Maximum amount of increment to accept a challenge. The max is 180. Set to 0 for no increment.
   min_increment: 0             # Minimum amount of increment to accept a challenge.
   max_byoyomi: 180             # Maximum amount of increment to accept a challenge. The max is 180. Set to 0 for no byoyomi.
   min_byoyomi: 0               # Minimum amount of increment to accept a challenge.
