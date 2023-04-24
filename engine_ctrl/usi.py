@@ -125,7 +125,6 @@ class Engine:
         self.send("setoption name %s value %s" % (name, value))
 
     def set_variant_options(self, variant):
-        variant = variant.lower()
         if variant in ["standard"]:
             self.setoption("USI_Variant", "shogi")
         else:
