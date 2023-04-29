@@ -501,7 +501,7 @@ def fake_thinking(config, board, game):
 def print_last_move(moves):
     if moves:
         moves = moves.split(" ")
-    move = moves[-1] if moves else None
+    move = moves[-1] if moves and len(moves) > 0 else None
     logger.info("")
     logger.info(f"Last move: {len(moves)}. {move}")
 
