@@ -541,10 +541,9 @@ def tell_user_game_result(game):
     winner = game.state.get("winner")
     termination = game.state.get("status")
 
-    winning_name = game.sente.name if winner == "sente" else game.gote.name
-    losing_name = game.sente.name if winner == "gote" else game.gote.name
-
     if winner is not None:
+        winning_name = game.sente.name if winner == "sente" else game.gote.name
+        losing_name = game.sente.name if winner == "gote" else game.gote.name
         logger.info(f"{winning_name} won!")
     elif termination == engine_wrapper.Termination.DRAW:
         logger.info("Game ended in draw.")
@@ -560,13 +559,12 @@ def tell_user_game_result(game):
     elif termination == engine_wrapper.Termination.ABORT:
         logger.info("Game aborted.")
     elif termination == engine_wrapper.Termination.DRAW:
-        board = setup_board(game)
-        if board.is_fifty_moves():
-            logger.info("Game drawn by 50-move rule.")
-        elif board.is_repetition():
-            logger.info("Game drawn by threefold repetition.")
-        else:
+        sdraw = game.state.get("sdraw")
+        gdraw = game.state.get("gdraw")
+        if sdraw and gdraw:
             logger.info("Game drawn by agreement.")
+        else:
+            logger.info("Game drawn by repetition (or impasse).")
     elif termination:
         logger.info(f"Game ended by {termination}")
 
