@@ -258,6 +258,7 @@ def play_game(li, game_id, control_queue, user_profile, config, challenge_queue,
 
     # Initial response of stream will be the full game info. Store it
     initial_state = json.loads(next(lines).decode("utf-8"))
+    logger.debug(initial_state)
     game = model.Game(initial_state, user_profile["username"], li.baseUrl, config.get("abort_time", 20))
 
     engine = engine_wrapper.create_engine(config)
