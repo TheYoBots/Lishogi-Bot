@@ -306,12 +306,14 @@ def play_game(li, game_id, control_queue, user_profile, config, challenge_queue,
                 conversation.react(ChatLine(upd), game)
             elif u_type == "gameState":
                 game.state = upd
-                board = setup_board(game)
                 if is_game_over(game):
-                    engine.report_game_result(game, board)
-                    tell_user_game_result(game, board)
+                    engine.report_game_result(game, game.state["moves"].split(" "))
+                    tell_user_game_result(game)
                     conversation.send_message("player", goodbye)
-                elif is_engine_move(game, board):
+                    break
+
+                board = setup_board(game)
+                if is_engine_move(game, board):
                     if len(board.move_stack) < 2:
                         conversation.send_message("player", hello)
                     else:
@@ -535,7 +537,7 @@ def is_game_over(game):
     return game.state["status"] != "started"
 
 
-def tell_user_game_result(game, board):
+def tell_user_game_result(game):
     winner = game.state.get("winner")
     termination = game.state.get("status")
 
@@ -558,6 +560,7 @@ def tell_user_game_result(game, board):
     elif termination == engine_wrapper.Termination.ABORT:
         logger.info("Game aborted.")
     elif termination == engine_wrapper.Termination.DRAW:
+        board = setup_board(game)
         if board.is_fifty_moves():
             logger.info("Game drawn by 50-move rule.")
         elif board.is_repetition():
