@@ -560,12 +560,7 @@ def tell_user_game_result(game):
     elif termination == engine_wrapper.Termination.ABORT:
         logger.info("Game aborted.")
     elif termination == engine_wrapper.Termination.DRAW:
-        sdraw = game.state.get("sdraw")
-        gdraw = game.state.get("gdraw")
-        if sdraw and gdraw:
-            logger.info("Game drawn by agreement.")
-        else:
-            logger.info("Game drawn by repetition (or impasse).")
+        logger.info("Game drawn.")
     elif termination:
         logger.info(f"Game ended by {termination}")
 
