@@ -73,7 +73,6 @@ def test_bot():
     CONFIG["engine"]["dir"] = "/usr/games"
     CONFIG["engine"]["name"] = "fairy-stockfish"
     CONFIG["engine"]["protocol"] = "usi"
-    CONFIG["engine"]["go_commands"] = {}
     run_bot(CONFIG, logging_level)
 
 
