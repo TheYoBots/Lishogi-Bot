@@ -258,6 +258,7 @@ def play_game(li, game_id, control_queue, user_profile, config, challenge_queue,
 
     # Initial response of stream will be the full game info. Store it
     initial_state = json.loads(next(lines).decode("utf-8"))
+    logger.debug(initial_state)
     game = model.Game(initial_state, user_profile["username"], li.baseUrl, config.get("abort_time", 20))
 
     engine = engine_wrapper.create_engine(config)
@@ -306,17 +307,20 @@ def play_game(li, game_id, control_queue, user_profile, config, challenge_queue,
                 conversation.react(ChatLine(upd), game)
             elif u_type == "gameState":
                 game.state = upd
-                board = setup_board(game)
                 if is_game_over(game):
-                    engine.report_game_result(game, board)
-                    tell_user_game_result(game, board)
+                    engine.report_game_result(game, game.state["moves"].split(" "))
+                    tell_user_game_result(game)
                     conversation.send_message("player", goodbye)
-                elif is_engine_move(game, board):
+                    break
+
+                board = setup_board(game)
+                if is_engine_move(game, board):
                     if len(board.move_stack) < 2:
                         conversation.send_message("player", hello)
+                    else:
+                        print_move_number(game.state["moves"])
                     start_time = time.perf_counter_ns()
                     fake_thinking(config, board, game)
-                    print_move_number(board)
                     correspondence_disconnect_time = correspondence_cfg.get("disconnect_time", 300)
 
                     if len(board.move_stack) < 2:
@@ -497,9 +501,12 @@ def fake_thinking(config, board, game):
         time.sleep(sleep)
 
 
-def print_move_number(board):
+def print_move_number(moves):
+    if moves:
+        moves = moves.split(" ")
+    move = moves[-1] if moves and len(moves) > 0 else None
     logger.info("")
-    logger.info(f"move: {len(board.move_stack) // 1 + 1}")
+    logger.info(f"move: {len(moves)}. {move}")
 
 
 def setup_board(game):
@@ -531,14 +538,13 @@ def is_game_over(game):
     return game.state["status"] != "started"
 
 
-def tell_user_game_result(game, board):
+def tell_user_game_result(game):
     winner = game.state.get("winner")
     termination = game.state.get("status")
 
-    winning_name = game.sente.name if winner == "sente" else game.gote.name
-    losing_name = game.sente.name if winner == "gote" else game.gote.name
-
     if winner is not None:
+        winning_name = game.sente.name if winner == "sente" else game.gote.name
+        losing_name = game.sente.name if winner == "gote" else game.gote.name
         logger.info(f"{winning_name} won!")
     elif termination == engine_wrapper.Termination.DRAW:
         logger.info("Game ended in draw.")
@@ -554,12 +560,7 @@ def tell_user_game_result(game, board):
     elif termination == engine_wrapper.Termination.ABORT:
         logger.info("Game aborted.")
     elif termination == engine_wrapper.Termination.DRAW:
-        if board.is_fifty_moves():
-            logger.info("Game drawn by 50-move rule.")
-        elif board.is_repetition():
-            logger.info("Game drawn by threefold repetition.")
-        else:
-            logger.info("Game drawn by agreement.")
+        logger.info("Game drawn.")
     elif termination:
         logger.info(f"Game ended by {termination}")
 
