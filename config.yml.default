@@ -55,6 +55,8 @@ challenge:                     # Incoming challenges.
     - standard
 #   - minishogi
 #   - chushogi
+#   - annanshogi
+#   - kyotoshogi
   time_controls:               # Time controls to accept.
     - ultraBullet
     - bullet

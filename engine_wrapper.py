@@ -54,13 +54,19 @@ class EngineWrapper:
         pass
 
     def search_for(self, board, game, movetime):
-        moves = "" if game.variant_name == "Standard" else game.state["moves"].split()
+        if game.variant_name == "Kyoto shogi":
+            moves = game.state["fairyMoves"].split()
+        else:
+            moves = "" if game.variant_name == "Standard" else game.state["moves"].split()
         sfen = board.sfen() if game.variant_name == "Standard" else game.initial_sfen
         self.engine.set_variant_options(game.variant_name.lower())
         return self.search(sfen, moves, movetime=movetime // 1000)
     
     def search_with_ponder(self, game, board, btime, wtime, binc, winc, byo, ponder=False):
-        moves = [m.usi() for m in list(board.move_stack)] if game.variant_name == "Standard" else game.state["moves"].split()
+        if game.variant_name == "Kyoto shogi":
+            moves = game.state["fairyMoves"].split()
+        else:
+            moves = [m.usi() for m in list(board.move_stack)] if game.variant_name == "Standard" else game.state["moves"].split()
         sfen = game.initial_sfen
         cmds = self.go_commands
         movetime = cmds.get("movetime")
