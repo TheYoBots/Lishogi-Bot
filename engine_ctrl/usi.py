@@ -125,10 +125,16 @@ class Engine:
         self.send("setoption name %s value %s" % (name, value))
 
     def set_variant_options(self, variant):
-        if variant in ["standard"]:
-            self.setoption("USI_Variant", "shogi")
+        if "fairy-stockfish" in self.id.get("name", "").lower():
+            if variant in ["standard"]:
+                self.setoption("UCI_Variant", "shogi")
+            else:
+                self.setoption("UCI_Variant", variant)
         else:
-            self.setoption("USI_Variant", variant)
+            if variant in ["standard"]:
+                self.setoption("USI_Variant", "shogi")
+            else:
+                self.setoption("USI_Variant", variant)
 
     def go(self, position, moves, movetime=None, btime=None, wtime=None, binc=None, winc=None, byo=None, depth=None, nodes=None, ponder=False):
         self.position(position, moves)
