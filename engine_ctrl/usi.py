@@ -129,12 +129,12 @@ class Engine:
             if variant in ["standard"]:
                 self.setoption("UCI_Variant", "shogi")
             else:
-                self.setoption("UCI_Variant", variant)
+                self.setoption("UCI_Variant", variant.replace(" ", ""))
         else:
             if variant in ["standard"]:
                 self.setoption("USI_Variant", "shogi")
             else:
-                self.setoption("USI_Variant", variant)
+                self.setoption("USI_Variant", variant.replace(" ", ""))
 
     def go(self, position, moves, movetime=None, btime=None, wtime=None, binc=None, winc=None, byo=None, depth=None, nodes=None, ponder=False):
         self.position(position, moves)
