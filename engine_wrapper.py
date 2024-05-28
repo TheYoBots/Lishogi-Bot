@@ -23,6 +23,7 @@ def create_engine(config):
     go_commands = cfg.get("go_commands") or {}
 
     silence_stderr = cfg.get("silence_stderr", False)
+    startup_lines = cfg.get("startup_lines", 0) 
 
     if engine_type == "homemade":
         Engine = getHomemadeEngine(cfg["name"])
@@ -33,7 +34,7 @@ def create_engine(config):
             f"Invalid engine type: {engine_type}. Expected usi or homemade.")
 
     logger.debug(f"Starting engine: {' '.join(commands)}")
-    return Engine(commands, usi_options, go_commands, silence_stderr, cwd=engine_working_dir)
+    return Engine(commands, usi_options, go_commands, silence_stderr, startup_lines=startup_lines, cwd=engine_working_dir)
 
 
 class Termination(str, Enum):
@@ -134,11 +135,13 @@ class EngineWrapper:
 
 
 class USIEngine(EngineWrapper):
-    def __init__(self, commands, options, go_commands, silence_stderr=False, cwd=None):
+    def __init__(self, commands, options, go_commands, silence_stderr=False, startup_lines=0, cwd=None):
         commands = commands[0] if len(commands) == 1 else commands
         super(USIEngine, self).__init__(go_commands)
 
         self.engine = usi.Engine(commands, cwd=cwd)
+        for _ in range(startup_lines): 
+            self.engine.recv()
         self.engine.usi()
 
         if options:

@@ -95,9 +95,6 @@ class Engine:
                     engine_info[name_and_value[0]] = name_and_value[1]
             elif command == "option":
                 pass
-            elif command == "Fairy-Stockfish" and " by " in arg:
-                # Ignore identification line
-                pass
             else:
                 logger.warning("Unexpected engine response to usi: %s %s" % (command, arg))
             self.id = engine_info
