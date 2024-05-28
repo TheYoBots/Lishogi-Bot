@@ -68,6 +68,7 @@ class EngineWrapper:
         else:
             moves = [m.usi() for m in list(board.move_stack)] if game.variant_name == "Standard" else game.state["moves"].split()
         sfen = game.initial_sfen
+        self.engine.set_variant_options(game.variant_name.lower())
         cmds = self.go_commands
         movetime = cmds.get("movetime")
         if movetime is not None:

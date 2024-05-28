@@ -14,6 +14,7 @@ class Engine:
         cwd = cwd or os.path.realpath(os.path.expanduser("."))
         self.proccess = self.open_process(command, cwd)
         self.go_commands = None
+        self.current_variant = None 
 
     def set_go_commands(self, go_comm):
         self.go_commands = go_comm
@@ -125,6 +126,12 @@ class Engine:
         self.send("setoption name %s value %s" % (name, value))
 
     def set_variant_options(self, variant):
+        # Some engines may unnecessarily reset board when selecting a variant
+        if self.current_variant == variant: 
+            return 
+        
+        self.current_variant = variant 
+
         if "fairy-stockfish" in self.id.get("name", "").lower():
             if variant in ["standard"]:
                 self.setoption("UCI_Variant", "shogi")
