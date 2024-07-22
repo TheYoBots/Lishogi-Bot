@@ -5,5 +5,5 @@ backoff==2.2.1
 rich==13.7.1
 
 # Requirements for tests
-pytest==8.2.2
+pytest==8.3.1
 pytest-timeout==2.3.1
