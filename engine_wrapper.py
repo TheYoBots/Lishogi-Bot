@@ -23,6 +23,7 @@ def create_engine(config):
     go_commands = cfg.get("go_commands") or {}
 
     silence_stderr = cfg.get("silence_stderr", False)
+    startup_lines = cfg.get("startup_lines", 0) 
 
     if engine_type == "homemade":
         Engine = getHomemadeEngine(cfg["name"])
@@ -33,7 +34,7 @@ def create_engine(config):
             f"Invalid engine type: {engine_type}. Expected usi or homemade.")
 
     logger.debug(f"Starting engine: {' '.join(commands)}")
-    return Engine(commands, usi_options, go_commands, silence_stderr, cwd=engine_working_dir)
+    return Engine(commands, usi_options, go_commands, silence_stderr, startup_lines=startup_lines, cwd=engine_working_dir)
 
 
 class Termination(str, Enum):
@@ -60,7 +61,7 @@ class EngineWrapper:
             moves = "" if game.variant_name == "Standard" else game.state["moves"].split()
         sfen = board.sfen() if game.variant_name == "Standard" else game.initial_sfen
         self.engine.set_variant_options(game.variant_name.lower())
-        return self.search(sfen, moves, movetime=movetime // 1000)
+        return self.search(sfen, moves, movetime=movetime)
     
     def search_with_ponder(self, game, board, btime, wtime, binc, winc, byo, ponder=False):
         if game.variant_name == "Kyoto shogi":
@@ -68,10 +69,11 @@ class EngineWrapper:
         else:
             moves = [m.usi() for m in list(board.move_stack)] if game.variant_name == "Standard" else game.state["moves"].split()
         sfen = game.initial_sfen
+        self.engine.set_variant_options(game.variant_name.lower())
         cmds = self.go_commands
         movetime = cmds.get("movetime")
         if movetime is not None:
-            movetime = float(movetime) / 1000
+            movetime = float(movetime)
         best_move, ponder_move = self.search(sfen,
                                              moves,
                                              btime=btime,
@@ -133,11 +135,13 @@ class EngineWrapper:
 
 
 class USIEngine(EngineWrapper):
-    def __init__(self, commands, options, go_commands, silence_stderr=False, cwd=None):
+    def __init__(self, commands, options, go_commands, silence_stderr=False, startup_lines=0, cwd=None):
         commands = commands[0] if len(commands) == 1 else commands
         super(USIEngine, self).__init__(go_commands)
 
         self.engine = usi.Engine(commands, cwd=cwd)
+        for _ in range(startup_lines): 
+            self.engine.recv()
         self.engine.usi()
 
         if options:
