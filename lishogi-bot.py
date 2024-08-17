@@ -510,7 +510,7 @@ def print_move_number(moves):
 
 
 def setup_board(game):
-    if game.variant_name == "Standard":
+    if game.variant_name == "Standard" or game.variant_name == "Checkshogi":
         if game.initial_sfen != "startpos":
             board = shogi.Board(game.initial_sfen)
         else:
