@@ -57,7 +57,7 @@ class EngineWrapper:
         moves = "" if game.variant_name == "Standard" else game.state["moves"].split()
         sfen = board.sfen() if game.variant_name == "Standard" else game.initial_sfen
         self.engine.set_variant_options(game.variant_name.lower())
-        return self.search(sfen, moves, movetime=movetime // 1000)
+        return self.search(sfen, moves, movetime=movetime)
     
     def search_with_ponder(self, game, board, btime, wtime, binc, winc, byo, ponder=False):
         moves = [m.usi() for m in list(board.move_stack)] if game.variant_name == "Standard" else game.state["moves"].split()
@@ -65,7 +65,7 @@ class EngineWrapper:
         cmds = self.go_commands
         movetime = cmds.get("movetime")
         if movetime is not None:
-            movetime = float(movetime) / 1000
+            movetime = float(movetime)
         best_move, ponder_move = self.search(sfen,
                                              moves,
                                              btime=btime,
