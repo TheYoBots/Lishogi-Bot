@@ -14,6 +14,7 @@ class Engine:
         cwd = cwd or os.path.realpath(os.path.expanduser("."))
         self.proccess = self.open_process(command, cwd)
         self.go_commands = None
+        self.current_variant = None 
 
     def set_go_commands(self, go_comm):
         self.go_commands = go_comm
@@ -94,9 +95,6 @@ class Engine:
                     engine_info[name_and_value[0]] = name_and_value[1]
             elif command == "option":
                 pass
-            elif command == "Fairy-Stockfish" and " by " in arg:
-                # Ignore identification line
-                pass
             else:
                 logger.warning("Unexpected engine response to usi: %s %s" % (command, arg))
             self.id = engine_info
@@ -125,10 +123,22 @@ class Engine:
         self.send("setoption name %s value %s" % (name, value))
 
     def set_variant_options(self, variant):
-        if variant in ["standard"]:
-            self.setoption("USI_Variant", "shogi")
+        # Some engines may unnecessarily reset board when selecting a variant
+        if self.current_variant == variant: 
+            return 
+        
+        self.current_variant = variant 
+
+        if "fairy-stockfish" in self.id.get("name", "").lower():
+            if variant in ["standard"]:
+                self.setoption("UCI_Variant", "shogi")
+            else:
+                self.setoption("UCI_Variant", variant.replace(" ", ""))
         else:
-            self.setoption("USI_Variant", variant)
+            if variant in ["standard"]:
+                self.setoption("USI_Variant", "shogi")
+            else:
+                self.setoption("USI_Variant", variant.replace(" ", ""))
 
     def go(self, position, moves, movetime=None, btime=None, wtime=None, binc=None, winc=None, byo=None, depth=None, nodes=None, ponder=False):
         self.position(position, moves)
@@ -149,17 +159,17 @@ class Engine:
         # In Shogi and USI, black is the player to move first
         if btime is not None:
             builder.append("btime")
-            builder.append(str(btime))
+            builder.append(str(max(btime - byo - binc, 0)))
         if wtime is not None:
             builder.append("wtime")
-            builder.append(str(wtime))
-        if binc is not None:
+            builder.append(str(max(wtime - byo - winc, 0)))
+        if binc is not None and binc > 0:
             builder.append("binc")
             builder.append(str(binc))
-        if winc is not None:
+        if winc is not None and winc > 0:
             builder.append("winc")
             builder.append(str(winc))
-        if byo is not None:
+        if byo is not None and byo > 0:
             builder.append("byoyomi")
             builder.append(str(byo))
 

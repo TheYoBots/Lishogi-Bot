@@ -24,7 +24,7 @@ from http.client import RemoteDisconnected
 
 logger = logging.getLogger(__name__)
 
-__version__ = "1.1.1"
+__version__ = "1.1.2"
 
 terminated = False
 
@@ -308,7 +308,10 @@ def play_game(li, game_id, control_queue, user_profile, config, challenge_queue,
             elif u_type == "gameState":
                 game.state = upd
                 if is_game_over(game):
-                    engine.report_game_result(game, game.state["moves"].split(" "))
+                    if game.variant_name == "Kyoto shogi":
+                        engine.report_game_result(game, game.state["fairyMoves"].split(" "))
+                    else:
+                        engine.report_game_result(game, game.state["moves"].split(" "))
                     tell_user_game_result(game)
                     conversation.send_message("player", goodbye)
                     break
@@ -318,7 +321,10 @@ def play_game(li, game_id, control_queue, user_profile, config, challenge_queue,
                     if len(board.move_stack) < 2:
                         conversation.send_message("player", hello)
                     else:
-                        print_move_number(game.state["moves"])
+                        if game.variant_name == "Kyoto shogi":
+                            print_move_number(game.state["fairyMoves"])
+                        else:
+                            print_move_number(game.state["moves"])
                     start_time = time.perf_counter_ns()
                     fake_thinking(config, board, game)
                     correspondence_disconnect_time = correspondence_cfg.get("disconnect_time", 300)
@@ -524,8 +530,12 @@ def setup_board(game):
                 logger.debug(f"Ignoring illegal move {move} on board {board.sfen()}")
     else:
         board = shogi.Board()
-        for move in game.state["moves"].split():
-            board.push(shogi.Move.null())
+        if game.variant_name == "Kyoto shogi":
+            for move in game.state["fairyMoves"].split():
+                board.push(shogi.Move.null())
+        else:
+            for move in game.state["moves"].split():
+                board.push(shogi.Move.null())
 
     return board
 
