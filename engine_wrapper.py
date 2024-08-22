@@ -65,7 +65,7 @@ class EngineWrapper:
         cmds = self.go_commands
         movetime = cmds.get("movetime")
         if movetime is not None:
-            movetime = int(movetime)
+            movetime = float(movetime)
         best_move, ponder_move = self.search(sfen,
                                              moves,
                                              btime=btime,
