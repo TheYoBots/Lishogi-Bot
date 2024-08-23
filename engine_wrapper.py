@@ -60,7 +60,7 @@ class EngineWrapper:
         else:
             moves = "" if game.variant_name == "Standard" else game.state["moves"].split()
         sfen = board.sfen() if game.variant_name == "Standard" else game.initial_sfen
-        self.engine.set_variant_options(game.variant_name.lower().replace(" ",""))
+        self.engine.set_variant_options(game.variant_name.lower())
         return self.search(sfen, moves, movetime=movetime)
     
     def search_with_ponder(self, game, board, btime, wtime, binc, winc, byo, ponder=False):
