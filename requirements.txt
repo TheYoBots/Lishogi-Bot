@@ -2,7 +2,7 @@ python-shogi==1.1.1
 PyYAML==6.0.2
 requests==2.32.3
 backoff==2.2.1
-rich==13.8.0
+rich==13.8.1
 
 # Requirements for tests
 pytest==8.3.2
